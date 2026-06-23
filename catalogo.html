@@ -135,8 +135,13 @@ let todosLosProductos = [];
 let categoriaActual   = "todas";
 
 // ── VERIFICAR SESIÓN (solo usuarios) ─────────────────────────────────────────
-const usuario = await verificarSesion("usuario");
-document.getElementById("userEmail").textContent = usuario.email;
+verificarSesion("usuario")
+  .then(usuario => {
+    document.getElementById("userEmail").textContent = usuario.email;
+  })
+  .catch(() => {
+    console.log("sin sesión, continuando...");
+  });
 actualizarContadorCarrito();
 
 window.cerrarSesionBtn = () => cerrarSesion();
