@@ -149,13 +149,22 @@ window.cerrarSesionBtn = () => cerrarSesion();
 // ── CARGAR PRODUCTOS DESDE FIRESTORE ─────────────────────────────────────────
 async function cargarProductos() {
   try {
-    const q = query(collection(db, "productos"), where("activo", "==", true));
-    const snap = await getDocs(q);
+    console.log("Cargando productos...");
+
+    const snap = await getDocs(collection(db, "productos"));
+
+    console.log("Docs encontrados:", snap.size);
+
     todosLosProductos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    console.log("Productos:", todosLosProductos);
+
     aplicarFiltros();
-  } catch(e) {
-    console.error("Error cargando productos:", e);
-    document.getElementById("loading").innerHTML = "<p style='color:red'>Error al cargar productos. Verifica tu conexión.</p>";
+
+  } catch (e) {
+    console.error("ERROR FIRESTORE:", e);
+    document.getElementById("loading").innerHTML =
+      "<p style='color:red'>Error: " + e.message + "</p>";
   }
 }
 
@@ -396,26 +405,7 @@ document.addEventListener("keydown", e => {
 });
 
 // ── INICIAR CARGA (al final, cuando todas las funciones ya están definidas) ──
-async function cargarProductos() {
-  try {
-    console.log("Cargando productos...");
-
-    const snap = await getDocs(collection(db, "productos"));
-
-    console.log("Docs encontrados:", snap.size);
-
-    todosLosProductos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    console.log("Productos:", todosLosProductos);
-
-    aplicarFiltros();
-
-  } catch (e) {
-    console.error("ERROR FIRESTORE:", e);
-    document.getElementById("loading").innerHTML =
-      "<p style='color:red'>Error: " + e.message + "</p>";
-  }
-}
+await cargarProductos();
 </script>
 
 </body>
