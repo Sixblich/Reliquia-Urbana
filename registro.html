@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Cuenta — Reliquia Urbana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      font-family: 'DM Sans', sans-serif;
+      background: #0f0f0f;
+    }
+
+    .left {
+      flex: 1;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2014 50%, #1a1a1a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .left::before {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(200,169,110,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .brand-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: #c8a96e;
+      letter-spacing: 4px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .brand-tagline {
+      color: #888;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      position: relative;
+    }
+    .brand-deco {
+      width: 60px; height: 1px;
+      background: #c8a96e;
+      margin: 24px auto;
+      position: relative;
+    }
+    .brand-desc {
+      color: #666;
+      font-size: 13px;
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    .right {
+      width: 520px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 50px;
+      overflow-y: auto;
+    }
+
+    .form-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      color: #111;
+      margin-bottom: 6px;
+    }
+    .form-sub {
+      color: #999;
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+
+    .form-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .full { grid-column: 1 / -1; }
+
+    .input-group { width: 100%; }
+    .input-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fafafa;
+      color: #111;
+    }
+    .input-group input:focus, .input-group select:focus {
+      outline: none;
+      border-color: #c8a96e;
+      box-shadow: 0 0 0 3px rgba(200,169,110,0.15);
+      background: #fff;
+    }
+
+    .rol-info {
+      width: 100%;
+      background: #fdf8f0;
+      border: 1px solid #e8d5a3;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #7a5c1e;
+      margin-bottom: 4px;
+      line-height: 1.5;
+    }
+    .rol-info strong { color: #5a3d0e; }
+
+    .btn-registro {
+      width: 100%;
+      padding: 14px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 20px;
+    }
+    .btn-registro:hover { background: #c8a96e; color: #111; }
+    .btn-registro:active { transform: scale(0.98); }
+    .btn-registro:disabled { background: #ccc; cursor: not-allowed; }
+
+    .divider {
+      width: 100%;
+      text-align: center;
+      position: relative;
+      margin: 20px 0 16px;
+      color: #bbb;
+      font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 42%;
+      height: 1px;
+      background: #eee;
+    }
+    .divider::before { left: 0; }
+    .divider::after  { right: 0; }
+
+    .link-login {
+      width: 100%;
+      padding: 13px;
+      background: transparent;
+      color: #111;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s;
+      text-decoration: none;
+      display: block;
+    }
+    .link-login:hover { border-color: #c8a96e; background: #fdf8f0; }
+
+    .mensaje {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+    .mensaje.error   { background: #fff0f0; color: #c00; border: 1px solid #fcc; display: block; }
+    .mensaje.success { background: #f0fff4; color: #090; border: 1px solid #9f9; display: block; }
+    .mensaje.loading { background: #f5f5f5; color: #555; border: 1px solid #ddd; display: block; }
+
+    @media (max-width: 768px) {
+      .left { display: none; }
+      .right { width: 100%; padding: 30px 20px; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LADO IZQUIERDO -->
+  <div class="left">
+    <div class="brand-logo">RELIQUIA URBANA</div>
+    <div class="brand-deco"></div>
+    <div class="brand-tagline">Únete a la comunidad</div>
+    <div class="brand-desc">
+      Crea tu cuenta y empieza a comprar o vender ropa única. Moda sostenible al alcance de todos.
+    </div>
+  </div>
+
+  <!-- LADO DERECHO -->
+  <div class="right">
+    <h1 class="form-title">Crear cuenta</h1>
+    <p class="form-sub">Completa tus datos para registrarte</p>
+
+    <div class="rol-info">
+      <strong>Nota:</strong> Las cuentas nuevas se crean como <strong>Usuario</strong>. 
+      Si necesitas acceso de administrador, comunícate con el equipo de Reliquia Urbana.
+    </div>
+
+    <form id="registroForm" style="width:100%; margin-top:14px;">
+      <div class="form-grid">
+
+        <div class="input-group">
+          <label>Nombre</label>
+          <input type="text" id="nombre" placeholder="Tu nombre" required>
+        </div>
+
+        <div class="input-group">
+          <label>Apellido</label>
+          <input type="text" id="apellido" placeholder="Tu apellido" required>
+        </div>
+
+        <div class="input-group full">
+          <label>Correo electrónico</label>
+          <input type="email" id="email" placeholder="tu@correo.com" required autocomplete="email">
+        </div>
+
+        <div class="input-group">
+          <label>Contraseña</label>
+          <input type="password" id="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+
+        <div class="input-group">
+          <label>Confirmar contraseña</label>
+          <input type="password" id="confirmPassword" placeholder="Repite tu contraseña" required>
+        </div>
+
+        <div class="input-group full">
+          <label>Teléfono</label>
+          <input type="tel" id="telefono" placeholder="0999999999">
+        </div>
+
+        <div class="input-group full">
+          <label>Dirección</label>
+          <input type="text" id="direccion" placeholder="Ciudad, Provincia">
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn-registro" id="btnRegistro">Crear mi cuenta</button>
+    </form>
+
+    <div class="mensaje" id="mensaje"></div>
+
+    <div class="divider">¿Ya tienes cuenta?</div>
+    <a href="login.html" class="link-login">Iniciar sesión</a>
+  </div>
+
+  <script type="module">
+    import { auth, db } from "./firebase.js";
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const form = document.getElementById("registroForm");
+    const msg  = document.getElementById("mensaje");
+    const btn  = document.getElementById("btnRegistro");
+
+    function mostrarMsg(texto, tipo) {
+      msg.textContent = texto;
+      msg.className = "mensaje " + tipo;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nombre   = document.getElementById("nombre").value.trim();
+      const apellido = document.getElementById("apellido").value.trim();
+      const email    = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirm  = document.getElementById("confirmPassword").value;
+      const telefono = document.getElementById("telefono").value.trim();
+      const direccion= document.getElementById("direccion").value.trim();
+
+      // Validaciones
+      if (password !== confirm) {
+        mostrarMsg("Las contraseñas no coinciden.", "error");
+        return;
+      }
+      if (password.length < 6) {
+        mostrarMsg("La contraseña debe tener al menos 6 caracteres.", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Creando cuenta...";
+      mostrarMsg("Registrando tu cuenta...", "loading");
+
+      try {
+        // 1. Crear usuario en Firebase Auth
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid  = cred.user.uid;
+
+        // 2. Guardar datos del usuario en Firestore con rol = "usuario"
+        await setDoc(doc(db, "usuarios", uid), {
+          uid,
+          nombre,
+          apellido,
+          nombreCompleto : nombre + " " + apellido,
+          email,
+          telefono       : telefono || "",
+          direccion      : direccion || "",
+          rol            : "usuario",      // ← siempre usuario al registrarse
+          activo         : true,
+          creado_en      : serverTimestamp()
+        });
+
+        mostrarMsg("✅ ¡Cuenta creada exitosamente! Redirigiendo...", "success");
+
+        setTimeout(() => {
+          window.location.href = "catalogo.html";
+        }, 1500);
+
+      } catch (error) {
+        btn.disabled = false;
+        btn.textContent = "Crear mi cuenta";
+
+        const errores = {
+          "auth/email-already-in-use" : "Ya existe una cuenta con ese correo.",
+          "auth/invalid-email"        : "El formato del correo no es válido.",
+          "auth/weak-password"        : "La contraseña es muy débil. Usa al menos 6 caracteres.",
+        };
+        mostrarMsg(errores[error.code] || "Error al registrar. Intenta nuevamente.", "error");
+      }
+    });
+  </script>
+</body>
+</html>
