@@ -396,7 +396,26 @@ document.addEventListener("keydown", e => {
 });
 
 // ── INICIAR CARGA (al final, cuando todas las funciones ya están definidas) ──
-await cargarProductos();
+async function cargarProductos() {
+  try {
+    console.log("Cargando productos...");
+
+    const snap = await getDocs(collection(db, "productos"));
+
+    console.log("Docs encontrados:", snap.size);
+
+    todosLosProductos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    console.log("Productos:", todosLosProductos);
+
+    aplicarFiltros();
+
+  } catch (e) {
+    console.error("ERROR FIRESTORE:", e);
+    document.getElementById("loading").innerHTML =
+      "<p style='color:red'>Error: " + e.message + "</p>";
+  }
+}
 </script>
 
 </body>
