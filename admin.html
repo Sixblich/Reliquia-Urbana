@@ -6,6 +6,7 @@
   <title>Panel Admin — Reliquia Urbana</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: #f4f4f4; color: #111; }
 
@@ -258,6 +259,8 @@
     <a onclick="mostrarPagina('productos')"><span class="icon">👕</span> Productos</a>
     <a onclick="mostrarPagina('pagos')"><span class="icon">💳</span> Validar Pagos</a>
     <a onclick="mostrarPagina('pedidos')"><span class="icon">📦</span> Pedidos</a>
+    <a onclick="mostrarPagina('prendas')"><span class="icon">👚</span> Prendas Marketplace</a>
+    <a onclick="mostrarPagina('reportes')"><span class="icon">📈</span> Reportes</a>
     <a onclick="mostrarPagina('usuarios')"><span class="icon">👥</span> Usuarios</a>
   </aside>
 
@@ -425,6 +428,100 @@
       </div>
     </div>
 
+    <!-- ── PRENDAS MARKETPLACE ── -->
+    <div class="page" id="page-prendas">
+      <h1 class="page-title">Marketplace — Prendas Ofrecidas</h1>
+      <p class="page-sub">Revisa, aprueba o rechaza las prendas que los usuarios quieren vender (RF-13, RF-14)</p>
+      <div class="card">
+        <div class="card-head"><h3>Prendas pendientes y procesadas</h3></div>
+        <table>
+          <thead>
+            <tr><th>Fotos</th><th>Prenda</th><th>Vendedor</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaPrendas"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── REPORTES ── -->
+    <div class="page" id="page-reportes">
+      <h1 class="page-title">Reportes de Ventas</h1>
+      <p class="page-sub">Consulta las ventas por período y descarga el reporte en PDF</p>
+
+      <!-- FILTROS -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-head">
+          <h3>Filtrar por período</h3>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <select id="reporteMes" style="padding:7px 12px; border:1px solid #ddd; border-radius:6px; font-size:13px;">
+              <option value="0">Enero</option>
+              <option value="1">Febrero</option>
+              <option value="2">Marzo</option>
+              <option value="3">Abril</option>
+              <option value="4">Mayo</option>
+              <option value="5">Junio</option>
+              <option value="6">Julio</option>
+              <option value="7">Agosto</option>
+              <option value="8">Septiembre</option>
+              <option value="9">Octubre</option>
+              <option value="10">Noviembre</option>
+              <option value="11">Diciembre</option>
+            </select>
+            <select id="reporteAnio" style="padding:7px 12px; border:1px solid #ddd; border-radius:6px; font-size:13px;">
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+            </select>
+            <button class="btn-primary" onclick="generarReporte()">Consultar</button>
+            <button class="btn-primary" id="btnDescargarPDF" onclick="descargarPDF()" style="background:#2e7d32; display:none;">⬇ Descargar PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUMEN DEL MES -->
+      <div class="stats" id="statsReporte" style="display:none; margin-bottom:20px;">
+        <div class="stat-card blue">
+          <div class="stat-num" id="rTotalPedidos">0</div>
+          <div class="stat-label">Pedidos aprobados</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-num" id="rTotalVendido">$0</div>
+          <div class="stat-label">Total vendido</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-num" id="rProductoTop">—</div>
+          <div class="stat-label">Producto más vendido</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-num" id="rClienteTop">—</div>
+          <div class="stat-label">Cliente frecuente</div>
+        </div>
+      </div>
+
+      <!-- TABLA DE VENTAS -->
+      <div class="card" id="cardTablaReporte" style="display:none;">
+        <div class="card-head">
+          <h3 id="reporteTitulo">Ventas del período</h3>
+          <span id="reporteConteo" style="color:#999; font-size:13px;"></span>
+        </div>
+        <table id="tablaReporte">
+          <thead>
+            <tr>
+              <th># Pedido</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Productos</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoReporte"></tbody>
+        </table>
+        <div id="sinVentas" class="empty" style="display:none;">
+          😕 No hay ventas aprobadas en este período.
+        </div>
+      </div>
+    </div>
+
     <!-- ── USUARIOS ── -->
     <div class="page" id="page-usuarios">
       <h1 class="page-title">Gestión de Usuarios</h1>
@@ -453,6 +550,13 @@
   </div>
 </div>
 
+<!-- MODAL VER PRENDA -->
+<div id="modalPrenda" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:14px; padding:24px; max-width:560px; width:90%; max-height:85vh; overflow-y:auto;">
+    <div id="prendaModalContent"></div>
+  </div>
+</div>
+
 <script type="module">
   import { auth, db, storage } from "./firebase.js";
   import { verificarSesion, cerrarSesion } from "./auth-guard.js";
@@ -478,6 +582,8 @@
     if (id === "productos")  cargarProductos();
     if (id === "pagos")      cargarPagos();
     if (id === "pedidos")    cargarPedidosAdmin();
+    if (id === "prendas")    cargarPrendas();
+    if (id === "reportes")   iniciarReportes();
     if (id === "usuarios")   cargarUsuarios();
   };
 
@@ -674,7 +780,7 @@
     document.getElementById("tablaUsuarios").innerHTML = users.length
       ? users.map(u => `
           <tr>
-            <td><strong>${u.nombreCompleto || u.nombre || '—'}</strong></td>
+            <td><strong>${u.nombreCompleto || u.nombre || '"+"—"+"'}</strong></td>
             <td>${u.email}</td>
             <td><span class="badge ${u.rol}">${u.rol}</span></td>
             <td><span class="badge ${u.activo !== false ? 'activo' : 'inactivo'}">${u.activo !== false ? 'Activo' : 'Inactivo'}</span></td>
@@ -705,8 +811,8 @@
               <img src="${p.comprobante_url}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;cursor:pointer"
                    onclick="verComprobante('${p.comprobante_url}')">
             </td>
-            <td>${p.nombre_titular || '—'}<br><small style="color:#999">${p.usuario_id ? p.usuario_id.substring(0,8) : ''}</small></td>
-            <td>${p.referencia || '—'}</td>
+            <td>${p.nombre_titular || '"+"—"+"'}<br><small style="color:#999">${p.usuario_id ? p.usuario_id.substring(0,8) : ''}</small></td>
+            <td>${p.referencia || '"+"—"+"'}</td>
             <td>$${parseFloat(p.monto).toFixed(2)}</td>
             <td><span class="badge ${p.estado === 'aprobado' ? 'activo' : p.estado === 'rechazado' ? 'inactivo' : 'admin'}">${p.estado}</span></td>
             <td>
@@ -788,7 +894,7 @@
       ? pedidos.map(p => `
           <tr>
             <td><strong>#${p.id.substring(0,8).toUpperCase()}</strong></td>
-            <td>${p.usuario_email || '—'}</td>
+            <td>${p.usuario_email || '"+"—"+"'}</td>
             <td style="font-size:12px">${(p.items||[]).map(i => `${i.nombre} x${i.cantidad}`).join(', ')}</td>
             <td>$${parseFloat(p.total).toFixed(2)}</td>
             <td>
@@ -810,8 +916,354 @@
     cargarPedidosAdmin();
   };
 
+  // ── MARKETPLACE "+"—"+" PRENDAS OFRECIDAS (RF-13, RF-14) ────────────────────────
+  let prendasCache = [];
+
+  async function cargarPrendas() {
+    const snap = await getDocs(collection(db, "prendas_ofrecidas"));
+    prendasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    prendasCache.sort((a,b) => (b.fecha?.seconds||0) - (a.fecha?.seconds||0));
+
+    document.getElementById("tablaPrendas").innerHTML = prendasCache.length
+      ? prendasCache.map(p => `
+          <tr>
+            <td>
+              <img src="${p.imagen}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;cursor:pointer"
+                   onclick="verPrenda('${p.id}')">
+            </td>
+            <td><strong>${p.nombre}</strong><br><small style="color:#999">${p.categoria} · Talla ${p.talla}</small></td>
+            <td>${p.usuario_nombre || p.usuario_email}</td>
+            <td>$${parseFloat(p.precio).toFixed(2)}</td>
+            <td><span class="badge ${p.estadoRevision === 'aprobada' ? 'activo' : p.estadoRevision === 'rechazada' ? 'inactivo' : 'admin'}">${p.estadoRevision}</span></td>
+            <td>
+              ${p.estadoRevision === 'pendiente' ? `
+                <button class="btn-sm" onclick="verPrenda('${p.id}')">👁️ Revisar</button>
+              ` : `<span style="color:#aaa; font-size:12px">Ya procesada</span>`}
+            </td>
+          </tr>`).join("")
+      : `<tr><td colspan="6" class="empty">No hay prendas ofrecidas todavía</td></tr>`;
+  }
+
+  window.verPrenda = function(id) {
+    const p = prendasCache.find(x => x.id === id);
+    if (!p) return;
+
+    const fotos = (p.imagenes || [p.imagen]).map(url =>
+      `<img src="${url}" style="width:100%; border-radius:8px; margin-bottom:8px;">`
+    ).join("");
+
+    document.getElementById("prendaModalContent").innerHTML = `
+      <h3 style="margin-bottom:14px;">${p.nombre}</h3>
+      <div style="display:grid; grid-template-columns:repeat(${Math.min((p.imagenes||[p.imagen]).length,3)}, 1fr); gap:8px; margin-bottom:16px;">
+        ${fotos}
+      </div>
+      <table style="width:100%; font-size:13px; margin-bottom:16px;">
+        <tr><td style="padding:4px 0; color:#888;">Vendedor</td><td><strong>${p.usuario_nombre || p.usuario_email}</strong></td></tr>
+        <tr><td style="padding:4px 0; color:#888;">Marca</td><td>${p.marca || '"+"—"+"'}</td></tr>
+        <tr><td style="padding:4px 0; color:#888;">Categoría</td><td>${p.categoria}</td></tr>
+        <tr><td style="padding:4px 0; color:#888;">Talla</td><td>${p.talla}</td></tr>
+        <tr><td style="padding:4px 0; color:#888;">Estado</td><td>${p.estado}</td></tr>
+        <tr><td style="padding:4px 0; color:#888;">Precio sugerido</td><td><strong>$${parseFloat(p.precio).toFixed(2)}</strong></td></tr>
+        <tr><td style="padding:4px 0; color:#888;">Cantidad</td><td>${p.stock}</td></tr>
+        <tr><td style="padding:4px 0; color:#888; vertical-align:top;">Descripción</td><td>${p.descripcion}</td></tr>
+      </table>
+      ${p.estadoRevision === 'pendiente' ? `
+        <div style="display:flex; gap:10px;">
+          <button class="btn-primary" style="flex:1;" onclick="aprobarPrenda('${p.id}')">✅ Aprobar y publicar</button>
+          <button class="btn-sm danger" style="flex:1;" onclick="rechazarPrenda('${p.id}')">❌ Rechazar</button>
+        </div>
+      ` : `<p style="text-align:center; color:#999; font-size:13px;">Esta prenda ya fue ${p.estadoRevision}.</p>`}
+      <button class="btn-sm" style="width:100%; margin-top:10px;" onclick="cerrarModalPrenda()">Cerrar</button>
+    `;
+
+    document.getElementById("modalPrenda").style.display = "flex";
+  };
+
+  window.cerrarModalPrenda = function() {
+    document.getElementById("modalPrenda").style.display = "none";
+  };
+
+  // Aprobar prenda → crea producto en catálogo (RF-14)
+  window.aprobarPrenda = async function(id) {
+    const p = prendasCache.find(x => x.id === id);
+    if (!p) return;
+    if (!confirm(`¿Aprobar "${p.nombre}"? Se publicará automáticamente en el catálogo.`)) return;
+
+    try {
+      // 1. Crear el producto en la colección "productos" (RF-14)
+      await addDoc(collection(db, "productos"), {
+        nombre        : p.nombre,
+        marca         : p.marca || "",
+        precio        : p.precio,
+        precioAnterior: 0,
+        categoria     : p.categoria,
+        talla         : p.talla,
+        estado        : p.estado,
+        stock         : p.stock,
+        descripcion   : p.descripcion,
+        imagen        : p.imagen,
+        activo        : true,
+        origenMarketplace: true,
+        vendedor_id   : p.usuario_id,
+        creado_en     : serverTimestamp()
+      });
+
+      // 2. Actualizar el estado de la prenda ofrecida
+      await updateDoc(doc(db, "prendas_ofrecidas", id), {
+        estadoRevision: "aprobada",
+        fecha_revision: serverTimestamp()
+      });
+
+      alert("Prenda aprobada y publicada en el catálogo ✅");
+      cerrarModalPrenda();
+      cargarPrendas();
+      cargarDashboard();
+
+    } catch(e) {
+      alert("Error al aprobar la prenda: " + e.message);
+    }
+  };
+
+  window.rechazarPrenda = async function(id) {
+    const p = prendasCache.find(x => x.id === id);
+    if (!confirm(`¿Rechazar "${p.nombre}"? El usuario no podrá venderla.`)) return;
+
+    await updateDoc(doc(db, "prendas_ofrecidas", id), {
+      estadoRevision: "rechazada",
+      fecha_revision: serverTimestamp()
+    });
+
+    alert("Prenda rechazada.");
+    cerrarModalPrenda();
+    cargarPrendas();
+  };
+
+  // ── REPORTES DE VENTAS ────────────────────────────────────────────────────
+  let reporteData = []; // cache de pedidos del período actual
+
+  const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                 "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+  function iniciarReportes() {
+    // Seleccionar el mes actual por defecto
+    const hoy = new Date();
+    document.getElementById("reporteMes").value = hoy.getMonth();
+    document.getElementById("reporteAnio").value = hoy.getFullYear();
+  }
+
+  window.generarReporte = async function() {
+    const mes  = parseInt(document.getElementById("reporteMes").value);
+    const anio = parseInt(document.getElementById("reporteAnio").value);
+    const nomMes = MESES[mes];
+
+    // Rango de fechas del mes seleccionado
+    const inicio = new Date(anio, mes, 1);
+    const fin    = new Date(anio, mes + 1, 0, 23, 59, 59);
+
+    const btn = document.getElementById("btnDescargarPDF");
+    btn.style.display = "none";
+    document.getElementById("statsReporte").style.display = "none";
+    document.getElementById("cardTablaReporte").style.display = "none";
+
+    try {
+      // Traer todos los pedidos aprobados
+      const snap = await getDocs(collection(db, "pedidos"));
+      const todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Filtrar por mes/año y estado aprobado
+      reporteData = todos.filter(p => {
+        if (p.estado !== "aprobado") return false;
+        const fecha = p.fecha?.toDate ? p.fecha.toDate() : new Date(p.fecha);
+        return fecha >= inicio && fecha <= fin;
+      });
+
+      reporteData.sort((a,b) => {
+        const fa = a.fecha?.toDate ? a.fecha.toDate() : new Date(a.fecha);
+        const fb = b.fecha?.toDate ? b.fecha.toDate() : new Date(b.fecha);
+        return fa - fb;
+      });
+
+      // ── ESTADÍSTICAS ────────────────────────────────────────────────────
+      const totalVendido = reporteData.reduce((s,p) => s + parseFloat(p.total||0), 0);
+
+      // Producto más vendido
+      const conteoProductos = {};
+      reporteData.forEach(p => {
+        (p.items||[]).forEach(item => {
+          conteoProductos[item.nombre] = (conteoProductos[item.nombre]||0) + item.cantidad;
+        });
+      });
+      const productoTop = Object.entries(conteoProductos)
+        .sort((a,b) => b[1]-a[1])[0]?.[0] || ""+"—"+"";
+
+      // Cliente frecuente
+      const conteoClientes = {};
+      reporteData.forEach(p => {
+        const email = p.usuario_email || ""+"—"+"";
+        conteoClientes[email] = (conteoClientes[email]||0) + 1;
+      });
+      const clienteTop = Object.entries(conteoClientes)
+        .sort((a,b) => b[1]-a[1])[0]?.[0] || ""+"—"+"";
+
+      document.getElementById("rTotalPedidos").textContent  = reporteData.length;
+      document.getElementById("rTotalVendido").textContent  = "$" + totalVendido.toFixed(2);
+      document.getElementById("rProductoTop").textContent   = productoTop.length > 14 ? productoTop.substring(0,12)+".." : productoTop;
+      document.getElementById("rClienteTop").textContent    = clienteTop.split("@")[0];
+      document.getElementById("statsReporte").style.display = "grid";
+
+      // ── TABLA ────────────────────────────────────────────────────────────
+      document.getElementById("reporteTitulo").textContent  = `Ventas de ${nomMes} ${anio}`;
+      document.getElementById("reporteConteo").textContent  = `${reporteData.length} pedido${reporteData.length!==1?"s":""} aprobado${reporteData.length!==1?"s":""}`;
+      document.getElementById("cardTablaReporte").style.display = "block";
+
+      if (reporteData.length === 0) {
+        document.getElementById("cuerpoReporte").innerHTML = "";
+        document.getElementById("sinVentas").style.display = "block";
+        document.getElementById("tablaReporte").style.display = "none";
+        return;
+      }
+
+      document.getElementById("sinVentas").style.display = "none";
+      document.getElementById("tablaReporte").style.display = "table";
+
+      document.getElementById("cuerpoReporte").innerHTML = reporteData.map(p => {
+        const fecha = p.fecha?.toDate
+          ? p.fecha.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"short", year:"numeric"})
+          : ""+"—"+"";
+        const productos = (p.items||[]).map(i => `${i.nombre} x${i.cantidad} ($${(i.precio*i.cantidad).toFixed(2)})`).join("<br>");
+        return `
+          <tr>
+            <td><strong>#${p.id.substring(0,8).toUpperCase()}</strong></td>
+            <td>${fecha}</td>
+            <td>${p.usuario_email || ""+"—"+""}</td>
+            <td style="font-size:12px;">${productos}</td>
+            <td><strong>$${parseFloat(p.total).toFixed(2)}</strong></td>
+            <td><span class="badge activo">aprobado</span></td>
+          </tr>`;
+      }).join("");
+
+      btn.style.display = "inline-block";
+
+    } catch(e) {
+      alert("Error al generar el reporte: " + e.message);
+    }
+  };
+
+  // ── GENERAR PDF SIN LIBRERÍAS EXTERNAS ────────────────────────────────────
+  window.descargarPDF = function () {
+  const mes = parseInt(document.getElementById("reporteMes").value || 0);
+  const anio = parseInt(document.getElementById("reporteAnio").value || new Date().getFullYear());
+  const nomMes = MESES?.[mes] || "Mes";
+
+  if (!Array.isArray(reporteData) || reporteData.length === 0) {
+    alert("No hay datos para exportar.");
+    return;
+  }
+
+  const safe = (v) => (v === null || v === undefined ? " - " : v);
+  const num = (v) => Number(v || 0);
+
+  const totalVendido = reporteData.reduce((s, p) => s + num(p.total), 0);
+  const promedio = reporteData.length ? (totalVendido / reporteData.length).toFixed(2) : "0.00";
+
+  const fechaHoy = new Date().toLocaleDateString("es-EC", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  let filas = "";
+
+  reporteData.forEach((p, idx) => {
+    const fecha = p?.fecha?.toDate
+      ? p.fecha.toDate().toLocaleDateString("es-EC")
+      : " - ";
+
+    let productos = "";
+
+    (p.items || []).forEach((i) => {
+      productos += `${safe(i.nombre)} x${num(i.cantidad)} - $${(num(i.precio) * num(i.cantidad)).toFixed(2)}<br>`;
+    });
+
+    filas += `
+      <tr>
+        <td>#${(p.id || "SINID").substring(0, 8).toUpperCase()}</td>
+        <td>${fecha}</td>
+        <td>${safe(p.usuario_email)}</td>
+        <td>${productos}</td>
+        <td><b>$${num(p.total).toFixed(2)}</b></td>
+      </tr>
+    `;
+  });
+
+  const html = `
+  <div style="font-family:Arial;padding:30px;color:#111;">
+    <h1>RELIQUIA URBANA</h1>
+    <h3>Reporte ${nomMes} ${anio}</h3>
+    <p>Generado: ${fechaHoy}</p>
+
+    <hr>
+
+    <p><b>Total ventas:</b> $${totalVendido.toFixed(2)}</p>
+    <p><b>Promedio:</b> $${promedio}</p>
+    <p><b>Pedidos:</b> ${reporteData.length}</p>
+
+    <hr>
+
+    <table border="1" cellspacing="0" cellpadding="6" width="100%">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Productos</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filas}
+      </tbody>
+    </table>
+  </div>
+  `;
+
+  const contenedor = document.createElement("div");
+  contenedor.innerHTML = html;
+  document.body.appendChild(contenedor);
+
+  const opciones = {
+    margin: 0.5,
+    filename: `reporte_${nomMes}_${anio}.pdf`,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+  };
+
+  html2pdf()
+    .set(opciones)
+    .from(contenedor)
+    .save()
+    .then(() => {
+      document.body.removeChild(contenedor);
+    });
+};
+  
   // ── CARGAR AL INICIO ──────────────────────────────────────────────────────
+  
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    console.log("No logueado");
+    return;
+  }
+
+  console.log("Usuario listo:", user.email);
+
   cargarDashboard();
+  cargarProductos();
+});
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
