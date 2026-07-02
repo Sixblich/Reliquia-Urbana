@@ -18,7 +18,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyDHyaGi8c560adgbe7CTY9dTzxJL0SN_rk",
   authDomain: "reliquia-urbana.firebaseapp.com",
   projectId: "reliquia-urbana",
-  storageBucket: "reliquia-urbana.firebasestorage.app",
+  storageBucket: "reliquia-urbana.appspot.com",
   messagingSenderId: "1046553293789",
   appId: "1:1046553293789:web:316808a57723d7fdf33c34",
   measurementId: "G-WE3PNNKG9N"
