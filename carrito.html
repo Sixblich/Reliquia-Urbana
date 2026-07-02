@@ -395,89 +395,53 @@
   };
 
   // ── CONFIRMAR COMPRA (RF-09, RF-10, RF-15, RF-16, RF-17) ─────────────────
-  window.confirmarCompra = async function() {
-    const msg = document.getElementById("msgPago");
-    const btn = document.getElementById("btnConfirmarPago");
-    const nombre = document.getElementById("payNombre").value.trim();
-    const referencia = document.getElementById("payReferencia").value.trim();
-    const carrito = getCarrito();
+  window.confirmarCompra = async function () {
+  const msg = document.getElementById("msgPago");
+  const btn = document.getElementById("btnConfirmarPago");
+  const nombre = document.getElementById("payNombre").value.trim();
+  const referencia = document.getElementById("payReferencia").value.trim();
+  const carrito = getCarrito();
 
-    if (!comprobanteFile) {
-      msg.textContent = "Debes subir una imagen del comprobante de pago.";
-      msg.className = "mensaje error";
-      return;
-    }
-    if (!nombre || !referencia) {
-      msg.textContent = "Completa el nombre del titular y el número de referencia.";
-      msg.className = "mensaje error";
-      return;
-    }
-    if (carrito.length === 0) {
-      msg.textContent = "Tu carrito está vacío.";
-      msg.className = "mensaje error";
-      return;
-    }
-
+  try {
     btn.disabled = true;
-    msg.textContent = "Subiendo comprobante y registrando tu pedido...";
+    msg.textContent = "Procesando pedido...";
     msg.className = "mensaje loading";
 
-    try {
-      const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
+    if (!usuario?.uid) throw new Error("Usuario no autenticado");
+    if (!nombre || !referencia) throw new Error("Completa los datos");
+    if (carrito.length === 0) throw new Error("Carrito vacío");
 
-      // 1. Subir comprobante a Firebase Storage (RF-17)
-      const storageRef = ref(storage, `comprobantes/${usuario.uid}_${Date.now()}.jpg`);
-      const snap = await uploadBytes(storageRef, comprobanteFile);
-      const comprobanteUrl = await getDownloadURL(snap.ref);
+    const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
 
-      // 2. Crear el pedido en Firestore (RF-16)
-      const pedidoRef = await addDoc(collection(db, "pedidos"), {
-        usuario_id : usuario.uid,
-        usuario_email: usuario.email,
-        items      : carrito,
-        total      : total,
-        estado     : "pendiente_pago",   // pendiente_pago → aprobado / rechazado
-        fecha      : serverTimestamp()
-      });
+    // 🔥 GUARDAR DIRECTO EN FIRESTORE (SIN IMAGEN)
+    const pedidoRef = await addDoc(collection(db, "pedidos"), {
+      usuario_id: usuario.uid,
+      usuario_email: usuario.email,
+      items: carrito,
+      total: total,
+      estado: "pendiente_pago",
+      comprobante_url: null, // 👈 IMPORTANTE PARA PRUEBAS
+      nombre_titular: nombre,
+      referencia: referencia,
+      fecha: serverTimestamp()
+    });
 
-      // 3. Crear el registro de pago (RF-15, RF-17)
-      await addDoc(collection(db, "pagos"), {
-        pedido_id         : pedidoRef.id,
-        usuario_id        : usuario.uid,
-        comprobante_url   : comprobanteUrl,
-        nombre_titular    : nombre,
-        referencia        : referencia,
-        monto             : total,
-        estado            : "pendiente",  // pendiente → aprobado / rechazado
-        fecha_subida      : serverTimestamp(),
-        fecha_verificacion: null
-      });
+    console.log("Pedido creado:", pedidoRef.id);
 
-      // 4. Reservar/actualizar stock (RF-10)
-      // Nota: el stock se descuenta definitivamente cuando el admin APRUEBA el pago.
-      // Aquí solo se valida que haya stock suficiente antes de confirmar.
-      for (const item of carrito) {
-        const prodRef = doc(db, "productos", item.id);
-        const prodSnap = await getDoc(prodRef);
-        if (prodSnap.exists()) {
-          const stockActual = prodSnap.data().stock || 0;
-          if (stockActual < item.cantidad) {
-            throw new Error(`Sin stock suficiente para "${item.nombre}"`);
-          }
-        }
-      }
+    // limpiar carrito
+    setCarrito([]);
 
-      // 5. Limpiar carrito y mostrar confirmación
-      setCarrito([]);
-      mostrarConfirmacion(pedidoRef.id);
+    // mostrar confirmación
+    mostrarConfirmacion(pedidoRef.id);
 
-    } catch (e) {
-      console.error(e);
-      msg.textContent = "Error al procesar tu pedido: " + e.message;
-      msg.className = "mensaje error";
-      btn.disabled = false;
-    }
-  };
+  } catch (e) {
+    console.error(e);
+    msg.textContent = "Error: " + e.message;
+    msg.className = "mensaje error";
+  } finally {
+    btn.disabled = false;
+  }
+};
 
   // ── VISTA CONFIRMACIÓN ────────────────────────────────────────────────────
   function mostrarConfirmacion(pedidoId) {
