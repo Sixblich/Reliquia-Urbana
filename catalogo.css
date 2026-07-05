@@ -826,3 +826,140 @@ footer {
 .btn-main-nav:hover { background: #a07c3f; color: var(--white); }
 
 #authArea { display: flex; align-items: center; gap: 10px; }
+
+/* ── RESPONSIVE MOVIL COMPLETO ────────────────────────────────────────────── */
+
+/* Tablet (max 768px) */
+@media (max-width: 768px) {
+
+  /* Navbar */
+  nav {
+    padding: 0 16px;
+    flex-wrap: wrap;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    gap: 8px;
+  }
+  .logo { font-size: 13px; letter-spacing: 2px; }
+  .nav-links { gap: 12px; order: 3; width: 100%; justify-content: center; }
+  .nav-links a { font-size: 12px; }
+  .nav-right { gap: 8px; }
+  .search-box input { width: 140px; font-size: 12px; }
+  .search-box input:focus { width: 180px; }
+
+  /* Hero */
+  .hero { padding: 48px 20px; }
+  .hero h1 { font-size: 32px; }
+  .hero p { font-size: 13px; }
+
+  /* Filtros */
+  .filtros-bar {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    top: 0;
+  }
+  .cats { gap: 6px; }
+  .cat { padding: 5px 12px; font-size: 11px; }
+  .filtros-right { width: 100%; display: flex; gap: 8px; }
+  .filtros-right select { flex: 1; font-size: 11px; padding: 6px 8px; }
+
+  /* Grid */
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .catalogo-sec { padding: 20px 16px; }
+
+  /* Cards */
+  .card-img { height: 160px; }
+  .card-nombre { font-size: 13px; }
+  .card-precio { font-size: 14px; }
+  .card-btns { flex-direction: column; gap: 4px; }
+  .btn-ver, .btn-add-rapido { padding: 8px; font-size: 11px; }
+
+  /* Modal detalle */
+  .modal-detalle { width: 95%; max-height: 92vh; }
+  .detalle-content { grid-template-columns: 1fr; }
+  .detalle-img { min-height: 220px; }
+  .detalle-img img { border-radius: 14px 14px 0 0; }
+  .detalle-info { padding: 20px; gap: 10px; }
+  .detalle-nombre { font-size: 20px; }
+  .detalle-precio { font-size: 22px; }
+
+  /* Panel carrito */
+  .cart-panel { width: 100%; right: -100%; }
+
+  /* Seccion vender */
+  .vender-cta { padding: 36px 20px; }
+  .vender-cta-inner { flex-direction: column; gap: 24px; }
+  .vender-cta-text h2 { font-size: 20px; }
+  .vender-cta-text p { font-size: 13px; }
+  .vender-cta-steps { flex-direction: row; flex-wrap: wrap; gap: 12px; }
+
+  /* Footer */
+  footer {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 12px;
+  }
+  .foot-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+}
+
+/* Movil pequeno (max 480px) */
+@media (max-width: 480px) {
+
+  /* Grid */
+  .grid { grid-template-columns: 1fr; gap: 14px; }
+
+  /* Navbar */
+  .nav-links { gap: 10px; }
+  .search-box input { width: 120px; }
+  .search-box input:focus { width: 150px; }
+
+  /* Hero */
+  .hero h1 { font-size: 26px; }
+
+  /* Filtros - scroll horizontal para categorias */
+  .cats {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    width: 100%;
+    scrollbar-width: none;
+  }
+  .cats::-webkit-scrollbar { display: none; }
+  .cat { white-space: nowrap; flex-shrink: 0; }
+
+  /* Cards mas grandes en 1 columna */
+  .card-img { height: 200px; }
+
+  /* Modal detalle full screen en movil */
+  .modal-detalle {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+    margin: 0;
+  }
+  .modal-detalle.open {
+    transform: none;
+  }
+  .cerrar-modal { top: 12px; right: 12px; }
+
+  /* Meta items en detalle */
+  .detalle-meta { flex-wrap: wrap; gap: 10px; }
+
+  /* Seccion vender */
+  .vender-cta-text h2 { font-size: 18px; }
+}
+
+/* Movil muy pequeno (max 360px) */
+@media (max-width: 360px) {
+  .logo { font-size: 11px; letter-spacing: 1px; }
+  .hero h1 { font-size: 22px; }
+  .nav-links a { font-size: 11px; }
+  .cart-icon { font-size: 16px; }
+}
