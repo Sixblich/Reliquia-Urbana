@@ -1,11 +1,391 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=catalogo.html">
-    <title>Reliquia Urbana</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reliquia Urbana — Moda Sostenible</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:  #c8a96e;
+      --gold2: #a07c3f;
+      --dark:  #0a0a0a;
+      --dark2: #1a1a1a;
+      --bg:    #f7f4ef;
+      --muted: #666;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ── FONDO CON PARTICULAS DECORATIVAS ── */
+    .bg-deco {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,169,110,0.08) 0%, transparent 70%);
+    }
+    .bg-circle:nth-child(1) { width: 600px; height: 600px; top: -150px; left: -100px; }
+    .bg-circle:nth-child(2) { width: 400px; height: 400px; bottom: -100px; right: -80px; animation: pulse 6s ease-in-out infinite; }
+    .bg-circle:nth-child(3) { width: 300px; height: 300px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: pulse 4s ease-in-out infinite reverse; }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    /* ── LINEAS DECORATIVAS ── */
+    .line-left, .line-right {
+      position: fixed;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(200,169,110,0.2), transparent);
+    }
+    .line-left { left: 10%; }
+    .line-right { right: 10%; }
+
+    /* ── CONTENIDO CENTRAL ── */
+    .splash {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 40px 24px;
+      animation: fadeIn 1.2s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo decorativo superior */
+    .logo-deco {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 0.3s both;
+    }
+    .logo-line {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.5;
+    }
+    .logo-tag {
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* Nombre principal */
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 8vw, 72px);
+      font-weight: 700;
+      color: var(--bg);
+      letter-spacing: 6px;
+      line-height: 1;
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 0.5s both;
+    }
+    .brand-name span { color: var(--gold); }
+
+    /* Subtitulo */
+    .brand-sub {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(12px, 2.5vw, 16px);
+      color: var(--muted);
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 0.7s both;
+    }
+
+    /* Separador dorado */
+    .gold-sep {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 0.9s both;
+    }
+    .gold-sep-line { width: 60px; height: 1px; background: var(--gold); }
+    .gold-sep-diamond {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+    }
+
+    /* Frase */
+    .brand-phrase {
+      font-size: clamp(13px, 2vw, 15px);
+      color: #888;
+      max-width: 380px;
+      line-height: 1.8;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 1.0s both;
+    }
+
+    /* Botones */
+    .btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 52px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 1.1s both;
+    }
+
+    .btn-enter {
+      padding: 14px 36px;
+      background: var(--gold);
+      color: var(--dark);
+      border: none;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-enter:hover {
+      background: var(--gold2);
+      color: var(--bg);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(200,169,110,0.3);
+    }
+
+    .btn-login {
+      padding: 14px 36px;
+      background: transparent;
+      color: var(--bg);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    }
+    .btn-login:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* BARRA DE PROGRESO */
+    .progress-wrap {
+      opacity: 0;
+      animation: fadeIn 0.8s ease 1.3s both;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .progress-label {
+      font-size: 10px;
+      color: #555;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .progress-bar {
+      width: 200px;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, var(--gold2), var(--gold));
+      border-radius: 1px;
+      animation: fill 4s linear 1.5s both;
+    }
+    @keyframes fill {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+    .progress-count {
+      font-size: 10px;
+      color: #444;
+      letter-spacing: 1px;
+    }
+
+    /* ── FOOTER SPLASH ── */
+    .splash-footer {
+      position: fixed;
+      bottom: 24px;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 1.5s both;
+    }
+    .splash-footer a {
+      font-size: 10px;
+      color: #444;
+      text-decoration: none;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .splash-footer a:hover { color: var(--gold); }
+
+    /* ── CORNER DECO ── */
+    .corner {
+      position: fixed;
+      width: 60px; height: 60px;
+      border-color: rgba(200,169,110,0.2);
+      border-style: solid;
+      z-index: 1;
+    }
+    .corner-tl { top: 24px; left: 24px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 24px; right: 24px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 24px; left: 24px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 24px; right: 24px; border-width: 0 1px 1px 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .btns { flex-direction: column; align-items: center; }
+      .btn-enter, .btn-login { width: 260px; text-align: center; }
+      .line-left, .line-right { display: none; }
+      .corner { width: 40px; height: 40px; }
+      .splash-footer { gap: 16px; }
+      .splash-footer a { font-size: 9px; }
+    }
+  </style>
 </head>
 <body>
-    <p>Redirigiendo a Reliquia Urbana...</p>
+
+  <!-- Fondo decorativo -->
+  <div class="bg-deco">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
+
+  <!-- Lineas laterales -->
+  <div class="line-left"></div>
+  <div class="line-right"></div>
+
+  <!-- Esquinas decorativas -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="splash">
+
+    <div class="logo-deco">
+      <div class="logo-line"></div>
+      <span class="logo-tag">Moda Sostenible · Ecuador</span>
+      <div class="logo-line"></div>
+    </div>
+
+    <h1 class="brand-name">RELIQUIA<br><span>URBANA</span></h1>
+
+    <p class="brand-sub">Tu armario, tu mercado</p>
+
+    <div class="gold-sep">
+      <div class="gold-sep-line"></div>
+      <div class="gold-sep-diamond"></div>
+      <div class="gold-sep-line"></div>
+    </div>
+
+    <p class="brand-phrase">
+      Compra y vende ropa unica. Moda circular con precios justos
+      para una generacion que cuida el planeta.
+    </p>
+
+    <div class="btns">
+      <a href="catalogo.html" class="btn-enter">Entrar a la tienda</a>
+      <a href="login.html" class="btn-login">Iniciar sesion</a>
+    </div>
+
+    <div class="progress-wrap">
+      <span class="progress-label">Entrando automaticamente</span>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+      <span class="progress-count" id="countDown">4s</span>
+    </div>
+
+  </div>
+
+  <!-- Footer splash -->
+  <div class="splash-footer">
+    <a href="ayuda.html">Ayuda</a>
+    <a href="privacidad.html">Privacidad</a>
+    <a href="terminos.html">Terminos</a>
+    <a href="acerca.html">Acerca de</a>
+  </div>
+
+  <script>
+    // Cuenta regresiva y redireccion automatica
+    var segundos = 4;
+    var countEl  = document.getElementById('countDown');
+
+    var intervalo = setInterval(function() {
+      segundos--;
+      if (countEl) countEl.textContent = segundos + 's';
+      if (segundos <= 0) {
+        clearInterval(intervalo);
+        window.location.href = 'catalogo.html';
+      }
+    }, 1000);
+
+    // Si el usuario hace click en cualquier boton, cancelar el contador
+    document.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        clearInterval(intervalo);
+      });
+    });
+  </script>
+
 </body>
 </html>
