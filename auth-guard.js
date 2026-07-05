@@ -21,9 +21,10 @@ export function verificarSesion(rolRequerido = null) {
   return new Promise((resolve, reject) => {
     onAuthStateChanged(auth, async (user) => {
 
-      // Sin sesión → al login
+      // Sin sesión → al login (guardando a dónde quería ir)
       if (!user) {
-        window.location.href = "login.html";
+        const destino = window.location.pathname.split("/").pop();
+        window.location.href = "login.html?redirect=" + encodeURIComponent(destino);
         return;
       }
 
@@ -76,4 +77,33 @@ export async function cerrarSesion() {
   const { signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
   await signOut(auth);
   window.location.href = "login.html";
+}
+
+/**
+ * Verifica si hay sesión SIN redirigir si no la hay.
+ * Útil para páginas públicas (como catalogo.html) que muestran
+ * contenido distinto si el usuario está logueado o no, pero
+ * no deben bloquear el acceso a quien no tiene cuenta.
+ * @returns {Promise<{uid, email, rol, ...}|null>} datos del usuario o null
+ */
+export function verificarSesionOpcional() {
+  return new Promise((resolve) => {
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        resolve(null);
+        return;
+      }
+      try {
+        const snap = await getDoc(doc(db, "usuarios", user.uid));
+        if (!snap.exists()) {
+          resolve(null);
+          return;
+        }
+        resolve({ uid: user.uid, email: user.email, ...snap.data() });
+      } catch (e) {
+        console.error("Error verificando sesión opcional:", e);
+        resolve(null);
+      }
+    });
+  });
 }
