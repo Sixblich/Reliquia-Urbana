@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acerca de — Reliquia Urbana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --gold: #c8a96e; --dark: #111; --bg: #f7f4ef; --white: #fff; --muted: #999; --border: #e8e4dc; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--dark); }
+
+    nav { background: var(--dark); display: flex; justify-content: space-between; align-items: center; padding: 0 32px; height: 58px; position: sticky; top: 0; z-index: 200; }
+    .logo { font-family: 'Playfair Display', serif; color: var(--bg); font-size: 16px; letter-spacing: 4px; text-decoration: none; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { color: var(--muted); font-size: 13px; text-decoration: none; transition: 0.2s; }
+    .nav-links a:hover { color: var(--bg); }
+    .btn-volver { background: transparent; border: 1px solid #333; color: var(--muted); padding: 6px 14px; border-radius: 4px; font-size: 12px; text-decoration: none; }
+    .btn-volver:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #111 0%, #2d2014 60%, #111 100%);
+      color: var(--bg); padding: 72px 32px; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(200,169,110,0.12) 0%, transparent 70%);
+      border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: 40px; margin-bottom: 10px; position: relative; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 14px; max-width: 500px; margin: 0 auto; line-height: 1.7; position: relative; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 56px 24px 80px; }
+
+    /* PROYECTO */
+    .proyecto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 56px; }
+    @media (max-width: 640px) { .proyecto-grid { grid-template-columns: 1fr; } }
+    .proyecto-card { background: var(--white); border-radius: 14px; padding: 28px; border: 1px solid var(--border); }
+    .proyecto-card .icon { font-size: 28px; margin-bottom: 14px; }
+    .proyecto-card h3 { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 8px; }
+    .proyecto-card p { font-size: 13px; color: #555; line-height: 1.7; }
+
+    /* DESARROLLADOR */
+    .dev-section { margin-bottom: 56px; }
+    .dev-section h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 24px; text-align: center; }
+    .dev-card {
+      background: var(--white); border-radius: 14px; padding: 36px;
+      border: 1px solid var(--border); display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap;
+    }
+    .dev-avatar {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: linear-gradient(135deg, #2d2014, #c8a96e);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-size: 36px; color: var(--white);
+      flex-shrink: 0;
+    }
+    .dev-info { flex: 1; min-width: 200px; }
+    .dev-name { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 4px; }
+    .dev-role { color: var(--gold); font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+    .dev-details { display: flex; flex-direction: column; gap: 8px; }
+    .dev-detail { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555; }
+    .dev-detail span:first-child { font-size: 16px; width: 22px; text-align: center; }
+    .dev-detail strong { color: var(--dark); }
+
+    /* TECNOLOGIAS */
+    .tech-section { margin-bottom: 56px; }
+    .tech-section h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 24px; text-align: center; }
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }
+    .tech-card {
+      background: var(--white); border-radius: 10px; padding: 18px 12px;
+      border: 1px solid var(--border); text-align: center; transition: 0.2s;
+    }
+    .tech-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+    .tech-icon { font-size: 26px; margin-bottom: 8px; }
+    .tech-name { font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 2px; }
+    .tech-desc { font-size: 10px; color: var(--muted); }
+
+    /* INCREMENTOS */
+    .incrementos-section { margin-bottom: 56px; }
+    .incrementos-section h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 24px; text-align: center; }
+    .timeline { position: relative; padding-left: 32px; }
+    .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+    .tl-item { position: relative; margin-bottom: 24px; }
+    .tl-dot {
+      position: absolute; left: -28px; top: 4px; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--gold); border: 3px solid var(--white);
+      box-shadow: 0 0 0 2px var(--gold);
+    }
+    .tl-card { background: var(--white); border-radius: 10px; padding: 16px 20px; border: 1px solid var(--border); }
+    .tl-fecha { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .tl-titulo { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .tl-desc { font-size: 12px; color: #666; line-height: 1.6; }
+
+    /* STATS */
+    .stats-section { background: var(--dark); border-radius: 14px; padding: 36px; margin-bottom: 56px; }
+    .stats-section h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--bg); text-align: center; margin-bottom: 28px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 16px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--gold); font-weight: 700; }
+    .stat-lbl { font-size: 11px; color: #888; margin-top: 4px; line-height: 1.4; }
+
+    footer { background: #0a0a0a; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .foot-logo { font-family: 'Playfair Display', serif; color: #555; font-size: 13px; letter-spacing: 3px; }
+    .foot-links { display: flex; gap: 20px; }
+    .foot-links a { font-size: 11px; color: #555; text-decoration: none; }
+    .foot-links a:hover { color: var(--bg); }
+    .foot-copy { font-size: 11px; color: #333; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="catalogo.html" class="logo">RELIQUIA URBANA</a>
+  <div class="nav-links">
+    <a href="catalogo.html">Catalogo</a>
+    <a href="historial.html">Mis compras</a>
+    <a href="vender.html">Vender ropa</a>
+  </div>
+  <a href="catalogo.html" class="btn-volver">← Volver</a>
+</nav>
+
+<div class="hero">
+  <h1>Acerca de <span>Reliquia Urbana</span></h1>
+  <p>Conoce el proyecto, la historia detras de la aplicacion y al desarrollador que la hizo realidad.</p>
+</div>
+
+<div class="container">
+
+  <!-- SOBRE EL PROYECTO -->
+  <div class="proyecto-grid" style="margin-bottom:56px;">
+    <div class="proyecto-card">
+      <div class="icon">🛍️</div>
+      <h3>El proyecto</h3>
+      <p>Reliquia Urbana es una aplicacion web de comercio electronico enfocada en la venta de ropa, con una funcionalidad de marketplace que permite a los usuarios ofrecer sus propias prendas para su venta en la plataforma.</p>
+    </div>
+    <div class="proyecto-card">
+      <div class="icon">♻️</div>
+      <h3>La idea</h3>
+      <p>Nace de la necesidad de tener una plataforma local donde las personas puedan comprar y vender ropa de forma segura, simple y sostenible, promoviendo la moda circular y el consumo responsable.</p>
+    </div>
+    <div class="proyecto-card">
+      <div class="icon">🎓</div>
+      <h3>Contexto academico</h3>
+      <p>Este proyecto fue desarrollado como trabajo final de la materia de Aplicaciones Web, en el cuarto semestre de la carrera de Tecnologias de la Informacion en la Universidad Nacional de Chimborazo.</p>
+    </div>
+    <div class="proyecto-card">
+      <div class="icon">🔥</div>
+      <h3>Tecnologia</h3>
+      <p>Construido completamente sobre Firebase como Backend as a Service, con un frontend en HTML5, CSS3, JavaScript y Bootstrap 5, aplicando el Modelo Incremental como ciclo de vida de desarrollo.</p>
+    </div>
+  </div>
+
+  <!-- DESARROLLADOR -->
+  <div class="dev-section">
+    <h2>El desarrollador</h2>
+    <div class="dev-card">
+      <div class="dev-avatar">S</div>
+      <div class="dev-info">
+        <div class="dev-name">Cazco Muyulema Sixto Stalin</div>
+        <div class="dev-role">Desarrollador Full Stack</div>
+        <div class="dev-details">
+          <div class="dev-detail">
+            <span>🎓</span>
+            <span>Estudiante de <strong>4to semestre</strong></span>
+          </div>
+          <div class="dev-detail">
+            <span>📚</span>
+            <span>Carrera: <strong>Ingenieria en Tecnologias de la Informacion</strong></span>
+          </div>
+          <div class="dev-detail">
+            <span>🏛️</span>
+            <span>Universidad: <strong>Universidad Nacional de Chimborazo (UNACH)</strong></span>
+          </div>
+          <div class="dev-detail">
+            <span>💻</span>
+            <span>Materia: <strong>Aplicaciones Web</strong></span>
+          </div>
+          <div class="dev-detail">
+            <span>📍</span>
+            <span>Riobamba, <strong>Chimborazo, Ecuador</strong></span>
+          </div>
+          <div class="dev-detail">
+            <span>📧</span>
+            <span><strong>stalinmuy@gmail.com</strong></span>
+          </div>
+          <div class="dev-detail">
+            <span>📅</span>
+            <span>Periodo de desarrollo: <strong>Mayo - Julio 2025</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESTADISTICAS -->
+  <div class="stats-section">
+    <h2>El proyecto en numeros</h2>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">10</div>
+        <div class="stat-lbl">Semanas de desarrollo</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4</div>
+        <div class="stat-lbl">Incrementos de desarrollo</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">25</div>
+        <div class="stat-lbl">Requerimientos funcionales</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">11</div>
+        <div class="stat-lbl">Requerimientos no funcionales</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">10+</div>
+        <div class="stat-lbl">Archivos HTML desarrollados</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5</div>
+        <div class="stat-lbl">Servicios Firebase utilizados</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECNOLOGIAS -->
+  <div class="tech-section">
+    <h2>Tecnologias utilizadas</h2>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-icon">🔥</div>
+        <div class="tech-name">Firebase Auth</div>
+        <div class="tech-desc">Autenticacion</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🗄️</div>
+        <div class="tech-name">Firestore</div>
+        <div class="tech-desc">Base de datos</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">📦</div>
+        <div class="tech-name">Firebase Storage</div>
+        <div class="tech-desc">Almacenamiento</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🌐</div>
+        <div class="tech-name">Firebase Hosting</div>
+        <div class="tech-desc">Despliegue</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">📄</div>
+        <div class="tech-name">HTML5</div>
+        <div class="tech-desc">Estructura</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🎨</div>
+        <div class="tech-name">CSS3</div>
+        <div class="tech-desc">Estilos</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">⚙️</div>
+        <div class="tech-name">JavaScript</div>
+        <div class="tech-desc">Logica</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🅱️</div>
+        <div class="tech-name">Bootstrap 5</div>
+        <div class="tech-desc">Responsividad</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="incrementos-section">
+    <h2>Historia del desarrollo</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-fecha">13 - 19 Mayo 2025</div>
+          <div class="tl-titulo">Fase 1: Analisis y Diseno</div>
+          <div class="tl-desc">Levantamiento de requerimientos, diseno del diagrama ER, arquitectura del sistema y wireframes de las interfaces principales.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-fecha">20 Mayo - 2 Junio 2025</div>
+          <div class="tl-titulo">Incremento 1: Autenticacion y Usuarios</div>
+          <div class="tl-desc">Implementacion del sistema de registro, login con Firebase Authentication, roles de usuario y administrador, y proteccion de rutas.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-fecha">3 - 16 Junio 2025</div>
+          <div class="tl-titulo">Incremento 2: Catalogo de Productos</div>
+          <div class="tl-desc">Desarrollo del catalogo publico con carga desde Firestore, filtros por categoria, talla y estado, busqueda en tiempo real y vista de detalle.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-fecha">17 - 30 Junio 2025</div>
+          <div class="tl-titulo">Incremento 3: Carrito y Compras</div>
+          <div class="tl-desc">Panel lateral de carrito, flujo de pago por transferencia bancaria, subida de comprobante a Firebase Storage y validacion por administrador.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-fecha">1 - 7 Julio 2025</div>
+          <div class="tl-titulo">Incremento 4: Marketplace</div>
+          <div class="tl-desc">Modulo para que usuarios ofrezcan prendas con hasta 3 fotos, flujo de aprobacion por el administrador e integracion automatica al catalogo.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-fecha">8 - 23 Julio 2025</div>
+          <div class="tl-titulo">Fase Final: Pruebas y Despliegue</div>
+          <div class="tl-desc">Pruebas funcionales, modulo de reportes de ventas con exportacion PDF, toques finales y despliegue en Firebase Hosting.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span class="foot-logo">RELIQUIA URBANA</span>
+  <div class="foot-links">
+    <a href="ayuda.html">Ayuda</a>
+    <a href="privacidad.html">Privacidad</a>
+    <a href="terminos.html">Terminos</a>
+    <a href="acerca.html">Acerca de</a>
+  </div>
+  <span class="foot-copy">© 2026 Reliquia Urbana</span>
+</footer>
+
+</body>
+</html>
