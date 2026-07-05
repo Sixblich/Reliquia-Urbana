@@ -15,6 +15,7 @@
     <div class="nav-links">
       <a href="catalogo.html" class="active">Catálogo</a>
       <a href="historial.html">Mis compras</a>
+      <a href="vender.html">Vender ropa</a>
       <a href="#" id="navAdmin" style="display:none">Admin</a>
     </div>
     <div class="nav-right">
@@ -24,8 +25,8 @@
       <button class="cart-icon" id="cartIcon" onclick="toggleCarrito()">
         🛍️ <span class="cart-count" id="cartCount" style="display:none">0</span>
       </button>
-      <span id="userEmail" style="color:#999;font-size:12px;"></span>
-      <button class="btn-logout" onclick="cerrarSesionBtn()">Salir</button>
+      <span id="userEmail" style="color:#999;font-size:12px; display:none;"></span>
+      <span id="authArea"></span>
     </div>
   </nav>
 
@@ -113,20 +114,36 @@
   <!-- ── TOAST CONFIRMACIÓN ── -->
   <div class="toast" id="toast"></div>
 
+  <!-- ── INVITACIÓN A VENDER ── -->
+  <section class="vender-cta">
+    <div class="vender-cta-inner">
+      <div class="vender-cta-text">
+        <h2>¿Tienes ropa que ya no usas?</h2>
+        <p>Véndela en Reliquia Urbana en 3 simples pasos: sube tus fotos, describe la prenda y espera la aprobación. Una vez aceptada, aparecerá en nuestro catálogo para que otros la compren.</p>
+        <a href="vender.html" class="btn-main">Empezar a vender →</a>
+      </div>
+      <div class="vender-cta-steps">
+        <div class="vender-cta-step"><span>1</span> Sube tus fotos</div>
+        <div class="vender-cta-step"><span>2</span> Describe la prenda</div>
+        <div class="vender-cta-step"><span>3</span> Espera la aprobación</div>
+      </div>
+    </div>
+  </section>
+
   <!-- ── FOOTER ── -->
   <footer>
     <span class="foot-logo">RELIQUIA URBANA</span>
     <div class="foot-links">
-     <a href="ayuda.html">Ayuda</a>
-     <a href="privacidad.html">Privacidad</a>
+      <a href="ayuda.html">Ayuda</a>
+      <a href="privacidad.html">Privacidad</a>
       <a href="#">Términos</a>
     </div>
-    <span class="foot-copy">© 2025 Reliquia Urbana</span>
+    <span class="foot-copy">© 2026 Reliquia Urbana</span>
   </footer>
 
 <script type="module">
 import { db } from "./firebase.js";
-import { verificarSesion, cerrarSesion } from "./auth-guard.js";
+import { verificarSesionOpcional, cerrarSesion } from "./auth-guard.js";
 import { agregarAlCarrito, actualizarContadorCarrito, getCarrito, setCarrito } from "./carrito-utils.js";
 import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -134,37 +151,40 @@ import { collection, getDocs, query, where } from "https://www.gstatic.com/fireb
 let todosLosProductos = [];
 let categoriaActual   = "todas";
 
-// ── VERIFICAR SESIÓN (solo usuarios) ─────────────────────────────────────────
-verificarSesion("usuario")
-  .then(usuario => {
-    document.getElementById("userEmail").textContent = usuario.email;
-  })
-  .catch(() => {
-    console.log("sin sesión, continuando...");
-  });
+// ── VERIFICAR SESIÓN (OPCIONAL — el catálogo es público) ─────────────────────
+const usuario = await verificarSesionOpcional();
+actualizarNavSegunSesion(usuario);
 actualizarContadorCarrito();
+
+function actualizarNavSegunSesion(usuario) {
+  const userEmailEl = document.getElementById("userEmail");
+  const authAreaEl  = document.getElementById("authArea");
+
+  if (usuario) {
+    userEmailEl.textContent = usuario.email;
+    userEmailEl.style.display = "inline";
+    authAreaEl.innerHTML = `<button class="btn-logout" onclick="cerrarSesionBtn()">Salir</button>`;
+  } else {
+    userEmailEl.style.display = "none";
+    authAreaEl.innerHTML = `
+      <a href="login.html" class="btn-login-nav">Iniciar sesión</a>
+      <a href="registro.html" class="btn-main-nav">Crear cuenta</a>
+    `;
+  }
+}
 
 window.cerrarSesionBtn = () => cerrarSesion();
 
 // ── CARGAR PRODUCTOS DESDE FIRESTORE ─────────────────────────────────────────
 async function cargarProductos() {
   try {
-    console.log("Cargando productos...");
-
-    const snap = await getDocs(collection(db, "productos"));
-
-    console.log("Docs encontrados:", snap.size);
-
+    const q = query(collection(db, "productos"), where("activo", "==", true));
+    const snap = await getDocs(q);
     todosLosProductos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    console.log("Productos:", todosLosProductos);
-
     aplicarFiltros();
-
-  } catch (e) {
-    console.error("ERROR FIRESTORE:", e);
-    document.getElementById("loading").innerHTML =
-      "<p style='color:red'>Error: " + e.message + "</p>";
+  } catch(e) {
+    console.error("Error cargando productos:", e);
+    document.getElementById("loading").innerHTML = "<p style='color:red'>Error al cargar productos. Verifica tu conexión.</p>";
   }
 }
 
@@ -406,14 +426,6 @@ document.addEventListener("keydown", e => {
 
 // ── INICIAR CARGA (al final, cuando todas las funciones ya están definidas) ──
 await cargarProductos();
-window.filtrarCategoria = filtrarCategoria;
-window.aplicarFiltros = aplicarFiltros;
-window.verDetalle = verDetalle;
-window.agregarRapido = agregarRapido;
-window.toggleCarrito = toggleCarrito;
-window.cerrarDetalle = cerrarDetalle;
-window.agregarDesdeDetalle = agregarDesdeDetalle;
-window.cerrarSesionBtn = cerrarSesionBtn;
 </script>
 
 </body>
