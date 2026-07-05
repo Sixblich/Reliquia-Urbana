@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacidad — Reliquia Urbana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --gold: #c8a96e; --dark: #111; --bg: #f7f4ef; --white: #fff; --muted: #999; --border: #e8e4dc; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--dark); }
+    nav { background: var(--dark); display: flex; justify-content: space-between; align-items: center; padding: 0 32px; height: 58px; position: sticky; top: 0; z-index: 200; }
+    .logo { font-family: 'Playfair Display', serif; color: var(--bg); font-size: 16px; letter-spacing: 4px; text-decoration: none; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { color: var(--muted); font-size: 13px; text-decoration: none; transition: 0.2s; }
+    .nav-links a:hover { color: var(--bg); }
+    .btn-volver { background: transparent; border: 1px solid #333; color: var(--muted); padding: 6px 14px; border-radius: 4px; font-size: 12px; text-decoration: none; }
+    .btn-volver:hover { border-color: var(--gold); color: var(--gold); }
+    .hero { background: var(--dark); color: var(--bg); padding: 56px 32px; text-align: center; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 10px; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 13px; max-width: 480px; margin: 0 auto; line-height: 1.7; }
+    .container { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+    .update-date { background: var(--white); border-left: 4px solid var(--gold); padding: 12px 16px; border-radius: 6px; font-size: 12px; color: var(--muted); margin-bottom: 36px; }
+    .section { margin-bottom: 36px; }
+    .section h2 { font-size: 18px; font-weight: 600; color: var(--dark); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .section p { font-size: 13px; color: #444; line-height: 1.8; margin-bottom: 10px; }
+    .section ul { padding-left: 20px; margin-top: 6px; }
+    .section ul li { font-size: 13px; color: #444; line-height: 1.8; margin-bottom: 4px; }
+    .highlight-box { background: var(--white); border-radius: 10px; padding: 20px 24px; border: 1px solid var(--border); margin-top: 12px; }
+    .highlight-box p { margin: 0; }
+    footer { background: #0a0a0a; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .foot-logo { font-family: 'Playfair Display', serif; color: #555; font-size: 13px; letter-spacing: 3px; }
+    .foot-links { display: flex; gap: 20px; }
+    .foot-links a { font-size: 11px; color: #555; text-decoration: none; }
+    .foot-links a:hover { color: var(--bg); }
+    .foot-copy { font-size: 11px; color: #333; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="catalogo.html" class="logo">RELIQUIA URBANA</a>
+  <div class="nav-links">
+    <a href="catalogo.html">Catalogo</a>
+    <a href="historial.html">Mis compras</a>
+    <a href="vender.html">Vender ropa</a>
+  </div>
+  <a href="catalogo.html" class="btn-volver">← Volver</a>
+</nav>
+
+<div class="hero">
+  <h1>Politica de <span>Privacidad</span></h1>
+  <p>Tu privacidad es importante para nosotros. Lee como recopilamos, usamos y protegemos tu informacion personal.</p>
+</div>
+
+<div class="container">
+
+  <div class="update-date">Ultima actualizacion: Julio 2025 | Version 1.0</div>
+
+  <div class="section">
+    <h2>1. Informacion que recopilamos</h2>
+    <p>Cuando usas Reliquia Urbana, recopilamos la siguiente informacion:</p>
+    <ul>
+      <li><strong>Datos de registro:</strong> nombre, apellido, correo electronico, telefono y direccion.</li>
+      <li><strong>Datos de compra:</strong> productos adquiridos, montos pagados, comprobantes de pago.</li>
+      <li><strong>Datos del marketplace:</strong> informacion y fotos de las prendas que ofreces para vender.</li>
+      <li><strong>Datos de uso:</strong> como navegas e interactuas con la plataforma.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>2. Como usamos tu informacion</h2>
+    <p>Usamos tu informacion para:</p>
+    <ul>
+      <li>Gestionar tu cuenta y autenticacion segura.</li>
+      <li>Procesar tus pedidos y validar tus pagos.</li>
+      <li>Publicar las prendas que ofreces en el marketplace.</li>
+      <li>Enviarte notificaciones sobre el estado de tus pedidos.</li>
+      <li>Mejorar la experiencia de uso de la plataforma.</li>
+      <li>Generar reportes internos de ventas para la administracion.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Almacenamiento y seguridad</h2>
+    <p>Reliquia Urbana utiliza <strong>Firebase de Google</strong> como infraestructura tecnologica. Tus datos son almacenados en servidores seguros con los siguientes servicios:</p>
+    <ul>
+      <li><strong>Firebase Authentication:</strong> gestiona tus credenciales con encriptacion automatica.</li>
+      <li><strong>Firebase Firestore:</strong> almacena tu informacion de perfil, pedidos y pagos.</li>
+      <li><strong>Firebase Storage:</strong> guarda las imagenes de comprobantes y prendas de forma segura.</li>
+    </ul>
+    <div class="highlight-box">
+      <p>Las contrasenas nunca son almacenadas en texto plano. Firebase Authentication encripta automaticamente todas las credenciales de acceso.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>4. Comparticion de datos</h2>
+    <p>No vendemos, alquilamos ni compartimos tu informacion personal con terceros con fines comerciales. Tu informacion unicamente es accesible por:</p>
+    <ul>
+      <li>El administrador de Reliquia Urbana, para gestionar pedidos y validar pagos.</li>
+      <li>Los servicios de Firebase (Google), como proveedor de infraestructura.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>5. Tus derechos</h2>
+    <p>Como usuario de Reliquia Urbana tienes derecho a:</p>
+    <ul>
+      <li>Acceder a la informacion que tenemos sobre ti.</li>
+      <li>Solicitar la correccion de datos incorrectos.</li>
+      <li>Solicitar la eliminacion de tu cuenta y datos personales.</li>
+      <li>Retirar tu consentimiento en cualquier momento.</li>
+    </ul>
+    <p>Para ejercer cualquiera de estos derechos, contactanos a: <strong>stalinmuy@gmail.com</strong></p>
+  </div>
+
+  <div class="section">
+    <h2>6. Cookies y almacenamiento local</h2>
+    <p>Reliquia Urbana utiliza <strong>localStorage</strong> del navegador para mantener tu carrito de compras de forma temporal. Esta informacion no se envia a ningún servidor y se elimina al limpiar los datos del navegador. No utilizamos cookies de rastreo ni publicidad.</p>
+  </div>
+
+  <div class="section">
+    <h2>7. Cambios a esta politica</h2>
+    <p>Podemos actualizar esta politica de privacidad ocasionalmente. Cuando lo hagamos, actualizaremos la fecha de "Ultima actualizacion" en la parte superior de esta pagina. Te recomendamos revisarla periodicamente.</p>
+  </div>
+
+</div>
+
+<footer>
+  <span class="foot-logo">RELIQUIA URBANA</span>
+  <div class="foot-links">
+    <a href="ayuda.html">Ayuda</a>
+    <a href="privacidad.html">Privacidad</a>
+    <a href="terminos.html">Terminos</a>
+    <a href="acerca.html">Acerca de</a>
+  </div>
+  <span class="foot-copy">© 2026 Reliquia Urbana</span>
+</footer>
+
+</body>
+</html>
