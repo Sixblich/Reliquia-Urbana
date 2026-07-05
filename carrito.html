@@ -9,14 +9,10 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: #f6f6f6; color: #111; }
 
-    /* ── NAVBAR ── */
+    /* NAVBAR */
     nav {
-      background: #111;
-      padding: 0 32px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: #111; padding: 0 32px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
       position: sticky; top: 0; z-index: 100;
     }
     .logo { font-family: 'Playfair Display', serif; color: #c8a96e; font-size: 20px; letter-spacing: 2px; text-decoration: none; }
@@ -25,51 +21,48 @@
     .nav-links a:hover, .nav-links a.active { color: #c8a96e; }
     .nav-right { display: flex; align-items: center; gap: 14px; }
     .nav-email { color: #777; font-size: 12px; }
-    .btn-logout { background: transparent; border: 1px solid #333; color: #888; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .btn-logout { background: transparent; border: 1px solid #333; color: #888; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: 0.2s; }
     .btn-logout:hover { border-color: #c8a96e; color: #c8a96e; }
 
-    /* ── CONTAINER ── */
+    /* CONTAINER */
     .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
     .page-title { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 4px; }
     .page-sub { color: #999; font-size: 13px; margin-bottom: 28px; }
 
-    /* ── STEPS INDICATOR ── */
+    /* STEPS */
     .steps-bar { display: flex; align-items: center; margin-bottom: 32px; }
     .step-item { display: flex; align-items: center; gap: 10px; flex: 1; }
     .step-circle {
       width: 32px; height: 32px; border-radius: 50%;
       background: #e5e5e5; color: #999;
       display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 600; flex-shrink: 0;
-      transition: 0.3s;
+      font-size: 13px; font-weight: 600; flex-shrink: 0; transition: 0.3s;
     }
     .step-circle.active { background: #111; color: #fff; }
-    .step-circle.done { background: #70ad47; color: #fff; }
-    .step-label { font-size: 12px; color: #999; white-space: nowrap; }
+    .step-circle.done   { background: #70ad47; color: #fff; }
+    .step-label { font-size: 12px; color: #999; }
     .step-label.active { color: #111; font-weight: 600; }
     .step-line { flex: 1; height: 2px; background: #e5e5e5; margin: 0 8px; }
     .step-line.done { background: #70ad47; }
 
-    /* ── LAYOUT ── */
+    /* LAYOUT */
     .layout { display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
     @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
 
+    /* CARD */
     .card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
     .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
 
-    /* ── ITEM ROW (carrito) ── */
+    /* ITEMS */
     .item-row { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f0f0f0; align-items: center; }
     .item-row:last-child { border-bottom: none; }
     .item-img { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; background: #eee; flex-shrink: 0; }
     .item-info { flex: 1; min-width: 0; }
     .item-nombre { font-weight: 600; font-size: 14px; }
     .item-meta { font-size: 12px; color: #999; margin-top: 2px; }
-    .item-precio { font-weight: 600; color: #111; font-size: 14px; white-space: nowrap; }
+    .item-precio { font-weight: 600; font-size: 14px; white-space: nowrap; }
     .item-qty { display: flex; align-items: center; gap: 8px; }
-    .item-qty button {
-      width: 26px; height: 26px; border-radius: 6px; border: 1px solid #ddd;
-      background: #fafafa; cursor: pointer; font-size: 14px;
-    }
+    .item-qty button { width: 26px; height: 26px; border-radius: 6px; border: 1px solid #ddd; background: #fafafa; cursor: pointer; font-size: 14px; }
     .item-qty button:hover { border-color: #c8a96e; }
     .item-del { background: none; border: none; color: #c00; cursor: pointer; font-size: 13px; padding: 4px; }
 
@@ -77,10 +70,11 @@
     .empty-cart .icon { font-size: 48px; margin-bottom: 12px; }
     .empty-cart a { color: #c8a96e; text-decoration: none; font-weight: 600; }
 
-    /* ── RESUMEN ── */
+    /* RESUMEN */
     .resumen-row { display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 10px; }
-    .resumen-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; color: #111; padding-top: 14px; border-top: 1px solid #eee; margin-top: 6px; }
+    .resumen-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; padding-top: 14px; border-top: 1px solid #eee; margin-top: 6px; }
 
+    /* BOTONES */
     .btn-main {
       width: 100%; padding: 14px; background: #111; color: #fff; border: none;
       border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
@@ -89,20 +83,22 @@
     .btn-main:hover { background: #c8a96e; color: #111; }
     .btn-main:disabled { background: #ccc; cursor: not-allowed; }
     .btn-secondary {
-      width: 100%; padding: 12px; background: transparent; color: #555; border: 1.5px solid #e0e0e0;
-      border-radius: 10px; font-size: 13px; cursor: pointer; margin-top: 10px; transition: 0.2s;
+      width: 100%; padding: 12px; background: transparent; color: #555;
+      border: 1.5px solid #e0e0e0; border-radius: 10px; font-size: 13px;
+      cursor: pointer; margin-top: 10px; transition: 0.2s;
     }
     .btn-secondary:hover { border-color: #c8a96e; color: #c8a96e; }
 
-    /* ── PAGO ── */
+    /* PAGO */
     .banco-box {
-      background: #fdf8f0; border: 1px solid #e8d5a3; border-radius: 10px;
-      padding: 16px; margin-bottom: 20px;
+      background: #fdf8f0; border: 1px solid #e8d5a3;
+      border-radius: 10px; padding: 16px; margin-bottom: 20px;
     }
     .banco-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; }
     .banco-row span:first-child { color: #7a5c1e; }
     .banco-row span:last-child { font-weight: 600; color: #5a3d0e; }
 
+    /* UPLOAD */
     .upload-box {
       border: 2px dashed #ddd; border-radius: 10px; padding: 28px;
       text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 16px;
@@ -111,36 +107,40 @@
     .upload-box.has-file { border-color: #70ad47; background: #f4faf0; }
     .upload-box input { display: none; }
     .upload-icon { font-size: 32px; margin-bottom: 8px; }
-    .upload-text { font-size: 13px; color: #777; }
+    .upload-text { font-size: 13px; color: #777; line-height: 1.5; }
     .upload-preview { max-width: 100%; max-height: 160px; border-radius: 8px; margin-top: 12px; display: none; }
 
+    /* INPUTS */
     .input-group { margin-bottom: 14px; }
     .input-group label { display: block; font-size: 11px; font-weight: 500; color: #555; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .input-group input { width: 100%; padding: 11px 14px; border: 1.5px solid #e5e5e5; border-radius: 8px; font-size: 13px; background: #fafafa; }
+    .input-group input {
+      width: 100%; padding: 11px 14px; border: 1.5px solid #e5e5e5;
+      border-radius: 8px; font-size: 13px; background: #fafafa;
+      font-family: 'DM Sans', sans-serif; transition: 0.2s;
+    }
     .input-group input:focus { outline: none; border-color: #c8a96e; box-shadow: 0 0 0 3px rgba(200,169,110,0.12); background: #fff; }
 
+    /* MENSAJE */
     .mensaje { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 13px; text-align: center; display: none; }
     .mensaje.error   { background: #fff0f0; color: #c00; border: 1px solid #fcc; display: block; }
     .mensaje.success { background: #f0fff4; color: #090; border: 1px solid #9f9; display: block; }
     .mensaje.loading { background: #f5f5f5; color: #555; border: 1px solid #ddd; display: block; }
 
-    /* ── CONFIRMACIÓN ── */
+    /* CONFIRMACION */
     .confirm-box { text-align: center; padding: 40px 20px; }
     .confirm-icon { font-size: 56px; margin-bottom: 16px; }
     .confirm-box h2 { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 10px; }
-    .confirm-box p { color: #777; font-size: 14px; margin-bottom: 4px; }
+    .confirm-box p { color: #777; font-size: 14px; margin-bottom: 4px; line-height: 1.6; }
     .confirm-id { display: inline-block; background: #f4f4f4; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin: 14px 0; color: #111; }
-    .estado-badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .estado-badge.pendiente_pago { background: #fff3e0; color: #e65100; }
+    .estado-badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #fff3e0; color: #e65100; }
   </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav>
   <a href="catalogo.html" class="logo">RELIQUIA URBANA</a>
   <div class="nav-links">
-    <a href="catalogo.html">Catálogo</a>
+    <a href="catalogo.html">Catalogo</a>
     <a href="carrito.html" class="active">Carrito</a>
     <a href="historial.html">Mis compras</a>
   </div>
@@ -155,7 +155,7 @@
   <p class="page-sub">Revisa tus productos y completa tu compra</p>
 
   <!-- STEPS -->
-  <div class="steps-bar" id="stepsBar">
+  <div class="steps-bar">
     <div class="step-item">
       <div class="step-circle active" id="circ1">1</div>
       <span class="step-label active" id="lbl1">Carrito</span>
@@ -168,11 +168,11 @@
     <div class="step-line" id="line2"></div>
     <div class="step-item">
       <div class="step-circle" id="circ3">3</div>
-      <span class="step-label" id="lbl3">Confirmación</span>
+      <span class="step-label" id="lbl3">Confirmacion</span>
     </div>
   </div>
 
-  <!-- ── VISTA 1: CARRITO ── -->
+  <!-- VISTA 1: CARRITO -->
   <div id="vistaCarrito">
     <div class="layout">
       <div class="card">
@@ -182,15 +182,15 @@
       <div class="card">
         <h3>Resumen de compra</h3>
         <div class="resumen-row"><span>Subtotal</span><span id="resSubtotal">$0.00</span></div>
-        <div class="resumen-row"><span>Envío</span><span>Gratis</span></div>
+        <div class="resumen-row"><span>Envio</span><span>Gratis</span></div>
         <div class="resumen-total"><span>Total</span><span id="resTotal">$0.00</span></div>
-        <button class="btn-main" id="btnIrPago" onclick="irAPago()">Continuar al pago →</button>
+        <button class="btn-main" id="btnIrPago" onclick="irAPago()">Continuar al pago</button>
         <button class="btn-secondary" onclick="window.location.href='catalogo.html'">Seguir comprando</button>
       </div>
     </div>
   </div>
 
-  <!-- ── VISTA 2: PAGO ── -->
+  <!-- VISTA 2: PAGO -->
   <div id="vistaPago" style="display:none">
     <div class="layout">
       <div class="card">
@@ -198,28 +198,28 @@
         <div class="banco-box">
           <div class="banco-row"><span>Banco</span><span>Banco Pichincha</span></div>
           <div class="banco-row"><span>Tipo de cuenta</span><span>Ahorros</span></div>
-          <div class="banco-row"><span>Número de cuenta</span><span>2208765432</span></div>
+          <div class="banco-row"><span>Numero de cuenta</span><span>2208765432</span></div>
           <div class="banco-row"><span>Titular</span><span>Reliquia Urbana S.A.S</span></div>
-          <div class="banco-row"><span>Cédula/RUC</span><span>0605734573001</span></div>
+          <div class="banco-row"><span>Cedula/RUC</span><span>0605734573001</span></div>
           <div class="banco-row"><span>Monto a transferir</span><span id="montoPagar">$0.00</span></div>
         </div>
 
-        <h3>Sube tu comprobante de pago</h3>
+        <h3 style="margin-bottom:12px;">Sube tu comprobante de pago</h3>
         <div class="upload-box" id="uploadBox" onclick="document.getElementById('comprobanteInput').click()">
           <input type="file" id="comprobanteInput" accept="image/jpeg,image/png" onchange="previewComprobante(this)">
           <div id="uploadContent">
             <div class="upload-icon">📎</div>
-            <div class="upload-text">Click para seleccionar una imagen<br>(JPG o PNG, máximo 5MB)</div>
+            <div class="upload-text">Click para seleccionar una imagen<br>(JPG o PNG, maximo 5MB)</div>
           </div>
           <img id="comprobantePreview" class="upload-preview">
         </div>
 
         <div class="input-group">
-          <label>Nombre del titular que transfirió</label>
+          <label>Nombre del titular que transfirio</label>
           <input type="text" id="payNombre" placeholder="Nombre completo">
         </div>
         <div class="input-group">
-          <label>Número de transferencia / referencia</label>
+          <label>Numero de transferencia / referencia</label>
           <input type="text" id="payReferencia" placeholder="Ej: 000123456">
         </div>
 
@@ -229,57 +229,92 @@
       <div class="card">
         <h3>Resumen de tu pedido</h3>
         <div id="resumenPagoItems"></div>
-        <div class="resumen-total"><span>Total a pagar</span><span id="resTotalPago">$0.00</span></div>
+        <div class="resumen-total" style="margin-top:14px;"><span>Total a pagar</span><span id="resTotalPago">$0.00</span></div>
         <button class="btn-main" id="btnConfirmarPago" onclick="confirmarCompra()">Enviar comprobante y confirmar</button>
-        <button class="btn-secondary" onclick="volverACarrito()">← Volver al carrito</button>
+        <button class="btn-secondary" onclick="volverACarrito()">Volver al carrito</button>
       </div>
     </div>
   </div>
 
-  <!-- ── VISTA 3: CONFIRMACIÓN ── -->
+  <!-- VISTA 3: CONFIRMACION -->
   <div id="vistaConfirmacion" style="display:none">
     <div class="card confirm-box">
       <div class="confirm-icon">✅</div>
-      <h2>¡Pedido registrado con éxito!</h2>
+      <h2>Pedido registrado con exito</h2>
       <p>Tu comprobante fue enviado correctamente.</p>
       <div class="confirm-id" id="confirmPedidoId"></div>
-      <p>Estado actual: <span class="estado-badge pendiente_pago">Pendiente de validación</span></p>
+      <p>Estado actual: <span class="estado-badge">Pendiente de validacion</span></p>
       <p style="margin-top:16px; max-width:420px; margin-left:auto; margin-right:auto;">
-        El administrador revisará tu comprobante y validará el pago. Podrás ver el estado actualizado en
-        <strong>"Mis compras"</strong>.
+        El administrador revisara tu comprobante y validara el pago.
+        Puedes ver el estado en <strong>Mis compras</strong>.
       </p>
-      <button class="btn-main" style="max-width:280px; margin:24px auto 0;" onclick="window.location.href='historial.html'">Ver mis compras</button>
-      <button class="btn-secondary" style="max-width:280px; margin:10px auto 0;" onclick="window.location.href='catalogo.html'">Volver al catálogo</button>
+      <button class="btn-main" style="max-width:280px; margin:24px auto 0; display:block;" onclick="window.location.href='historial.html'">Ver mis compras</button>
+      <button class="btn-secondary" style="max-width:280px; margin:10px auto 0; display:block;" onclick="window.location.href='catalogo.html'">Volver al catalogo</button>
     </div>
   </div>
-
 </div>
 
 <script type="module">
   import { auth, db, storage } from "./firebase.js";
   import { verificarSesion, cerrarSesion } from "./auth-guard.js";
-  import { collection, addDoc, doc, updateDoc, getDoc, serverTimestamp, runTransaction }
-    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { ref, uploadBytes, getDownloadURL }
-    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  import {
+    collection, addDoc, doc, getDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    ref, uploadBytes, getDownloadURL
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-  // ── VERIFICAR SESIÓN (solo usuarios) ─────────────────────────────────────
+  // ── VERIFICAR SESION ────────────────────────────────────────────────────────
   const usuario = await verificarSesion("usuario");
   document.getElementById("userEmail").textContent = usuario.email;
   window.salir = () => cerrarSesion();
 
-  // ── ESTADO DEL CARRITO (localStorage) ────────────────────────────────────
+  // ── CARRITO (localStorage) ──────────────────────────────────────────────────
   const CARRITO_KEY = "reliquia_carrito";
 
   function getCarrito() {
     return JSON.parse(localStorage.getItem(CARRITO_KEY) || "[]");
   }
-  function setCarrito(carrito) {
-    localStorage.setItem(CARRITO_KEY, JSON.stringify(carrito));
+  function setCarrito(lista) {
+    localStorage.setItem(CARRITO_KEY, JSON.stringify(lista));
+  }
+
+  // ── RENDER CARRITO ──────────────────────────────────────────────────────────
+  function renderCarrito() {
+    const carrito = getCarrito();
+    const lista   = document.getElementById("listaCarrito");
+    const btnPago = document.getElementById("btnIrPago");
+
+    if (carrito.length === 0) {
+      lista.innerHTML = '<div class="empty-cart"><div class="icon">🛍️</div><p>Tu carrito esta vacio.</p><p style="margin-top:8px"><a href="catalogo.html">Ir al catalogo</a></p></div>';
+      btnPago.disabled = true;
+    } else {
+      lista.innerHTML = carrito.map(function(item, idx) {
+        return '<div class="item-row">' +
+          '<img class="item-img" src="' + (item.imagen || "https://via.placeholder.com/64") + '" onerror="this.src=\'https://via.placeholder.com/64\'">' +
+          '<div class="item-info">' +
+            '<div class="item-nombre">' + item.nombre + '</div>' +
+            '<div class="item-meta">Talla: ' + (item.talla || "-") + ' | ' + (item.marca || "") + '</div>' +
+          '</div>' +
+          '<div class="item-qty">' +
+            '<button onclick="cambiarQty(' + idx + ', -1)">-</button>' +
+            '<span>' + item.cantidad + '</span>' +
+            '<button onclick="cambiarQty(' + idx + ', 1)">+</button>' +
+          '</div>' +
+          '<div class="item-precio">$' + (item.precio * item.cantidad).toFixed(2) + '</div>' +
+          '<button class="item-del" onclick="eliminarItem(' + idx + ')">x</button>' +
+        '</div>';
+      }).join("");
+      btnPago.disabled = false;
+    }
+
+    var total = carrito.reduce(function(s, i) { return s + i.precio * i.cantidad; }, 0);
+    document.getElementById("resSubtotal").textContent = "$" + total.toFixed(2);
+    document.getElementById("resTotal").textContent    = "$" + total.toFixed(2);
   }
 
   window.cambiarQty = function(idx, delta) {
-    const carrito = getCarrito();
+    var carrito = getCarrito();
     carrito[idx].cantidad += delta;
     if (carrito[idx].cantidad <= 0) carrito.splice(idx, 1);
     setCarrito(carrito);
@@ -287,94 +322,55 @@
   };
 
   window.eliminarItem = function(idx) {
-    const carrito = getCarrito();
+    var carrito = getCarrito();
     carrito.splice(idx, 1);
     setCarrito(carrito);
     renderCarrito();
   };
 
-  // ── RENDER CARRITO ────────────────────────────────────────────────────────
-  function renderCarrito() {
-    const carrito = getCarrito();
-    const lista = document.getElementById("listaCarrito");
-    const btnPago = document.getElementById("btnIrPago");
-
-    if (carrito.length === 0) {
-      lista.innerHTML = `
-        <div class="empty-cart">
-          <div class="icon">🛍️</div>
-          <p>Tu carrito está vacío.</p>
-          <p style="margin-top:8px"><a href="catalogo.html">Ir al catálogo →</a></p>
-        </div>`;
-      btnPago.disabled = true;
-    } else {
-      lista.innerHTML = carrito.map((item, idx) => `
-        <div class="item-row">
-          <img class="item-img" src="${item.imagen || 'https://via.placeholder.com/64'}" onerror="this.src='https://via.placeholder.com/64'">
-          <div class="item-info">
-            <div class="item-nombre">${item.nombre}</div>
-            <div class="item-meta">Talla: ${item.talla || '—'} · ${item.marca || ''}</div>
-          </div>
-          <div class="item-qty">
-            <button onclick="cambiarQty(${idx}, -1)">−</button>
-            <span>${item.cantidad}</span>
-            <button onclick="cambiarQty(${idx}, 1)">+</button>
-          </div>
-          <div class="item-precio">$${(item.precio * item.cantidad).toFixed(2)}</div>
-          <button class="item-del" onclick="eliminarItem(${idx})">✕</button>
-        </div>
-      `).join("");
-      btnPago.disabled = false;
-    }
-
-    const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
-    document.getElementById("resSubtotal").textContent = "$" + total.toFixed(2);
-    document.getElementById("resTotal").textContent = "$" + total.toFixed(2);
-  }
-
   renderCarrito();
 
-  // ── NAVEGACIÓN ENTRE PASOS ───────────────────────────────────────────────
+  // ── PASO 1 → PASO 2 ────────────────────────────────────────────────────────
   window.irAPago = function() {
-    const carrito = getCarrito();
+    var carrito = getCarrito();
     if (carrito.length === 0) return;
 
     document.getElementById("vistaCarrito").style.display = "none";
-    document.getElementById("vistaPago").style.display = "block";
+    document.getElementById("vistaPago").style.display    = "block";
 
-    document.getElementById("circ1").classList.add("done");
-    document.getElementById("circ1").classList.remove("active");
+    // Steps
+    document.getElementById("circ1").className  = "step-circle done";
     document.getElementById("circ1").textContent = "✓";
-    document.getElementById("circ2").classList.add("active");
-    document.getElementById("line1").classList.add("done");
-    document.getElementById("lbl2").classList.add("active");
+    document.getElementById("circ2").className  = "step-circle active";
+    document.getElementById("line1").className  = "step-line done";
+    document.getElementById("lbl2").className   = "step-label active";
 
-    const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
-    document.getElementById("montoPagar").textContent = "$" + total.toFixed(2);
-    document.getElementById("resTotalPago").textContent = "$" + total.toFixed(2);
-    document.getElementById("resumenPagoItems").innerHTML = carrito.map(i => `
-      <div class="resumen-row"><span>${i.nombre} x${i.cantidad}</span><span>$${(i.precio*i.cantidad).toFixed(2)}</span></div>
-    `).join("");
+    var total = carrito.reduce(function(s, i) { return s + i.precio * i.cantidad; }, 0);
+    document.getElementById("montoPagar").textContent    = "$" + total.toFixed(2);
+    document.getElementById("resTotalPago").textContent  = "$" + total.toFixed(2);
 
-    window.scrollTo(0,0);
+    document.getElementById("resumenPagoItems").innerHTML = carrito.map(function(i) {
+      return '<div class="resumen-row"><span>' + i.nombre + ' x' + i.cantidad + '</span><span>$' + (i.precio * i.cantidad).toFixed(2) + '</span></div>';
+    }).join("");
+
+    window.scrollTo(0, 0);
   };
 
   window.volverACarrito = function() {
-    document.getElementById("vistaPago").style.display = "none";
+    document.getElementById("vistaPago").style.display   = "none";
     document.getElementById("vistaCarrito").style.display = "block";
-    document.getElementById("circ1").classList.remove("done");
-    document.getElementById("circ1").classList.add("active");
+    document.getElementById("circ1").className  = "step-circle active";
     document.getElementById("circ1").textContent = "1";
-    document.getElementById("circ2").classList.remove("active");
-    document.getElementById("line1").classList.remove("done");
-    document.getElementById("lbl2").classList.remove("active");
+    document.getElementById("circ2").className  = "step-circle";
+    document.getElementById("line1").className  = "step-line";
+    document.getElementById("lbl2").className   = "step-label";
   };
 
-  // ── PREVIEW COMPROBANTE ───────────────────────────────────────────────────
-  let comprobanteFile = null;
+  // ── PREVIEW COMPROBANTE ─────────────────────────────────────────────────────
+  var comprobanteFile = null;
 
   window.previewComprobante = function(input) {
-    const file = input.files[0];
+    var file = input.files[0];
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
@@ -384,8 +380,8 @@
     }
 
     comprobanteFile = file;
-    const reader = new FileReader();
-    reader.onload = e => {
+    var reader = new FileReader();
+    reader.onload = function(e) {
       document.getElementById("comprobantePreview").src = e.target.result;
       document.getElementById("comprobantePreview").style.display = "block";
       document.getElementById("uploadContent").style.display = "none";
@@ -394,69 +390,104 @@
     reader.readAsDataURL(file);
   };
 
-  // ── CONFIRMAR COMPRA (RF-09, RF-10, RF-15, RF-16, RF-17) ─────────────────
-  window.confirmarCompra = async function () {
-  const msg = document.getElementById("msgPago");
-  const btn = document.getElementById("btnConfirmarPago");
-  const nombre = document.getElementById("payNombre").value.trim();
-  const referencia = document.getElementById("payReferencia").value.trim();
-  const carrito = getCarrito();
+  // ── CONFIRMAR COMPRA ────────────────────────────────────────────────────────
+  window.confirmarCompra = async function() {
+    var msg       = document.getElementById("msgPago");
+    var btn       = document.getElementById("btnConfirmarPago");
+    var nombre    = document.getElementById("payNombre").value.trim();
+    var referencia= document.getElementById("payReferencia").value.trim();
+    var carrito   = getCarrito();
 
-  try {
+    // Validaciones
+    if (!comprobanteFile) {
+      msg.textContent = "Debes subir una imagen del comprobante de pago.";
+      msg.className = "mensaje error";
+      return;
+    }
+    if (!nombre || !referencia) {
+      msg.textContent = "Completa el nombre del titular y el numero de referencia.";
+      msg.className = "mensaje error";
+      return;
+    }
+    if (carrito.length === 0) {
+      msg.textContent = "Tu carrito esta vacio.";
+      msg.className = "mensaje error";
+      return;
+    }
+
     btn.disabled = true;
-    msg.textContent = "Procesando pedido...";
+    msg.textContent = "Subiendo comprobante y registrando tu pedido...";
     msg.className = "mensaje loading";
 
-    if (!usuario?.uid) throw new Error("Usuario no autenticado");
-    if (!nombre || !referencia) throw new Error("Completa los datos");
-    if (carrito.length === 0) throw new Error("Carrito vacío");
+    try {
+      var total = carrito.reduce(function(s, i) { return s + i.precio * i.cantidad; }, 0);
 
-    const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
+      // 1. Subir comprobante a Firebase Storage
+      var nombreArchivo = "comprobantes/" + usuario.uid + "_" + Date.now() + ".jpg";
+      var storageRef    = ref(storage, nombreArchivo);
+      var uploadResult  = await uploadBytes(storageRef, comprobanteFile);
+      var comprobanteUrl= await getDownloadURL(uploadResult.ref);
 
-    // 🔥 GUARDAR DIRECTO EN FIRESTORE (SIN IMAGEN)
-    const pedidoRef = await addDoc(collection(db, "pedidos"), {
-      usuario_id: usuario.uid,
-      usuario_email: usuario.email,
-      items: carrito,
-      total: total,
-      estado: "pendiente_pago",
-      comprobante_url: null, // 👈 IMPORTANTE PARA PRUEBAS
-      nombre_titular: nombre,
-      referencia: referencia,
-      fecha: serverTimestamp()
-    });
+      // 2. Verificar stock antes de confirmar
+      for (var k = 0; k < carrito.length; k++) {
+        var item = carrito[k];
+        var prodSnap = await getDoc(doc(db, "productos", item.id));
+        if (prodSnap.exists()) {
+          var stockActual = prodSnap.data().stock || 0;
+          if (stockActual < item.cantidad) {
+            throw new Error("Sin stock suficiente para: " + item.nombre);
+          }
+        }
+      }
 
-    console.log("Pedido creado:", pedidoRef.id);
+      // 3. Crear pedido en Firestore
+      var pedidoRef = await addDoc(collection(db, "pedidos"), {
+        usuario_id   : usuario.uid,
+        usuario_email: usuario.email,
+        items        : carrito,
+        total        : total,
+        estado       : "pendiente_pago",
+        fecha        : serverTimestamp()
+      });
 
-    // limpiar carrito
-    setCarrito([]);
+      // 4. Crear registro de pago en Firestore
+      await addDoc(collection(db, "pagos"), {
+        pedido_id       : pedidoRef.id,
+        usuario_id      : usuario.uid,
+        comprobante_url : comprobanteUrl,
+        nombre_titular  : nombre,
+        referencia      : referencia,
+        monto           : total,
+        estado          : "pendiente",
+        fecha_subida    : serverTimestamp(),
+        fecha_verificacion: null
+      });
 
-    // mostrar confirmación
-    mostrarConfirmacion(pedidoRef.id);
+      // 5. Limpiar carrito y mostrar confirmacion
+      setCarrito([]);
+      mostrarConfirmacion(pedidoRef.id);
 
-  } catch (e) {
-    console.error(e);
-    msg.textContent = "Error: " + e.message;
-    msg.className = "mensaje error";
-  } finally {
-    btn.disabled = false;
-  }
-};
+    } catch (e) {
+      console.error("Error en confirmarCompra:", e);
+      msg.textContent = "Error al procesar tu pedido: " + e.message;
+      msg.className = "mensaje error";
+      btn.disabled = false;
+    }
+  };
 
-  // ── VISTA CONFIRMACIÓN ────────────────────────────────────────────────────
+  // ── VISTA CONFIRMACION ──────────────────────────────────────────────────────
   function mostrarConfirmacion(pedidoId) {
-    document.getElementById("vistaPago").style.display = "none";
+    document.getElementById("vistaPago").style.display         = "none";
     document.getElementById("vistaConfirmacion").style.display = "block";
-    document.getElementById("confirmPedidoId").textContent = "Pedido #" + pedidoId.substring(0,8).toUpperCase();
+    document.getElementById("confirmPedidoId").textContent     = "Pedido #" + pedidoId.substring(0, 8).toUpperCase();
 
-    document.getElementById("circ2").classList.add("done");
-    document.getElementById("circ2").classList.remove("active");
+    document.getElementById("circ2").className  = "step-circle done";
     document.getElementById("circ2").textContent = "✓";
-    document.getElementById("circ3").classList.add("active");
-    document.getElementById("line2").classList.add("done");
-    document.getElementById("lbl3").classList.add("active");
+    document.getElementById("circ3").className  = "step-circle active";
+    document.getElementById("line2").className  = "step-line done";
+    document.getElementById("lbl3").className   = "step-label active";
 
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
   }
 </script>
 
