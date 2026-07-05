@@ -136,9 +136,10 @@
     <div class="foot-links">
       <a href="ayuda.html">Ayuda</a>
       <a href="privacidad.html">Privacidad</a>
-      <a href="#">Términos</a>
+      <a href="terminos.html">Términos</a>
+      <a href="acerca.html">Acerca de</a>
     </div>
-    <span class="foot-copy">© 2026 Reliquia Urbana</span>
+    <span class="foot-copy">© 2025 Reliquia Urbana</span>
   </footer>
 
 <script type="module">
@@ -181,7 +182,7 @@ async function cargarProductos() {
     const q = query(collection(db, "productos"), where("activo", "==", true));
     const snap = await getDocs(q);
     todosLosProductos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    aplicarFiltros();
+    window.aplicarFiltros();
   } catch(e) {
     console.error("Error cargando productos:", e);
     document.getElementById("loading").innerHTML = "<p style='color:red'>Error al cargar productos. Verifica tu conexión.</p>";
