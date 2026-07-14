@@ -6,7 +6,6 @@
   <title>Panel Admin — Reliquia Urbana</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: #f4f4f4; color: #111; }
 
@@ -234,6 +233,70 @@
     .msg-form.loading { background: #f5f5f5; color: #555; border: 1px solid #ddd; display: block; }
 
     .empty { text-align: center; padding: 40px; color: #aaa; }
+
+    /* ── PRENDAS MARKETPLACE ADMIN ── */
+    .btn-filtro-estado {
+      padding: 5px 12px; border-radius: 20px; border: 1px solid #ddd;
+      font-size: 12px; color: #666; cursor: pointer; background: #fff;
+      transition: 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .btn-filtro-estado:hover { border-color: #111; color: #111; }
+    .btn-filtro-estado.active { background: #111; color: #fff; border-color: #111; }
+
+    .prenda-admin-card {
+      background: #fff; border-radius: 12px; padding: 18px;
+      border: 1px solid #e0e0e0; margin-bottom: 14px;
+      display: flex; gap: 16px; align-items: flex-start;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .prenda-admin-img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; background: #eee; flex-shrink: 0; cursor: pointer; }
+    .prenda-admin-info { flex: 1; min-width: 0; }
+    .prenda-admin-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+    .prenda-admin-nombre { font-weight: 700; font-size: 14px; }
+    .prenda-admin-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+    .prenda-admin-acciones { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+
+    .badge-estado {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .bs-pendiente_revision { background: #fff3e0; color: #e65100; }
+    .bs-rechazada          { background: #fce4ec; color: #c62828; }
+    .bs-aceptada_pendiente { background: #e8f5e9; color: #2e7d32; }
+    .bs-en_inspeccion      { background: #e3f2fd; color: #1565c0; }
+    .bs-comprada           { background: #ede7f6; color: #5e35b1; }
+    .bs-publicada          { background: #e0f2f1; color: #00695c; }
+    .bs-vendida            { background: #f3e5f5; color: #7b1fa2; }
+
+    .btn-estado {
+      padding: 6px 12px; border-radius: 6px; border: 1px solid #ddd;
+      font-size: 12px; cursor: pointer; background: #fff;
+      transition: 0.2s; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    }
+    .btn-estado:hover { background: #f5f5f5; }
+    .btn-estado.verde  { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+    .btn-estado.verde:hover { background: #c8e6c9; }
+    .btn-estado.rojo   { background: #fce4ec; color: #c62828; border-color: #ef9a9a; }
+    .btn-estado.rojo:hover { background: #ffcdd2; }
+    .btn-estado.azul   { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
+    .btn-estado.azul:hover { background: #bbdefb; }
+    .btn-estado.morado { background: #ede7f6; color: #5e35b1; border-color: #ce93d8; }
+    .btn-estado.morado:hover { background: #d1c4e9; }
+    .btn-estado.teal   { background: #e0f2f1; color: #00695c; border-color: #80cbc4; }
+    .btn-estado.teal:hover { background: #b2dfdb; }
+
+    /* Modal prenda admin */
+    .modal-prenda-header { background: #111; padding: 20px 24px; border-radius: 14px 14px 0 0; display: flex; justify-content: space-between; align-items: center; }
+    .modal-prenda-header h3 { color: #c8a96e; font-family: 'Playfair Display', serif; font-size: 18px; }
+    .modal-prenda-body { padding: 24px; }
+    .modal-fotos-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+    .modal-fotos-grid img { width: 100%; aspect-ratio:1; object-fit:cover; border-radius:8px; cursor:pointer; }
+    .modal-info-table { width: 100%; font-size: 13px; border-collapse: collapse; margin-bottom: 16px; }
+    .modal-info-table td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; }
+    .modal-info-table td:first-child { color: #888; width: 130px; }
+    .modal-info-table td:last-child { font-weight: 500; }
+    .modal-acciones { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+
   </style>
 </head>
 <body>
@@ -431,15 +494,28 @@
     <!-- ── PRENDAS MARKETPLACE ── -->
     <div class="page" id="page-prendas">
       <h1 class="page-title">Marketplace — Prendas Ofrecidas</h1>
-      <p class="page-sub">Revisa, aprueba o rechaza las prendas que los usuarios quieren vender (RF-13, RF-14)</p>
-      <div class="card">
-        <div class="card-head"><h3>Prendas pendientes y procesadas</h3></div>
-        <table>
-          <thead>
-            <tr><th>Fotos</th><th>Prenda</th><th>Vendedor</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr>
-          </thead>
-          <tbody id="tablaPrendas"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
-        </table>
+      <p class="page-sub">Gestiona las prendas que los usuarios quieren vender a Reliquia Urbana</p>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-head" style="flex-wrap:wrap; gap:8px;">
+          <h3>Filtrar por estado</h3>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn-filtro-estado active" onclick="filtrarPrendas('todos',this)">Todas</button>
+            <button class="btn-filtro-estado" onclick="filtrarPrendas('pendiente_revision',this)">Pendientes</button>
+            <button class="btn-filtro-estado" onclick="filtrarPrendas('aceptada_pendiente',this)">Aceptadas</button>
+            <button class="btn-filtro-estado" onclick="filtrarPrendas('en_inspeccion',this)">En inspeccion</button>
+            <button class="btn-filtro-estado" onclick="filtrarPrendas('comprada',this)">Compradas</button>
+            <button class="btn-filtro-estado" onclick="filtrarPrendas('publicada',this)">Publicadas</button>
+            <button class="btn-filtro-estado" onclick="filtrarPrendas('rechazada',this)">Rechazadas</button>
+          </div>
+        </div>
+      </div>
+      <div id="listaPrendasAdmin"><div class="empty">Cargando...</div></div>
+    </div>
+
+    <!-- MODAL VER PRENDA DETALLE -->
+    <div id="modalPrendaAdmin" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; align-items:center; justify-content:center; overflow-y:auto; padding:20px;">
+      <div style="background:#fff; border-radius:14px; max-width:600px; width:100%; max-height:90vh; overflow-y:auto;">
+        <div id="prendaAdminContent"></div>
       </div>
     </div>
 
@@ -780,7 +856,7 @@
     document.getElementById("tablaUsuarios").innerHTML = users.length
       ? users.map(u => `
           <tr>
-            <td><strong>${u.nombreCompleto || u.nombre || '"+"—"+"'}</strong></td>
+            <td><strong>${u.nombreCompleto || u.nombre || '"+" - "+"'}</strong></td>
             <td>${u.email}</td>
             <td><span class="badge ${u.rol}">${u.rol}</span></td>
             <td><span class="badge ${u.activo !== false ? 'activo' : 'inactivo'}">${u.activo !== false ? 'Activo' : 'Inactivo'}</span></td>
@@ -811,8 +887,8 @@
               <img src="${p.comprobante_url}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;cursor:pointer"
                    onclick="verComprobante('${p.comprobante_url}')">
             </td>
-            <td>${p.nombre_titular || '"+"—"+"'}<br><small style="color:#999">${p.usuario_id ? p.usuario_id.substring(0,8) : ''}</small></td>
-            <td>${p.referencia || '"+"—"+"'}</td>
+            <td>${p.nombre_titular || '"+" - "+"'}<br><small style="color:#999">${p.usuario_id ? p.usuario_id.substring(0,8) : ''}</small></td>
+            <td>${p.referencia || '"+" - "+"'}</td>
             <td>$${parseFloat(p.monto).toFixed(2)}</td>
             <td><span class="badge ${p.estado === 'aprobado' ? 'activo' : p.estado === 'rechazado' ? 'inactivo' : 'admin'}">${p.estado}</span></td>
             <td>
@@ -894,7 +970,7 @@
       ? pedidos.map(p => `
           <tr>
             <td><strong>#${p.id.substring(0,8).toUpperCase()}</strong></td>
-            <td>${p.usuario_email || '"+"—"+"'}</td>
+            <td>${p.usuario_email || '"+" - "+"'}</td>
             <td style="font-size:12px">${(p.items||[]).map(i => `${i.nombre} x${i.cantidad}`).join(', ')}</td>
             <td>$${parseFloat(p.total).toFixed(2)}</td>
             <td>
@@ -916,126 +992,260 @@
     cargarPedidosAdmin();
   };
 
-  // ── MARKETPLACE "+"—"+" PRENDAS OFRECIDAS (RF-13, RF-14) ────────────────────────
+  // ── MARKETPLACE  -  PRENDAS OFRECIDAS ──────────────────────────────────────────
+
+  const ESTADOS_PRENDAS = {
+    pendiente_revision : "Pendiente de revision",
+    rechazada          : "Rechazada",
+    aceptada_pendiente : "Aceptada - Pend. entrega",
+    en_inspeccion      : "En inspeccion",
+    comprada           : "Comprada",
+    publicada          : "Publicada en catalogo",
+    vendida            : "Vendida"
+  };
+
   let prendasCache = [];
 
   async function cargarPrendas() {
     const snap = await getDocs(collection(db, "prendas_ofrecidas"));
-    prendasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    prendasCache.sort((a,b) => (b.fecha?.seconds||0) - (a.fecha?.seconds||0));
-
-    document.getElementById("tablaPrendas").innerHTML = prendasCache.length
-      ? prendasCache.map(p => `
-          <tr>
-            <td>
-              <img src="${p.imagen}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;cursor:pointer"
-                   onclick="verPrenda('${p.id}')">
-            </td>
-            <td><strong>${p.nombre}</strong><br><small style="color:#999">${p.categoria} · Talla ${p.talla}</small></td>
-            <td>${p.usuario_nombre || p.usuario_email}</td>
-            <td>$${parseFloat(p.precio).toFixed(2)}</td>
-            <td><span class="badge ${p.estadoRevision === 'aprobada' ? 'activo' : p.estadoRevision === 'rechazada' ? 'inactivo' : 'admin'}">${p.estadoRevision}</span></td>
-            <td>
-              ${p.estadoRevision === 'pendiente' ? `
-                <button class="btn-sm" onclick="verPrenda('${p.id}')">👁️ Revisar</button>
-              ` : `<span style="color:#aaa; font-size:12px">Ya procesada</span>`}
-            </td>
-          </tr>`).join("")
-      : `<tr><td colspan="6" class="empty">No hay prendas ofrecidas todavía</td></tr>`;
+    prendasCache = snap.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
+    prendasCache.sort(function(a, b) {
+      return (b.fecha_publicacion && b.fecha_publicacion.seconds || 0) -
+             (a.fecha_publicacion && a.fecha_publicacion.seconds || 0);
+    });
+    renderPrendasAdmin(prendasCache);
   }
 
-  window.verPrenda = function(id) {
-    const p = prendasCache.find(x => x.id === id);
-    if (!p) return;
+  function renderPrendasAdmin(lista) {
+    var cont = document.getElementById("listaPrendasAdmin");
+    if (!lista || lista.length === 0) {
+      cont.innerHTML = "<div class=\"empty\">No hay prendas en este estado.</div>";
+      return;
+    }
 
-    const fotos = (p.imagenes || [p.imagen]).map(url =>
-      `<img src="${url}" style="width:100%; border-radius:8px; margin-bottom:8px;">`
-    ).join("");
+    var html = "";
+    for (var i = 0; i < lista.length; i++) {
+      var p = lista[i];
+      var estadoKey  = p.estadoRevision || "pendiente_revision";
+      var estadoLbl  = ESTADOS_PRENDAS[estadoKey] || estadoKey;
+      var fecha = p.fecha_publicacion && p.fecha_publicacion.toDate
+        ? p.fecha_publicacion.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"short", year:"numeric"})
+        : "-";
+      var mainImg = (p.imagenes && p.imagenes[0]) || p.imagen || "https://via.placeholder.com/80";
+      var pid = p.id;
 
-    document.getElementById("prendaModalContent").innerHTML = `
-      <h3 style="margin-bottom:14px;">${p.nombre}</h3>
-      <div style="display:grid; grid-template-columns:repeat(${Math.min((p.imagenes||[p.imagen]).length,3)}, 1fr); gap:8px; margin-bottom:16px;">
-        ${fotos}
-      </div>
-      <table style="width:100%; font-size:13px; margin-bottom:16px;">
-        <tr><td style="padding:4px 0; color:#888;">Vendedor</td><td><strong>${p.usuario_nombre || p.usuario_email}</strong></td></tr>
-        <tr><td style="padding:4px 0; color:#888;">Marca</td><td>${p.marca || '"+"—"+"'}</td></tr>
-        <tr><td style="padding:4px 0; color:#888;">Categoría</td><td>${p.categoria}</td></tr>
-        <tr><td style="padding:4px 0; color:#888;">Talla</td><td>${p.talla}</td></tr>
-        <tr><td style="padding:4px 0; color:#888;">Estado</td><td>${p.estado}</td></tr>
-        <tr><td style="padding:4px 0; color:#888;">Precio sugerido</td><td><strong>$${parseFloat(p.precio).toFixed(2)}</strong></td></tr>
-        <tr><td style="padding:4px 0; color:#888;">Cantidad</td><td>${p.stock}</td></tr>
-        <tr><td style="padding:4px 0; color:#888; vertical-align:top;">Descripción</td><td>${p.descripcion}</td></tr>
-      </table>
-      ${p.estadoRevision === 'pendiente' ? `
-        <div style="display:flex; gap:10px;">
-          <button class="btn-primary" style="flex:1;" onclick="aprobarPrenda('${p.id}')">✅ Aprobar y publicar</button>
-          <button class="btn-sm danger" style="flex:1;" onclick="rechazarPrenda('${p.id}')">❌ Rechazar</button>
-        </div>
-      ` : `<p style="text-align:center; color:#999; font-size:13px;">Esta prenda ya fue ${p.estadoRevision}.</p>`}
-      <button class="btn-sm" style="width:100%; margin-top:10px;" onclick="cerrarModalPrenda()">Cerrar</button>
-    `;
+      // Botones segun estado
+      var btns = "<button class=\"btn-sm\" onclick=\"verPrendaAdmin('" + pid + "')\">Ver detalle</button>";
 
-    document.getElementById("modalPrenda").style.display = "flex";
-  };
+      if (estadoKey === "pendiente_revision") {
+        btns += "<button class=\"btn-estado verde\" onclick=\"cambiarEstadoPrenda('" + pid + "','aceptada_pendiente')\">Aceptar</button>";
+        btns += "<button class=\"btn-estado rojo\"  onclick=\"cambiarEstadoPrenda('" + pid + "','rechazada')\">Rechazar</button>";
+      } else if (estadoKey === "aceptada_pendiente") {
+        btns += "<button class=\"btn-estado azul\"  onclick=\"cambiarEstadoPrenda('" + pid + "','en_inspeccion')\">En inspeccion</button>";
+        btns += "<button class=\"btn-estado rojo\"  onclick=\"cambiarEstadoPrenda('" + pid + "','rechazada')\">Rechazar</button>";
+      } else if (estadoKey === "en_inspeccion") {
+        btns += "<button class=\"btn-estado morado\" onclick=\"comprarPrenda('" + pid + "')\">Confirmar compra</button>";
+        btns += "<button class=\"btn-estado rojo\"   onclick=\"cambiarEstadoPrenda('" + pid + "','rechazada')\">Rechazar</button>";
+      } else if (estadoKey === "comprada") {
+        btns += "<button class=\"btn-estado teal\" onclick=\"publicarPrenda('" + pid + "')\">Publicar en catalogo</button>";
+      } else if (estadoKey === "publicada") {
+        btns += "<span style=\"font-size:12px;color:#888;\">Publicada en catalogo</span>";
+      }
 
-  window.cerrarModalPrenda = function() {
-    document.getElementById("modalPrenda").style.display = "none";
-  };
+      html +=
+        "<div class=\"prenda-admin-card\">" +
+          "<img class=\"prenda-admin-img\" src=\"" + mainImg + "\" onclick=\"verPrendaAdmin('" + pid + "')\" onerror=\"this.src='https://via.placeholder.com/80'\">" +
+          "<div class=\"prenda-admin-info\">" +
+            "<div class=\"prenda-admin-head\">" +
+              "<span class=\"prenda-admin-nombre\">" + p.nombre + "</span>" +
+              "<span class=\"badge-estado bs-" + estadoKey + "\">" + estadoLbl + "</span>" +
+            "</div>" +
+            "<div class=\"prenda-admin-meta\">" +
+              (p.categoria || "") + " - Talla " + (p.talla || "") + " - " + (p.estado || "") +
+              " | Vendedor: " + (p.usuario_nombre || p.usuario_email) +
+              " | Tel: " + (p.usuario_telefono || "-") +
+              " | Publicada: " + fecha +
+            "</div>" +
+            "<div style=\"font-size:13px;color:#555;\">Precio sugerido: <strong>$" + parseFloat(p.precio_sugerido || 0).toFixed(2) + "</strong></div>" +
+            "<div class=\"prenda-admin-acciones\">" + btns + "</div>" +
+          "</div>" +
+        "</div>";
+    }
 
-  // Aprobar prenda → crea producto en catálogo (RF-14)
-  window.aprobarPrenda = async function(id) {
-    const p = prendasCache.find(x => x.id === id);
-    if (!p) return;
-    if (!confirm(`¿Aprobar "${p.nombre}"? Se publicará automáticamente en el catálogo.`)) return;
+    cont.innerHTML = html;
+  }
 
-    try {
-      // 1. Crear el producto en la colección "productos" (RF-14)
-      await addDoc(collection(db, "productos"), {
-        nombre        : p.nombre,
-        marca         : p.marca || "",
-        precio        : p.precio,
-        precioAnterior: 0,
-        categoria     : p.categoria,
-        talla         : p.talla,
-        estado        : p.estado,
-        stock         : p.stock,
-        descripcion   : p.descripcion,
-        imagen        : p.imagen,
-        activo        : true,
-        origenMarketplace: true,
-        vendedor_id   : p.usuario_id,
-        creado_en     : serverTimestamp()
-      });
-
-      // 2. Actualizar el estado de la prenda ofrecida
-      await updateDoc(doc(db, "prendas_ofrecidas", id), {
-        estadoRevision: "aprobada",
-        fecha_revision: serverTimestamp()
-      });
-
-      alert("Prenda aprobada y publicada en el catálogo ✅");
-      cerrarModalPrenda();
-      cargarPrendas();
-      cargarDashboard();
-
-    } catch(e) {
-      alert("Error al aprobar la prenda: " + e.message);
+  window.filtrarPrendas = function(estado, btn) {
+    document.querySelectorAll(".btn-filtro-estado").forEach(function(b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    if (estado === "todos") {
+      renderPrendasAdmin(prendasCache);
+    } else {
+      renderPrendasAdmin(prendasCache.filter(function(p) { return p.estadoRevision === estado; }));
     }
   };
 
-  window.rechazarPrenda = async function(id) {
-    const p = prendasCache.find(x => x.id === id);
-    if (!confirm(`¿Rechazar "${p.nombre}"? El usuario no podrá venderla.`)) return;
+  window.verPrendaAdmin = function(id) {
+    var p = prendasCache.find(function(x) { return x.id === id; });
+    if (!p) return;
+    var estadoKey = p.estadoRevision || "pendiente_revision";
+    var estadoLbl = ESTADOS_PRENDAS[estadoKey] || estadoKey;
+    var imgs = p.imagenes || [p.imagen];
 
+    // Fotos
+    var fotosHtml = "";
+    for (var fi = 0; fi < imgs.length; fi++) {
+      var url = imgs[fi];
+      fotosHtml += "<img src=\"" + url + "\" onclick=\"window.open('" + url + "','_blank')\" style=\"width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;\" onerror=\"this.src='https://via.placeholder.com/200'\">";
+    }
+
+    // Botones segun estado
+    var btnsHtml = "";
+    if (estadoKey === "pendiente_revision") {
+      btnsHtml += "<button class=\"btn-estado verde\" onclick=\"cambiarEstadoPrenda('" + id + "','aceptada_pendiente');cerrarModalPrendaAdmin()\">Aceptar prenda</button>";
+      btnsHtml += "<button class=\"btn-estado rojo\"  onclick=\"cambiarEstadoPrenda('" + id + "','rechazada');cerrarModalPrendaAdmin()\">Rechazar</button>";
+    } else if (estadoKey === "aceptada_pendiente") {
+      btnsHtml += "<button class=\"btn-estado azul\" onclick=\"cambiarEstadoPrenda('" + id + "','en_inspeccion');cerrarModalPrendaAdmin()\">Marcar en inspeccion</button>";
+      btnsHtml += "<button class=\"btn-estado rojo\" onclick=\"cambiarEstadoPrenda('" + id + "','rechazada');cerrarModalPrendaAdmin()\">Rechazar</button>";
+    } else if (estadoKey === "en_inspeccion") {
+      btnsHtml += "<button class=\"btn-estado morado\" onclick=\"comprarPrenda('" + id + "');cerrarModalPrendaAdmin()\">Confirmar compra</button>";
+      btnsHtml += "<button class=\"btn-estado rojo\"   onclick=\"cambiarEstadoPrenda('" + id + "','rechazada');cerrarModalPrendaAdmin()\">No cumple - Rechazar</button>";
+    } else if (estadoKey === "comprada") {
+      btnsHtml += "<button class=\"btn-estado teal\" onclick=\"publicarPrenda('" + id + "');cerrarModalPrendaAdmin()\">Publicar en catalogo</button>";
+    }
+
+    var modalHtml =
+      "<div class=\"modal-prenda-header\">" +
+        "<h3>" + p.nombre + "</h3>" +
+        "<button onclick=\"cerrarModalPrendaAdmin()\" style=\"background:none;border:none;color:#c8a96e;font-size:20px;cursor:pointer;\">x</button>" +
+      "</div>" +
+      "<div class=\"modal-prenda-body\">" +
+        "<div class=\"modal-fotos-grid\">" + fotosHtml + "</div>" +
+        "<table class=\"modal-info-table\">" +
+          "<tr><td>Vendedor</td><td>" + (p.usuario_nombre || p.usuario_email) + "</td></tr>" +
+          "<tr><td>Telefono</td><td>" + (p.usuario_telefono || "-") + "</td></tr>" +
+          "<tr><td>Correo</td><td>" + (p.usuario_email || "-") + "</td></tr>" +
+          "<tr><td>Marca</td><td>" + (p.marca || "-") + "</td></tr>" +
+          "<tr><td>Categoria</td><td>" + (p.categoria || "-") + "</td></tr>" +
+          "<tr><td>Talla</td><td>" + (p.talla || "-") + "</td></tr>" +
+          "<tr><td>Estado prenda</td><td>" + (p.estado || "-") + "</td></tr>" +
+          "<tr><td>Precio sugerido</td><td><strong>$" + parseFloat(p.precio_sugerido || 0).toFixed(2) + "</strong></td></tr>" +
+          "<tr><td>Estado revision</td><td><span class=\"badge-estado bs-" + estadoKey + "\">" + estadoLbl + "</span></td></tr>" +
+          "<tr><td>Descripcion</td><td>" + (p.descripcion || "-") + "</td></tr>" +
+        "</table>" +
+        "<div class=\"modal-acciones\">" + btnsHtml + "</div>" +
+      "</div>";
+
+    document.getElementById("prendaAdminContent").innerHTML = modalHtml;
+    document.getElementById("modalPrendaAdmin").style.display = "flex";
+  };
+
+  window.cerrarModalPrendaAdmin = function() {
+    document.getElementById("modalPrendaAdmin").style.display = "none";
+  };
+
+ window.cambiarEstadoPrenda = async function(id, nuevoEstado) {
+  var p = prendasCache.find(function(x) {
+    return x.id === id;
+  });
+
+  var nombre = p ? p.nombre : id;
+
+  var labels = {
+    aceptada_pendiente: "Aceptar la prenda (el usuario debera traerla a la tienda)",
+    rechazada: "Rechazar esta prenda",
+    en_inspeccion: "Marcar la prenda como 'En inspeccion'"
+  };
+
+  if (
+    !confirm(
+      (labels[nuevoEstado] || "Cambiar estado a: " + nuevoEstado) +
+      "?\n\nPrenda: " + nombre
+    )
+  ) return;
+
+  try {
     await updateDoc(doc(db, "prendas_ofrecidas", id), {
-      estadoRevision: "rechazada",
-      fecha_revision: serverTimestamp()
+      estadoRevision: nuevoEstado,
+      fecha_actualizacion: serverTimestamp()
     });
 
-    alert("Prenda rechazada.");
-    cerrarModalPrenda();
-    cargarPrendas();
+    await cargarPrendas();
+    cargarDashboard();
+
+  } catch (e) {
+    alert("Error: " + e.message);
+  }
+};
+
+  // Confirmar compra: paga al vendedor y crea producto en inventario
+  window.comprarPrenda = async function(id) {
+    var p = prendasCache.find(function(x) { return x.id === id; });
+    if (!p) return;
+    var precio = prompt("Confirmar compra de: " + p.nombre + "\nPrecio sugerido: $" + parseFloat(p.precio_sugerido || 0).toFixed(2) + "\n\nIngresa el precio final que pagaras al vendedor ($):", p.precio_sugerido || "");
+    if (!precio) return;
+    var precioFinal = parseFloat(precio);
+    if (isNaN(precioFinal) || precioFinal <= 0) { alert("Precio invalido."); return; }
+
+    try {
+      // Actualizar estado de la prenda
+      await updateDoc(doc(db, "prendas_ofrecidas", id), {
+        estadoRevision     : "comprada",
+        precio_compra      : precioFinal,
+        fecha_compra       : serverTimestamp(),
+        fecha_actualizacion: serverTimestamp()
+      });
+      await cargarPrendas();
+      cargarDashboard();
+      alert("Prenda comprada correctamente. Precio pagado: $" + precioFinal.toFixed(2) + "\nAhora puedes publicarla en el catalogo desde esta misma seccion.");
+    } catch(e) {
+      alert("Error: " + e.message);
+    }
+  };
+
+  // Publicar en catalogo: crea producto en coleccion productos
+  window.publicarPrenda = async function(id) {
+    var p = prendasCache.find(function(x) { return x.id === id; });
+    if (!p) return;
+    var precioVenta = prompt("Publicar '" + p.nombre + "' en el catalogo.\n\nIngresa el precio de venta al publico ($):", "");
+    if (!precioVenta) return;
+    var precio = parseFloat(precioVenta);
+    if (isNaN(precio) || precio <= 0) { alert("Precio invalido."); return; }
+
+    try {
+      // Crear producto en el catalogo
+      await addDoc(collection(db, "productos"), {
+        nombre           : p.nombre,
+        marca            : p.marca || "",
+        precio           : precio,
+        precioAnterior   : 0,
+        categoria        : p.categoria,
+        talla            : p.talla,
+        estado           : "usado",
+        stock            : 1,
+        descripcion      : p.descripcion,
+        imagen           : p.imagen,
+        activo           : true,
+        origenMarketplace: true,
+        prenda_id        : id,
+        vendedor_email   : p.usuario_email,
+        creado_en        : serverTimestamp()
+      });
+
+      // Actualizar estado prenda a publicada
+      await updateDoc(doc(db, "prendas_ofrecidas", id), {
+        estadoRevision     : "publicada",
+        precio_venta       : precio,
+        fecha_publicacion_catalogo: serverTimestamp(),
+        fecha_actualizacion: serverTimestamp()
+      });
+
+      await cargarPrendas();
+      cargarDashboard();
+      alert("Prenda publicada en el catalogo con precio de venta: $" + precio.toFixed(2));
+    } catch(e) {
+      alert("Error al publicar: " + e.message);
+    }
   };
 
   // ── REPORTES DE VENTAS ────────────────────────────────────────────────────
@@ -1094,16 +1304,16 @@
         });
       });
       const productoTop = Object.entries(conteoProductos)
-        .sort((a,b) => b[1]-a[1])[0]?.[0] || ""+"—"+"";
+        .sort((a,b) => b[1]-a[1])[0]?.[0] || ""+" - "+"";
 
       // Cliente frecuente
       const conteoClientes = {};
       reporteData.forEach(p => {
-        const email = p.usuario_email || ""+"—"+"";
+        const email = p.usuario_email || ""+" - "+"";
         conteoClientes[email] = (conteoClientes[email]||0) + 1;
       });
       const clienteTop = Object.entries(conteoClientes)
-        .sort((a,b) => b[1]-a[1])[0]?.[0] || ""+"—"+"";
+        .sort((a,b) => b[1]-a[1])[0]?.[0] || ""+" - "+"";
 
       document.getElementById("rTotalPedidos").textContent  = reporteData.length;
       document.getElementById("rTotalVendido").textContent  = "$" + totalVendido.toFixed(2);
@@ -1129,13 +1339,13 @@
       document.getElementById("cuerpoReporte").innerHTML = reporteData.map(p => {
         const fecha = p.fecha?.toDate
           ? p.fecha.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"short", year:"numeric"})
-          : ""+"—"+"";
+          : ""+" - "+"";
         const productos = (p.items||[]).map(i => `${i.nombre} x${i.cantidad} ($${(i.precio*i.cantidad).toFixed(2)})`).join("<br>");
         return `
           <tr>
             <td><strong>#${p.id.substring(0,8).toUpperCase()}</strong></td>
             <td>${fecha}</td>
-            <td>${p.usuario_email || ""+"—"+""}</td>
+            <td>${p.usuario_email || ""+" - "+""}</td>
             <td style="font-size:12px;">${productos}</td>
             <td><strong>$${parseFloat(p.total).toFixed(2)}</strong></td>
             <td><span class="badge activo">aprobado</span></td>
@@ -1150,120 +1360,99 @@
   };
 
   // ── GENERAR PDF SIN LIBRERÍAS EXTERNAS ────────────────────────────────────
-  window.descargarPDF = function () {
-  const mes = parseInt(document.getElementById("reporteMes").value || 0);
-  const anio = parseInt(document.getElementById("reporteAnio").value || new Date().getFullYear());
-  const nomMes = MESES?.[mes] || "Mes";
+  window.descargarPDF = function() {
+    const mes    = parseInt(document.getElementById("reporteMes").value);
+    const anio   = parseInt(document.getElementById("reporteAnio").value);
+    const nomMes = MESES[mes];
 
-  if (!Array.isArray(reporteData) || reporteData.length === 0) {
-    alert("No hay datos para exportar.");
-    return;
-  }
+    if (reporteData.length === 0) {
+      alert("No hay datos para exportar.");
+      return;
+    }
 
-  const safe = (v) => (v === null || v === undefined ? " - " : v);
-  const num = (v) => Number(v || 0);
+    const totalVendido = reporteData.reduce((s,p) => s + parseFloat(p.total||0), 0);
+    const promedio     = reporteData.length > 0 ? (totalVendido / reporteData.length).toFixed(2) : "0.00";
+    const fechaHoy     = new Date().toLocaleDateString("es-EC", {day:"2-digit", month:"long", year:"numeric"});
 
-  const totalVendido = reporteData.reduce((s, p) => s + num(p.total), 0);
-  const promedio = reporteData.length ? (totalVendido / reporteData.length).toFixed(2) : "0.00";
-
-  const fechaHoy = new Date().toLocaleDateString("es-EC", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-
-  let filas = "";
-
-  reporteData.forEach((p, idx) => {
-    const fecha = p?.fecha?.toDate
-      ? p.fecha.toDate().toLocaleDateString("es-EC")
-      : " - ";
-
-    let productos = "";
-
-    (p.items || []).forEach((i) => {
-      productos += `${safe(i.nombre)} x${num(i.cantidad)} - $${(num(i.precio) * num(i.cantidad)).toFixed(2)}<br>`;
+    // Filas de la tabla
+    let filas = "";
+    reporteData.forEach(function(p, idx) {
+      const fecha = p.fecha && p.fecha.toDate
+        ? p.fecha.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"long", year:"numeric"})
+        : " - ";
+      const bgColor = idx % 2 === 0 ? "#f9f9f9" : "#ffffff";
+      let productosStr = "";
+      (p.items || []).forEach(function(item) {
+        if (productosStr) productosStr += "<br>";
+        productosStr += item.nombre + " x" + item.cantidad + "  -  $" + (item.precio * item.cantidad).toFixed(2);
+      });
+      filas += "<tr style='background:" + bgColor + "'>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>#" + p.id.substring(0,8).toUpperCase() + "</td>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + fecha + "</td>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + (p.usuario_email || " - ") + "</td>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee;line-height:1.6'>" + productosStr + "</td>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee;font-weight:700;color:#1a5c3a'>$" + parseFloat(p.total).toFixed(2) + "</td>";
+      filas += "</tr>";
     });
 
-    filas += `
-      <tr>
-        <td>#${(p.id || "SINID").substring(0, 8).toUpperCase()}</td>
-        <td>${fecha}</td>
-        <td>${safe(p.usuario_email)}</td>
-        <td>${productos}</td>
-        <td><b>$${num(p.total).toFixed(2)}</b></td>
-      </tr>
-    `;
-  });
+    // Construir HTML del reporte con concatenación (sin template literals anidados)
+    let html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
+    html += "<title>Reporte " + nomMes + " " + anio + " - Reliquia Urbana</title>";
+    html += "<style>";
+    html += "* { box-sizing:border-box; margin:0; padding:0; }";
+    html += "body { font-family:Arial,sans-serif; padding:32px; color:#111; }";
+    html += ".header { background:#1a1a1a; color:#c8a96e; padding:24px 28px; border-radius:8px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; }";
+    html += ".header h1 { font-size:20px; letter-spacing:2px; }";
+    html += ".header p { font-size:12px; color:#999; margin-top:4px; }";
+    html += ".fecha-gen { text-align:right; font-size:11px; color:#888; }";
+    html += ".stats-row { display:flex; gap:16px; margin-bottom:24px; }";
+    html += ".stat { flex:1; background:#f5f5f5; border-radius:8px; padding:14px 16px; border-left:4px solid #c8a96e; }";
+    html += ".stat .num { font-size:22px; font-weight:700; color:#111; }";
+    html += ".stat .lbl { font-size:11px; color:#888; margin-top:2px; }";
+    html += "h2 { font-size:15px; margin-bottom:12px; color:#333; }";
+    html += "table { width:100%; border-collapse:collapse; }";
+    html += "thead tr { background:#1a1a1a; color:#fff; }";
+    html += "thead td { padding:10px; font-size:12px; font-weight:600; }";
+    html += ".total-final { text-align:right; margin-top:12px; font-size:16px; font-weight:700; color:#111; }";
+    html += ".footer { margin-top:24px; padding-top:16px; border-top:1px solid #eee; display:flex; justify-content:space-between; font-size:11px; color:#aaa; }";
+    html += "</" + "style></" + "head><body>";
 
-  const html = `
-  <div style="font-family:Arial;padding:30px;color:#111;">
-    <h1>RELIQUIA URBANA</h1>
-    <h3>Reporte ${nomMes} ${anio}</h3>
-    <p>Generado: ${fechaHoy}</p>
+    // Header
+    html += "<div class='header'>";
+    html += "<div><h1>RELIQUIA URBANA</h1><p>Reporte de ventas  -  " + nomMes + " " + anio + "</p></div>";
+    html += "<div class='fecha-gen'>Generado el: " + fechaHoy + "<br>Por: " + usuario.email + "</div>";
+    html += "</div>";
 
-    <hr>
+    // Stats
+    html += "<div class='stats-row'>";
+    html += "<div class='stat'><div class='num'>" + reporteData.length + "</div><div class='lbl'>Pedidos aprobados</div></div>";
+    html += "<div class='stat'><div class='num'>$" + totalVendido.toFixed(2) + "</div><div class='lbl'>Total vendido</div></div>";
+    html += "<div class='stat'><div class='num'>$" + promedio + "</div><div class='lbl'>Promedio por pedido</div></div>";
+    html += "</div>";
 
-    <p><b>Total ventas:</b> $${totalVendido.toFixed(2)}</p>
-    <p><b>Promedio:</b> $${promedio}</p>
-    <p><b>Pedidos:</b> ${reporteData.length}</p>
+    // Tabla
+    html += "<h2>Detalle de ventas aprobadas</h2>";
+    html += "<table><thead><tr>";
+    html += "<td># Pedido</td><td>Fecha</td><td>Cliente</td><td>Productos</td><td>Total</td>";
+    html += "</tr></thead><tbody>" + filas + "</tbody></table>";
 
-    <hr>
+    // Total y footer
+    html += "<div class='total-final'>Total del periodo: $" + totalVendido.toFixed(2) + "</div>";
+    html += "<div class='footer'>";
+    html += "<span>Reliquia Urbana (c) " + anio + "  -  Documento generado automaticamente</span>";
+    html += "<span>" + nomMes + " " + anio + "  -  " + reporteData.length + " pedido" + (reporteData.length !== 1 ? "s" : "") + "</span>";
+    html += "</div></" + "body></" + "html>";
 
-    <table border="1" cellspacing="0" cellpadding="6" width="100%">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Fecha</th>
-          <th>Cliente</th>
-          <th>Productos</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${filas}
-      </tbody>
-    </table>
-  </div>
-  `;
-
-  const contenedor = document.createElement("div");
-  contenedor.innerHTML = html;
-  document.body.appendChild(contenedor);
-
-  const opciones = {
-    margin: 0.5,
-    filename: `reporte_${nomMes}_${anio}.pdf`,
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+    // Abrir en nueva ventana e imprimir como PDF
+    const ventana = window.open("", "_blank", "width=900,height=700");
+    ventana.document.write(html);
+    ventana.document.close();
+    ventana.focus();
+    setTimeout(function() { ventana.print(); }, 600);
   };
 
-  html2pdf()
-    .set(opciones)
-    .from(contenedor)
-    .save()
-    .then(() => {
-      document.body.removeChild(contenedor);
-    });
-};
-  
   // ── CARGAR AL INICIO ──────────────────────────────────────────────────────
-  
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    console.log("No logueado");
-    return;
-  }
-
-  console.log("Usuario listo:", user.email);
-
   cargarDashboard();
-  cargarProductos();
-});
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
