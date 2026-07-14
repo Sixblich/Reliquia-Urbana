@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Prendas — Reliquia Urbana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --gold: #c8a96e; --dark: #111; --bg: #f7f4ef; --white: #fff; --muted: #999; --border: #e8e4dc; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--dark); }
+
+    nav {
+      background: var(--dark); display: flex; justify-content: space-between;
+      align-items: center; padding: 0 32px; height: 58px;
+      position: sticky; top: 0; z-index: 200; gap: 12px;
+    }
+    .logo { font-family: 'Playfair Display', serif; color: var(--bg); font-size: 16px; letter-spacing: 4px; text-decoration: none; white-space: nowrap; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { color: var(--muted); font-size: 13px; text-decoration: none; transition: 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--bg); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-email { color: #777; font-size: 12px; }
+    .btn-logout { background: transparent; border: 1px solid #333; color: var(--muted); padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+    .btn-logout:hover { border-color: #e74c3c; color: #e74c3c; }
+
+    .hero { background: var(--dark); padding: 48px 32px; text-align: center; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--bg); margin-bottom: 8px; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 13px; max-width: 440px; margin: 0 auto; line-height: 1.7; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* FILTROS DE ESTADO */
+    .filtros-estado {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+    }
+    .filtro-btn {
+      padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+      font-size: 12px; color: #666; cursor: pointer; background: var(--white);
+      transition: 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .filtro-btn:hover { border-color: var(--dark); color: var(--dark); }
+    .filtro-btn.active { background: var(--dark); color: var(--white); border-color: var(--dark); }
+
+    /* CARDS DE PRENDA */
+    .prendas-lista { display: flex; flex-direction: column; gap: 16px; }
+
+    .prenda-card {
+      background: var(--white); border-radius: 14px; padding: 20px;
+      border: 1px solid var(--border); display: flex; gap: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: 0.2s;
+    }
+    .prenda-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+    .prenda-fotos { display: flex; gap: 6px; flex-shrink: 0; }
+    .prenda-foto-main {
+      width: 90px; height: 90px; border-radius: 10px;
+      object-fit: cover; background: #eee; flex-shrink: 0;
+    }
+    .prenda-fotos-mini { display: flex; flex-direction: column; gap: 4px; }
+    .prenda-foto-mini {
+      width: 40px; height: 40px; border-radius: 6px;
+      object-fit: cover; background: #eee;
+    }
+
+    .prenda-info { flex: 1; min-width: 0; }
+    .prenda-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+    .prenda-nombre { font-weight: 700; font-size: 15px; }
+    .prenda-meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+
+    /* TIMELINE DE ESTADO */
+    .estado-timeline { display: flex; gap: 0; margin-top: 12px; overflow-x: auto; padding-bottom: 4px; }
+    .estado-step {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 70px; position: relative;
+    }
+    .estado-step:not(:last-child)::after {
+      content: ''; position: absolute;
+      top: 10px; left: 50%; width: 100%;
+      height: 2px; background: #eee; z-index: 0;
+    }
+    .estado-step.done::after { background: var(--gold); }
+    .estado-step.rechazado::after { background: #fcc; }
+    .estado-dot {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid #ddd; background: var(--white);
+      z-index: 1; margin-bottom: 6px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px;
+    }
+    .estado-step.done .estado-dot { background: var(--gold); border-color: var(--gold); color: var(--white); }
+    .estado-step.current .estado-dot { border-color: var(--dark); background: var(--dark); color: var(--white); animation: pulse-dot 1.5s ease infinite; }
+    .estado-step.rechazado .estado-dot { background: #c00; border-color: #c00; color: var(--white); }
+    @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(17,17,17,0.3)} 50%{box-shadow:0 0 0 5px rgba(17,17,17,0)} }
+    .estado-step-label { font-size: 9px; color: var(--muted); text-align: center; line-height: 1.3; max-width: 65px; }
+    .estado-step.done .estado-step-label { color: var(--dark); font-weight: 600; }
+    .estado-step.current .estado-step-label { color: var(--dark); font-weight: 700; }
+
+    /* BADGE DE ESTADO */
+    .estado-badge {
+      display: inline-block; padding: 4px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .badge-pendiente_revision    { background: #fff3e0; color: #e65100; }
+    .badge-rechazada             { background: #fce4ec; color: #c62828; }
+    .badge-aceptada_pendiente    { background: #e8f5e9; color: #2e7d32; }
+    .badge-en_inspeccion         { background: #e3f2fd; color: #1565c0; }
+    .badge-comprada              { background: #ede7f6; color: #5e35b1; }
+    .badge-publicada             { background: #e0f2f1; color: #00695c; }
+    .badge-vendida               { background: #f3e5f5; color: #7b1fa2; }
+
+    .prenda-precio { font-size: 13px; color: #555; margin-top: 8px; }
+    .prenda-precio strong { color: var(--dark); }
+
+    /* MENSAJE ESTADO ESPECIAL */
+    .estado-msg {
+      margin-top: 10px; padding: 10px 14px; border-radius: 8px;
+      font-size: 12px; line-height: 1.5;
+    }
+    .msg-aceptada  { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .msg-rechazada { background: #fce4ec; color: #c62828; border: 1px solid #ef9a9a; }
+    .msg-comprada  { background: #ede7f6; color: #5e35b1; border: 1px solid #ce93d8; }
+    .msg-publicada { background: #e0f2f1; color: #00695c; border: 1px solid #80cbc4; }
+    .msg-vendida   { background: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty .icon { font-size: 48px; margin-bottom: 14px; }
+    .empty a { color: var(--gold); text-decoration: none; font-weight: 600; }
+
+    /* BTN NUEVA PRENDA */
+    .btn-nueva {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--dark); color: var(--white);
+      padding: 10px 20px; border-radius: 8px; text-decoration: none;
+      font-size: 13px; font-weight: 600; margin-bottom: 24px; transition: 0.2s;
+    }
+    .btn-nueva:hover { background: var(--gold); color: var(--dark); }
+
+    /* SPINNER */
+    .spinner { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+
+    footer { background: #0a0a0a; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .foot-logo { font-family: 'Playfair Display', serif; color: #555; font-size: 13px; letter-spacing: 3px; }
+    .foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .foot-links a { font-size: 11px; color: #555; text-decoration: none; }
+    .foot-links a:hover { color: var(--bg); }
+    .foot-copy { font-size: 11px; color: #333; }
+
+    /* RESPONSIVE */
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; height: auto; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+      .logo { font-size: 13px; letter-spacing: 2px; }
+      .nav-links { order: 3; width: 100%; justify-content: center; gap: 12px; }
+      .hero { padding: 36px 20px; }
+      .hero h1 { font-size: 24px; }
+      .container { padding: 20px 16px 60px; }
+      .prenda-card { flex-direction: column; }
+      .prenda-fotos { flex-direction: row; }
+      .prenda-foto-main { width: 100px; height: 100px; }
+      .prenda-fotos-mini { flex-direction: row; }
+      .prenda-foto-mini { width: 44px; height: 44px; }
+      footer { flex-direction: column; text-align: center; padding: 20px 16px; }
+      .foot-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="catalogo.html" class="logo">RELIQUIA URBANA</a>
+  <div class="nav-links">
+    <a href="catalogo.html">Catalogo</a>
+    <a href="mis-prendas.html" class="active">Mis prendas</a>
+    <a href="vender.html">Vender ropa</a>
+  </div>
+  <div class="nav-right">
+    <span class="nav-email" id="userEmail"></span>
+    <button class="btn-logout" onclick="salir()">Salir</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Mis <span>Prendas</span></h1>
+  <p>Sigue el estado de cada prenda que has publicado para vender a Reliquia Urbana.</p>
+</div>
+
+<div class="container">
+  <a href="vender.html" class="btn-nueva">+ Publicar nueva prenda</a>
+
+  <!-- FILTROS -->
+  <div class="filtros-estado" id="filtrosEstado" style="display:none;">
+    <button class="filtro-btn active" onclick="filtrarEstado('todos', this)">Todas</button>
+    <button class="filtro-btn" onclick="filtrarEstado('pendiente_revision', this)">Pendientes</button>
+    <button class="filtro-btn" onclick="filtrarEstado('aceptada_pendiente', this)">Aceptadas</button>
+    <button class="filtro-btn" onclick="filtrarEstado('rechazada', this)">Rechazadas</button>
+    <button class="filtro-btn" onclick="filtrarEstado('comprada', this)">Compradas</button>
+    <button class="filtro-btn" onclick="filtrarEstado('vendida', this)">Vendidas</button>
+  </div>
+
+  <div id="listaPrendas"><div class="spinner">Cargando tus prendas...</div></div>
+</div>
+
+<footer>
+  <span class="foot-logo">RELIQUIA URBANA</span>
+  <div class="foot-links">
+    <a href="ayuda.html">Ayuda</a>
+    <a href="privacidad.html">Privacidad</a>
+    <a href="terminos.html">Terminos</a>
+    <a href="acerca.html">Acerca de</a>
+  </div>
+  <span class="foot-copy">© 2025 Reliquia Urbana</span>
+</footer>
+
+<script type="module">
+  import { db } from "./firebase.js";
+  import { verificarSesion, cerrarSesion } from "./auth-guard.js";
+  import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const usuario = await verificarSesion("usuario");
+  document.getElementById("userEmail").textContent = usuario.email;
+  window.salir = () => cerrarSesion();
+
+  // ── CONFIGURACION DE ESTADOS ─────────────────────────────────────────────
+  const ESTADOS = {
+    pendiente_revision  : { label: "Pendiente de revision",     badge: "badge-pendiente_revision" },
+    rechazada           : { label: "Rechazada",                 badge: "badge-rechazada" },
+    aceptada_pendiente  : { label: "Aceptada - Pend. entrega",  badge: "badge-aceptada_pendiente" },
+    en_inspeccion       : { label: "En inspeccion",             badge: "badge-en_inspeccion" },
+    comprada            : { label: "Comprada",                  badge: "badge-comprada" },
+    publicada           : { label: "Publicada en catalogo",     badge: "badge-publicada" },
+    vendida             : { label: "Vendida",                   badge: "badge-vendida" },
+  };
+
+  const TIMELINE_PASOS = [
+    { key: "pendiente_revision", label: "Publicada" },
+    { key: "aceptada_pendiente", label: "Aceptada" },
+    { key: "en_inspeccion",      label: "Inspeccion" },
+    { key: "comprada",           label: "Comprada" },
+    { key: "publicada",          label: "En catalogo" },
+    { key: "vendida",            label: "Vendida" },
+  ];
+
+  const ORDEN_ESTADOS = ["pendiente_revision","aceptada_pendiente","en_inspeccion","comprada","publicada","vendida"];
+
+  const MENSAJES = {
+    aceptada_pendiente: { cls: "msg-aceptada",  txt: "Tu prenda fue aceptada. Debes llevarla fisicamente a nuestra tienda para inspeccion. Contactaremos al numero que proporcionaste para coordinar." },
+    rechazada:          { cls: "msg-rechazada", txt: "Lo sentimos, tu prenda no fue aceptada en esta ocasion. Puedes publicar otras prendas cuando quieras." },
+    en_inspeccion:      { cls: "msg-aceptada",  txt: "Tu prenda esta siendo inspeccionada en nuestra tienda. Si todo coincide con las fotos y descripcion, realizaremos el pago pronto." },
+    comprada:           { cls: "msg-comprada",  txt: "Reliquia Urbana ha comprado tu prenda. El pago ya fue realizado. Gracias por confiar en nosotros." },
+    publicada:          { cls: "msg-publicada", txt: "Tu prenda ya esta disponible en nuestro catalogo. Cuando se venda te notificaremos." },
+    vendida:            { cls: "msg-vendida",   txt: "La prenda que vendiste a Reliquia Urbana ya fue vendida a un cliente. Gracias por tu aporte a la moda sostenible." },
+  };
+
+  let todasLasPrendas = [];
+
+  async function cargarPrendas() {
+    const lista = document.getElementById("listaPrendas");
+    try {
+      const q = query(collection(db, "prendas_ofrecidas"), where("usuario_id", "==", usuario.uid));
+      const snap = await getDocs(q);
+      todasLasPrendas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      todasLasPrendas.sort((a, b) => (b.fecha_publicacion?.seconds || 0) - (a.fecha_publicacion?.seconds || 0));
+
+      if (todasLasPrendas.length > 0) {
+        document.getElementById("filtrosEstado").style.display = "flex";
+      }
+      renderPrendas(todasLasPrendas);
+    } catch(e) {
+      lista.innerHTML = '<div class="empty"><p style="color:#c00">Error al cargar: ' + e.message + '</p></div>';
+    }
+  }
+
+  function renderPrendas(lista) {
+    const cont = document.getElementById("listaPrendas");
+    if (lista.length === 0) {
+      cont.innerHTML = '<div class="empty"><div class="icon">👗</div><p>No tienes prendas publicadas aun.</p><p style="margin-top:8px"><a href="vender.html">Publicar mi primera prenda →</a></p></div>';
+      return;
+    }
+
+    cont.innerHTML = '<div class="prendas-lista">' + lista.map(p => {
+      var estadoKey  = p.estadoRevision || "pendiente_revision";
+      var estadoInfo = ESTADOS[estadoKey] || { label: estadoKey, badge: "badge-pendiente_revision" };
+      var fecha      = p.fecha_publicacion?.toDate
+        ? p.fecha_publicacion.toDate().toLocaleDateString("es-EC", { day:"2-digit", month:"short", year:"numeric" })
+        : "—";
+
+      // Imagenes
+      var imgs = p.imagenes || [p.imagen];
+      var mainImg = imgs[0] || "https://via.placeholder.com/90";
+      var miniImgs = imgs.slice(1, 3).map(url =>
+        '<img class="prenda-foto-mini" src="' + url + '" onerror="this.src=\'https://via.placeholder.com/40\'">'
+      ).join("");
+
+      // Timeline
+      var esRechazada = estadoKey === "rechazada";
+      var idxActual   = ORDEN_ESTADOS.indexOf(estadoKey);
+      var timelineHtml = TIMELINE_PASOS.map(function(paso, i) {
+        var idxPaso = ORDEN_ESTADOS.indexOf(paso.key);
+        var cls = "";
+        if (esRechazada && i === 0) cls = "done";
+        else if (!esRechazada && idxPaso < idxActual) cls = "done";
+        else if (!esRechazada && idxPaso === idxActual) cls = "current";
+        return '<div class="estado-step ' + cls + '"><div class="estado-dot">' + (cls === "done" ? "✓" : "") + '</div><span class="estado-step-label">' + paso.label + '</span></div>';
+      }).join("");
+
+      if (esRechazada) {
+        timelineHtml = '<div class="estado-step rechazado"><div class="estado-dot">✕</div><span class="estado-step-label">Rechazada</span></div>';
+      }
+
+      // Mensaje especial
+      var msgHtml = "";
+      if (MENSAJES[estadoKey]) {
+        msgHtml = '<div class="estado-msg ' + MENSAJES[estadoKey].cls + '">' + MENSAJES[estadoKey].txt + '</div>';
+      }
+
+      return '<div class="prenda-card">' +
+        '<div class="prenda-fotos">' +
+          '<img class="prenda-foto-main" src="' + mainImg + '" onerror="this.src=\'https://via.placeholder.com/90\'">' +
+          (miniImgs ? '<div class="prenda-fotos-mini">' + miniImgs + '</div>' : '') +
+        '</div>' +
+        '<div class="prenda-info">' +
+          '<div class="prenda-head">' +
+            '<span class="prenda-nombre">' + p.nombre + '</span>' +
+            '<span class="estado-badge ' + estadoInfo.badge + '">' + estadoInfo.label + '</span>' +
+          '</div>' +
+          '<div class="prenda-meta">' + (p.categoria || "") + ' · Talla ' + (p.talla || "") + ' · ' + (p.estado || "") + ' · Publicada: ' + fecha + '</div>' +
+          '<div class="prenda-precio">Precio sugerido: <strong>$' + parseFloat(p.precio_sugerido || 0).toFixed(2) + '</strong></div>' +
+          '<div class="estado-timeline">' + timelineHtml + '</div>' +
+          msgHtml +
+        '</div>' +
+      '</div>';
+    }).join("") + '</div>';
+  }
+
+  window.filtrarEstado = function(estado, btn) {
+    document.querySelectorAll(".filtro-btn").forEach(function(b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    if (estado === "todos") {
+      renderPrendas(todasLasPrendas);
+    } else {
+      renderPrendas(todasLasPrendas.filter(function(p) { return p.estadoRevision === estado; }));
+    }
+  };
+
+  cargarPrendas();
+</script>
+</body>
+</html>
