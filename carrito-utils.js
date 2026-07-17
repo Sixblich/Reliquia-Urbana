@@ -43,6 +43,8 @@ export function agregarAlCarrito(producto) {
       imagen: producto.imagen || "",
       talla: producto.talla || "",
       marca: producto.marca || "",
+      categoria: producto.categoria || "",
+      estado: producto.estado || "",
       stock: stockDisponible,
       cantidad: 1
     });
