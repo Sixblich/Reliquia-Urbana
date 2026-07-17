@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas — Reliquia Urbana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f4f4f4; color: #111; }
+
+    nav {
+      background: #111; padding: 0 32px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; color: #c8a96e; font-size: 20px; letter-spacing: 2px; }
+    .nav-badge { background: #c8a96e; color: #111; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; letter-spacing: 1px; margin-left: 10px; }
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+    .btn-volver, .btn-logout {
+      background: transparent; border: 1px solid #333; color: #888;
+      padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer;
+      text-decoration: none; transition: 0.2s;
+    }
+    .btn-volver:hover, .btn-logout:hover { border-color: #c8a96e; color: #c8a96e; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 4px; }
+    .page-sub { color: #999; font-size: 13px; margin-bottom: 24px; }
+
+    /* Filtro de periodo global */
+    .periodo-bar {
+      background: #fff; border-radius: 12px; padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px; margin-bottom: 22px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-wrap: wrap;
+    }
+    .periodo-bar label { font-size: 12px; color: #666; font-weight: 600; }
+    .periodo-bar select {
+      padding: 7px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;
+    }
+    .periodo-bar button {
+      background: #111; color: #fff; border: none; padding: 8px 18px;
+      border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s;
+    }
+    .periodo-bar button:hover { background: #c8a96e; color: #111; }
+
+    /* KPIs */
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .kpi-card { background: #fff; border-radius: 12px; padding: 18px 20px; border-left: 4px solid; }
+    .kpi-card.blue   { border-color: #2e75b6; }
+    .kpi-card.green  { border-color: #70ad47; }
+    .kpi-card.orange { border-color: #ed7d31; }
+    .kpi-card.purple { border-color: #7030a0; }
+    .kpi-num { font-size: 26px; font-weight: 700; }
+    .kpi-lbl { font-size: 11px; color: #999; margin-top: 4px; }
+
+    /* Grid de tarjetas de graficos */
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+    @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+
+    .chart-card { background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .chart-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .chart-card .sub { font-size: 11px; color: #999; margin-bottom: 18px; }
+
+    /* Barras horizontales */
+    .bar-row { margin-bottom: 14px; }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+    .bar-label .name { font-weight: 600; color: #222; }
+    .bar-label .val { color: #888; }
+    .bar-track { background: #f0f0f0; border-radius: 20px; height: 10px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 20px; transition: width 0.6s ease; }
+    .bar-fill.c1 { background: linear-gradient(90deg, #c8a96e, #a07c3f); }
+    .bar-fill.c2 { background: linear-gradient(90deg, #70ad47, #4f7a30); }
+    .bar-fill.c3 { background: linear-gradient(90deg, #2e75b6, #1a4d7a); }
+    .bar-fill.c4 { background: linear-gradient(90deg, #7030a0, #4d2070); }
+
+    /* Split (nuevo vs usado) */
+    .split-bar { display: flex; height: 34px; border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+    .split-seg { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; transition: width 0.6s ease; }
+    .split-seg.nuevo { background: #70ad47; }
+    .split-seg.usado { background: #ed7d31; }
+    .split-legend { display: flex; gap: 20px; font-size: 12px; color: #666; }
+    .split-legend span { display: flex; align-items: center; gap: 6px; }
+    .split-legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.nuevo { background: #70ad47; }
+    .dot.usado { background: #ed7d31; }
+
+    /* Tendencia mensual (barras verticales) */
+    .tendencia-chart { display: flex; align-items: flex-end; gap: 10px; height: 160px; padding-top: 10px; }
+    .tendencia-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+    .tendencia-bar { width: 100%; max-width: 34px; background: linear-gradient(180deg, #c8a96e, #a07c3f); border-radius: 6px 6px 0 0; transition: height 0.6s ease; min-height: 2px; }
+    .tendencia-val { font-size: 10px; color: #888; margin-bottom: 4px; }
+    .tendencia-mes { font-size: 10px; color: #666; margin-top: 6px; text-align: center; }
+
+    .empty-chart { text-align: center; color: #bbb; font-size: 13px; padding: 40px 0; }
+
+    /* Tabla clientes */
+    .clientes-table { width: 100%; border-collapse: collapse; }
+    .clientes-table th { text-align: left; font-size: 11px; color: #999; padding: 8px 6px; border-bottom: 1px solid #eee; text-transform: uppercase; }
+    .clientes-table td { padding: 10px 6px; font-size: 13px; border-bottom: 1px solid #f5f5f5; }
+    .rank-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 50%; background: #f0f0f0;
+      font-size: 11px; font-weight: 700; color: #555; margin-right: 8px;
+    }
+    .rank-badge.top1 { background: #ffd700; color: #7a5c00; }
+    .rank-badge.top2 { background: #c0c0c0; color: #555; }
+    .rank-badge.top3 { background: #cd7f32; color: #fff; }
+
+    @media (max-width: 700px) {
+      .kpis { grid-template-columns: 1fr 1fr; }
+      nav { padding: 0 16px; }
+      .container { padding: 18px 14px 50px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div>
+    <span class="nav-logo">RELIQUIA URBANA</span>
+    <span class="nav-badge">ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <a href="admin.html" class="btn-volver">← Volver al panel</a>
+    <button class="btn-logout" onclick="salir()">Cerrar sesión</button>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="page-title">Estadísticas del negocio</h1>
+  <p class="page-sub">Analiza el rendimiento de Reliquia Urbana: productos, clientes y tendencias</p>
+
+  <div class="periodo-bar">
+    <label>Analizar:</label>
+    <select id="periodoSelect">
+      <option value="30">Últimos 30 días</option>
+      <option value="90">Últimos 3 meses</option>
+      <option value="180">Últimos 6 meses</option>
+      <option value="365">Último año</option>
+      <option value="all">Todo el historial</option>
+    </select>
+    <button onclick="cargarEstadisticas()">Actualizar</button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi-card blue">
+      <div class="kpi-num" id="kpiVentas">—</div>
+      <div class="kpi-lbl">Total vendido</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-num" id="kpiPedidos">—</div>
+      <div class="kpi-lbl">Pedidos aprobados</div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-num" id="kpiTicket">—</div>
+      <div class="kpi-lbl">Ticket promedio</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-num" id="kpiClientes">—</div>
+      <div class="kpi-lbl">Clientes activos</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <!-- Productos mas vendidos -->
+    <div class="chart-card">
+      <h3>🏆 Productos más vendidos</h3>
+      <div class="sub">Top 5 por unidades vendidas</div>
+      <div id="chartProductos"><div class="empty-chart">Cargando...</div></div>
+    </div>
+
+    <!-- Clientes que mas compran -->
+    <div class="chart-card">
+      <h3>👤 Clientes que más compran</h3>
+      <div class="sub">Top 5 por monto total gastado</div>
+      <table class="clientes-table" id="tablaClientesTop"><tbody><tr><td class="empty-chart">Cargando...</td></tr></tbody></table>
+    </div>
+
+    <!-- Ventas por categoria -->
+    <div class="chart-card">
+      <h3>📦 Ventas por categoría</h3>
+      <div class="sub">Distribución de unidades vendidas</div>
+      <div id="chartCategorias"><div class="empty-chart">Cargando...</div></div>
+    </div>
+
+    <!-- Ventas por talla -->
+    <div class="chart-card">
+      <h3>📏 Ventas por talla</h3>
+      <div class="sub">Tallas más solicitadas</div>
+      <div id="chartTallas"><div class="empty-chart">Cargando...</div></div>
+    </div>
+
+    <!-- Nuevo vs usado -->
+    <div class="chart-card">
+      <h3>♻️ Nuevo vs. Usado</h3>
+      <div class="sub">Proporción de productos vendidos por estado</div>
+      <div id="chartNuevoUsado"><div class="empty-chart">Cargando...</div></div>
+    </div>
+
+    <!-- Tendencia mensual -->
+    <div class="chart-card">
+      <h3>📈 Tendencia de ventas</h3>
+      <div class="sub">Últimos 6 meses ($ vendidos)</div>
+      <div id="chartTendencia"><div class="empty-chart">Cargando...</div></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { db } from "./firebase.js";
+  import { verificarSesion, cerrarSesion } from "./auth-guard.js";
+  import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  await verificarSesion("admin");
+  window.salir = () => cerrarSesion();
+
+  var MESES_CORTOS = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+  var COLORES = ["c1", "c2", "c3", "c4"];
+
+  window.cargarEstadisticas = async function () {
+    var dias = document.getElementById("periodoSelect").value;
+    var hoy = new Date();
+    var fechaLimite = null;
+    if (dias !== "all") {
+      fechaLimite = new Date();
+      fechaLimite.setDate(hoy.getDate() - parseInt(dias));
+    }
+
+    try {
+      var [snapPedidos, snapProductos] = await Promise.all([
+        getDocs(collection(db, "pedidos")),
+        getDocs(collection(db, "productos"))
+      ]);
+
+      var productosLookup = {};
+      snapProductos.docs.forEach(function (d) {
+        var data = d.data();
+        productosLookup[d.id] = { categoria: data.categoria || "", estado: data.estado || "" };
+      });
+
+      var todos = snapPedidos.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+
+      var aprobados = todos.filter(function (p) {
+        if (p.estado !== "aprobado") return false;
+        if (!fechaLimite) return true;
+        var fecha = p.fecha && p.fecha.toDate ? p.fecha.toDate() : new Date(p.fecha);
+        return fecha >= fechaLimite;
+      });
+
+      // ── KPIs ────────────────────────────────────────────────────────────
+      var totalVendido = aprobados.reduce(function (s, p) { return s + parseFloat(p.total || 0); }, 0);
+      var clientesUnicos = new Set(aprobados.map(function (p) { return p.usuario_email; }));
+      var ticketProm = aprobados.length > 0 ? totalVendido / aprobados.length : 0;
+
+      document.getElementById("kpiVentas").textContent   = "$" + totalVendido.toFixed(2);
+      document.getElementById("kpiPedidos").textContent  = aprobados.length;
+      document.getElementById("kpiTicket").textContent   = "$" + ticketProm.toFixed(2);
+      document.getElementById("kpiClientes").textContent = clientesUnicos.size;
+
+      // ── Desglosar items enriquecidos ─────────────────────────────────────
+      var items = [];
+      aprobados.forEach(function (p) {
+        (p.items || []).forEach(function (item) {
+          var lookup = productosLookup[item.id] || {};
+          items.push({
+            nombre: item.nombre,
+            cantidad: item.cantidad,
+            subtotal: item.precio * item.cantidad,
+            talla: item.talla || "Sin especificar",
+            categoria: item.categoria || lookup.categoria || "Sin categoria",
+            estado: item.estado || lookup.estado || "Sin especificar",
+            usuario_email: p.usuario_email || "-"
+          });
+        });
+      });
+
+      // ── Productos mas vendidos ────────────────────────────────────────────
+      var conteoProd = {};
+      items.forEach(function (it) { conteoProd[it.nombre] = (conteoProd[it.nombre] || 0) + it.cantidad; });
+      var topProd = Object.entries(conteoProd).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 5);
+      renderBarChart("chartProductos", topProd, function (v) { return v + " unid."; });
+
+      // ── Clientes top ──────────────────────────────────────────────────────
+      var montoCliente = {};
+      items.forEach(function (it) { montoCliente[it.usuario_email] = (montoCliente[it.usuario_email] || 0) + it.subtotal; });
+      var topClientes = Object.entries(montoCliente).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 5);
+      renderTablaClientes(topClientes);
+
+      // ── Categorias ────────────────────────────────────────────────────────
+      var conteoCat = {};
+      items.forEach(function (it) { conteoCat[it.categoria] = (conteoCat[it.categoria] || 0) + it.cantidad; });
+      var topCat = Object.entries(conteoCat).sort(function (a, b) { return b[1] - a[1]; });
+      renderBarChart("chartCategorias", topCat, function (v) { return v + " unid."; });
+
+      // ── Tallas ────────────────────────────────────────────────────────────
+      var conteoTalla = {};
+      items.forEach(function (it) { conteoTalla[it.talla] = (conteoTalla[it.talla] || 0) + it.cantidad; });
+      var topTalla = Object.entries(conteoTalla).sort(function (a, b) { return b[1] - a[1]; });
+      renderBarChart("chartTallas", topTalla, function (v) { return v + " unid."; });
+
+      // ── Nuevo vs usado ────────────────────────────────────────────────────
+      var nuevos = items.filter(function (it) { return it.estado === "nuevo"; }).reduce(function (s, it) { return s + it.cantidad; }, 0);
+      var usados = items.filter(function (it) { return it.estado === "usado"; }).reduce(function (s, it) { return s + it.cantidad; }, 0);
+      renderSplitChart("chartNuevoUsado", nuevos, usados);
+
+      // ── Tendencia mensual (ultimos 6 meses, siempre sobre todos los pedidos aprobados) ──
+      var aprobadosTodos = todos.filter(function (p) { return p.estado === "aprobado"; });
+      var mesesData = [];
+      for (var i = 5; i >= 0; i--) {
+        var d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
+        mesesData.push({ label: MESES_CORTOS[d.getMonth()], mes: d.getMonth(), anio: d.getFullYear(), total: 0 });
+      }
+      aprobadosTodos.forEach(function (p) {
+        var fecha = p.fecha && p.fecha.toDate ? p.fecha.toDate() : new Date(p.fecha);
+        mesesData.forEach(function (m) {
+          if (fecha.getMonth() === m.mes && fecha.getFullYear() === m.anio) {
+            m.total += parseFloat(p.total || 0);
+          }
+        });
+      });
+      renderTendencia("chartTendencia", mesesData);
+
+    } catch (e) {
+      console.error(e);
+      if (window.mostrarAviso) mostrarAviso("Error al cargar estadisticas: " + e.message, "error");
+    }
+  };
+
+  function renderBarChart(elId, entries, formatVal) {
+    var el = document.getElementById(elId);
+    if (!entries || entries.length === 0) {
+      el.innerHTML = '<div class="empty-chart">Sin datos suficientes en este periodo.</div>';
+      return;
+    }
+    var max = entries[0][1];
+    el.innerHTML = entries.map(function (entry, i) {
+      var pct = max > 0 ? Math.round((entry[1] / max) * 100) : 0;
+      var nombre = entry[0].length > 26 ? entry[0].substring(0, 24) + ".." : entry[0];
+      return '<div class="bar-row">' +
+        '<div class="bar-label"><span class="name">' + nombre + '</span><span class="val">' + formatVal(entry[1]) + '</span></div>' +
+        '<div class="bar-track"><div class="bar-fill ' + COLORES[i % COLORES.length] + '" style="width:' + pct + '%"></div></div>' +
+      '</div>';
+    }).join("");
+  }
+
+  function renderTablaClientes(entries) {
+    var tbody = document.querySelector("#tablaClientesTop tbody");
+    if (!entries || entries.length === 0) {
+      tbody.innerHTML = '<tr><td class="empty-chart">Sin datos suficientes en este periodo.</td></tr>';
+      return;
+    }
+    var rankClass = ["top1", "top2", "top3"];
+    tbody.innerHTML = entries.map(function (entry, i) {
+      var badgeCls = rankClass[i] || "";
+      return '<tr>' +
+        '<td><span class="rank-badge ' + badgeCls + '">' + (i + 1) + '</span>' + entry[0] + '</td>' +
+        '<td style="text-align:right; font-weight:700;">$' + entry[1].toFixed(2) + '</td>' +
+      '</tr>';
+    }).join("");
+  }
+
+  function renderSplitChart(elId, nuevos, usados) {
+    var el = document.getElementById(elId);
+    var total = nuevos + usados;
+    if (total === 0) {
+      el.innerHTML = '<div class="empty-chart">Sin datos suficientes en este periodo.</div>';
+      return;
+    }
+    var pctNuevo = Math.round((nuevos / total) * 100);
+    var pctUsado = 100 - pctNuevo;
+    el.innerHTML =
+      '<div class="split-bar">' +
+        (pctNuevo > 0 ? '<div class="split-seg nuevo" style="width:' + pctNuevo + '%">' + pctNuevo + '%</div>' : '') +
+        (pctUsado > 0 ? '<div class="split-seg usado" style="width:' + pctUsado + '%">' + pctUsado + '%</div>' : '') +
+      '</div>' +
+      '<div class="split-legend">' +
+        '<span><span class="dot nuevo"></span> Nuevo (' + nuevos + ' unid.)</span>' +
+        '<span><span class="dot usado"></span> Usado (' + usados + ' unid.)</span>' +
+      '</div>';
+  }
+
+  function renderTendencia(elId, mesesData) {
+    var el = document.getElementById(elId);
+    var max = Math.max.apply(null, mesesData.map(function (m) { return m.total; }));
+    if (max === 0) {
+      el.innerHTML = '<div class="empty-chart">Sin ventas registradas en los ultimos 6 meses.</div>';
+      return;
+    }
+    el.innerHTML = '<div class="tendencia-chart">' + mesesData.map(function (m) {
+      var pct = max > 0 ? Math.max((m.total / max) * 100, 2) : 2;
+      return '<div class="tendencia-col">' +
+        '<div class="tendencia-val">$' + Math.round(m.total) + '</div>' +
+        '<div class="tendencia-bar" style="height:' + pct + '%"></div>' +
+        '<div class="tendencia-mes">' + m.label + '</div>' +
+      '</div>';
+    }).join("") + '</div>';
+  }
+
+  cargarEstadisticas();
+</script>
+<script src="ui-notify.js"></script>
+</body>
+</html>
