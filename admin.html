@@ -463,6 +463,7 @@
     <a onclick="mostrarPagina('pedidos')"><span class="icon">📦</span> Pedidos</a>
     <a onclick="mostrarPagina('prendas')"><span class="icon">👚</span> Prendas Marketplace</a>
     <a onclick="mostrarPagina('reportes')"><span class="icon">📈</span> Reportes</a>
+    <a href="estadisticas.html"><span class="icon">📊</span> Estadísticas</a>
     <a onclick="mostrarPagina('usuarios')"><span class="icon">👥</span> Usuarios</a>
   </aside>
 
@@ -673,7 +674,7 @@
       <div class="card" style="margin-bottom:20px;">
         <div class="card-head">
           <h3>Filtrar por período</h3>
-          <div style="display:flex; gap:10px; align-items:center;">
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
             <select id="reporteMes" style="padding:7px 12px; border:1px solid #ddd; border-radius:6px; font-size:13px;">
               <option value="0">Enero</option>
               <option value="1">Febrero</option>
@@ -695,6 +696,33 @@
             <button class="btn-primary" onclick="generarReporte()">Consultar</button>
             <button class="btn-primary" id="btnDescargarPDF" onclick="descargarPDF()" style="background:#2e7d32; display:none;">⬇ Descargar PDF</button>
           </div>
+        </div>
+        <div style="padding:16px 24px; border-top:1px solid #f0f0f0; display:flex; gap:10px; flex-wrap:wrap;">
+          <input type="text" id="fNombreProducto" placeholder="🔍 Buscar por nombre de producto..." style="flex:1; min-width:180px; padding:7px 12px; border:1px solid #ddd; border-radius:6px; font-size:12px;" oninput="aplicarFiltrosReporte()">
+          <select id="fUsuario" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px; font-size:12px;" onchange="aplicarFiltrosReporte()">
+            <option value="">Todos los clientes</option>
+          </select>
+          <select id="fCategoria" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px; font-size:12px;" onchange="aplicarFiltrosReporte()">
+            <option value="">Todas las categorías</option>
+            <option value="camisetas">Camisetas</option>
+            <option value="pantalones">Pantalones</option>
+            <option value="vestidos">Vestidos</option>
+            <option value="abrigos">Abrigos</option>
+            <option value="zapatos">Zapatos</option>
+            <option value="accesorios">Accesorios</option>
+          </select>
+          <select id="fTalla" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px; font-size:12px;" onchange="aplicarFiltrosReporte()">
+            <option value="">Todas las tallas</option>
+            <option value="XS">XS</option><option value="S">S</option><option value="M">M</option>
+            <option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option>
+            <option value="Única">Única</option>
+          </select>
+          <select id="fEstadoProducto" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px; font-size:12px;" onchange="aplicarFiltrosReporte()">
+            <option value="">Nuevo y usado</option>
+            <option value="nuevo">Solo nuevos</option>
+            <option value="usado">Solo usados</option>
+          </select>
+          <button class="btn-sm" onclick="limpiarFiltrosReporte()">✕ Limpiar filtros</button>
         </div>
       </div>
 
@@ -1502,162 +1530,231 @@
   };
 
   // ── REPORTES DE VENTAS ────────────────────────────────────────────────────
-  let reporteData = []; // cache de pedidos del período actual
+  var pedidosReporteRaw = [];  // pedidos aprobados del periodo (sin filtrar)
+  var itemsReporteRaw   = [];  // items desglosados con datos enriquecidos (categoria/estado del producto)
+  var itemsReporteFiltrados = []; // resultado tras aplicar filtros
+  var productosLookup = {};    // id producto -> {categoria, estado}
 
-  const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
-                 "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  var MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+               "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
   function iniciarReportes() {
-    // Seleccionar el mes actual por defecto
-    const hoy = new Date();
+    var hoy = new Date();
     document.getElementById("reporteMes").value = hoy.getMonth();
     document.getElementById("reporteAnio").value = hoy.getFullYear();
   }
 
+  window.limpiarFiltrosReporte = function() {
+    document.getElementById("fNombreProducto").value = "";
+    document.getElementById("fUsuario").value = "";
+    document.getElementById("fCategoria").value = "";
+    document.getElementById("fTalla").value = "";
+    document.getElementById("fEstadoProducto").value = "";
+    aplicarFiltrosReporte();
+  };
+
   window.generarReporte = async function() {
-    const mes  = parseInt(document.getElementById("reporteMes").value);
-    const anio = parseInt(document.getElementById("reporteAnio").value);
-    const nomMes = MESES[mes];
+    var mes  = parseInt(document.getElementById("reporteMes").value);
+    var anio = parseInt(document.getElementById("reporteAnio").value);
 
-    // Rango de fechas del mes seleccionado
-    const inicio = new Date(anio, mes, 1);
-    const fin    = new Date(anio, mes + 1, 0, 23, 59, 59);
+    var inicio = new Date(anio, mes, 1);
+    var fin    = new Date(anio, mes + 1, 0, 23, 59, 59);
 
-    const btn = document.getElementById("btnDescargarPDF");
-    btn.style.display = "none";
+    document.getElementById("btnDescargarPDF").style.display = "none";
     document.getElementById("statsReporte").style.display = "none";
     document.getElementById("cardTablaReporte").style.display = "none";
 
     try {
-      // Traer todos los pedidos aprobados
-      const snap = await getDocs(collection(db, "pedidos"));
-      const todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Cargar productos para enriquecer items con categoria/estado (incluso pedidos viejos)
+      var snapProd = await getDocs(collection(db, "productos"));
+      productosLookup = {};
+      snapProd.docs.forEach(function(d) {
+        var data = d.data();
+        productosLookup[d.id] = { categoria: data.categoria || "", estado: data.estado || "" };
+      });
 
-      // Filtrar por mes/año y estado aprobado
-      reporteData = todos.filter(p => {
+      var snap = await getDocs(collection(db, "pedidos"));
+      var todos = snap.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
+
+      pedidosReporteRaw = todos.filter(function(p) {
         if (p.estado !== "aprobado") return false;
-        const fecha = p.fecha?.toDate ? p.fecha.toDate() : new Date(p.fecha);
+        var fecha = p.fecha && p.fecha.toDate ? p.fecha.toDate() : new Date(p.fecha);
         return fecha >= inicio && fecha <= fin;
       });
 
-      reporteData.sort((a,b) => {
-        const fa = a.fecha?.toDate ? a.fecha.toDate() : new Date(a.fecha);
-        const fb = b.fecha?.toDate ? b.fecha.toDate() : new Date(b.fecha);
+      pedidosReporteRaw.sort(function(a, b) {
+        var fa = a.fecha && a.fecha.toDate ? a.fecha.toDate() : new Date(a.fecha);
+        var fb = b.fecha && b.fecha.toDate ? b.fecha.toDate() : new Date(b.fecha);
         return fa - fb;
       });
 
-      // ── ESTADÍSTICAS ────────────────────────────────────────────────────
-      const totalVendido = reporteData.reduce((s,p) => s + parseFloat(p.total||0), 0);
-
-      // Producto más vendido
-      const conteoProductos = {};
-      reporteData.forEach(p => {
-        (p.items||[]).forEach(item => {
-          conteoProductos[item.nombre] = (conteoProductos[item.nombre]||0) + item.cantidad;
+      // Desglosar en items individuales, enriquecidos con categoria/estado
+      itemsReporteRaw = [];
+      pedidosReporteRaw.forEach(function(p) {
+        (p.items || []).forEach(function(item) {
+          var lookup = productosLookup[item.id] || {};
+          itemsReporteRaw.push({
+            pedidoId: p.id,
+            fecha: p.fecha,
+            usuario_email: p.usuario_email || "-",
+            nombre: item.nombre,
+            cantidad: item.cantidad,
+            precio: item.precio,
+            subtotal: item.precio * item.cantidad,
+            talla: item.talla || "-",
+            categoria: item.categoria || lookup.categoria || "",
+            estado: item.estado || lookup.estado || ""
+          });
         });
       });
-      const productoTop = Object.entries(conteoProductos)
-        .sort((a,b) => b[1]-a[1])[0]?.[0] || ""+" - "+"";
 
-      // Cliente frecuente
-      const conteoClientes = {};
-      reporteData.forEach(p => {
-        const email = p.usuario_email || ""+" - "+"";
-        conteoClientes[email] = (conteoClientes[email]||0) + 1;
-      });
-      const clienteTop = Object.entries(conteoClientes)
-        .sort((a,b) => b[1]-a[1])[0]?.[0] || ""+" - "+"";
+      // Poblar el select de usuarios con los clientes del periodo
+      var usuariosUnicos = Array.from(new Set(pedidosReporteRaw.map(function(p) { return p.usuario_email; }))).filter(Boolean);
+      var selUsuario = document.getElementById("fUsuario");
+      var valorActual = selUsuario.value;
+      selUsuario.innerHTML = '<option value="">Todos los clientes</option>' +
+        usuariosUnicos.map(function(u) { return '<option value="' + u + '">' + u + '</option>'; }).join("");
+      selUsuario.value = usuariosUnicos.indexOf(valorActual) >= 0 ? valorActual : "";
 
-      document.getElementById("rTotalPedidos").textContent  = reporteData.length;
-      document.getElementById("rTotalVendido").textContent  = "$" + totalVendido.toFixed(2);
-      document.getElementById("rProductoTop").textContent   = productoTop.length > 14 ? productoTop.substring(0,12)+".." : productoTop;
-      document.getElementById("rClienteTop").textContent    = clienteTop.split("@")[0];
-      document.getElementById("statsReporte").style.display = "grid";
-
-      // ── TABLA ────────────────────────────────────────────────────────────
-      document.getElementById("reporteTitulo").textContent  = `Ventas de ${nomMes} ${anio}`;
-      document.getElementById("reporteConteo").textContent  = `${reporteData.length} pedido${reporteData.length!==1?"s":""} aprobado${reporteData.length!==1?"s":""}`;
-      document.getElementById("cardTablaReporte").style.display = "block";
-
-      if (reporteData.length === 0) {
-        document.getElementById("cuerpoReporte").innerHTML = "";
-        document.getElementById("sinVentas").style.display = "block";
-        document.getElementById("tablaReporte").style.display = "none";
-        return;
-      }
-
-      document.getElementById("sinVentas").style.display = "none";
-      document.getElementById("tablaReporte").style.display = "table";
-
-      document.getElementById("cuerpoReporte").innerHTML = reporteData.map(p => {
-        const fecha = p.fecha?.toDate
-          ? p.fecha.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"short", year:"numeric"})
-          : ""+" - "+"";
-        const productos = (p.items||[]).map(i => `${i.nombre} x${i.cantidad} ($${(i.precio*i.cantidad).toFixed(2)})`).join("<br>");
-        return `
-          <tr>
-            <td><strong>#${p.id.substring(0,8).toUpperCase()}</strong></td>
-            <td>${fecha}</td>
-            <td>${p.usuario_email || ""+" - "+""}</td>
-            <td style="font-size:12px;">${productos}</td>
-            <td><strong>$${parseFloat(p.total).toFixed(2)}</strong></td>
-            <td><span class="badge activo">aprobado</span></td>
-          </tr>`;
-      }).join("");
-
-      btn.style.display = "inline-block";
+      aplicarFiltrosReporte();
 
     } catch(e) {
       mostrarAviso("Error al generar el reporte: " + e.message, "error");
     }
   };
 
+  window.aplicarFiltrosReporte = function() {
+    var mes  = parseInt(document.getElementById("reporteMes").value);
+    var anio = parseInt(document.getElementById("reporteAnio").value);
+    var nomMes = MESES[mes];
+
+    var fNombre    = document.getElementById("fNombreProducto").value.trim().toLowerCase();
+    var fUsuario   = document.getElementById("fUsuario").value;
+    var fCategoria = document.getElementById("fCategoria").value;
+    var fTalla     = document.getElementById("fTalla").value;
+    var fEstado    = document.getElementById("fEstadoProducto").value;
+
+    itemsReporteFiltrados = itemsReporteRaw.filter(function(it) {
+      if (fNombre && it.nombre.toLowerCase().indexOf(fNombre) < 0) return false;
+      if (fUsuario && it.usuario_email !== fUsuario) return false;
+      if (fCategoria && it.categoria !== fCategoria) return false;
+      if (fTalla && it.talla !== fTalla) return false;
+      if (fEstado && it.estado !== fEstado) return false;
+      return true;
+    });
+
+    var totalVendido = itemsReporteFiltrados.reduce(function(s, it) { return s + it.subtotal; }, 0);
+    var pedidosUnicos = new Set(itemsReporteFiltrados.map(function(it) { return it.pedidoId; }));
+
+    // Producto mas vendido (dentro del filtro)
+    var conteoProductos = {};
+    itemsReporteFiltrados.forEach(function(it) {
+      conteoProductos[it.nombre] = (conteoProductos[it.nombre] || 0) + it.cantidad;
+    });
+    var productoTopEntry = Object.entries(conteoProductos).sort(function(a,b){ return b[1]-a[1]; })[0];
+    var productoTop = productoTopEntry ? productoTopEntry[0] : "-";
+
+    // Cliente que mas compra (dentro del filtro, por monto)
+    var montoClientes = {};
+    itemsReporteFiltrados.forEach(function(it) {
+      montoClientes[it.usuario_email] = (montoClientes[it.usuario_email] || 0) + it.subtotal;
+    });
+    var clienteTopEntry = Object.entries(montoClientes).sort(function(a,b){ return b[1]-a[1]; })[0];
+    var clienteTop = clienteTopEntry ? clienteTopEntry[0] : "-";
+
+    document.getElementById("rTotalPedidos").textContent  = pedidosUnicos.size;
+    document.getElementById("rTotalVendido").textContent  = "$" + totalVendido.toFixed(2);
+    document.getElementById("rProductoTop").textContent   = productoTop.length > 16 ? productoTop.substring(0,14)+".." : productoTop;
+    document.getElementById("rClienteTop").textContent    = clienteTop.split("@")[0];
+    document.getElementById("statsReporte").style.display = "grid";
+
+    document.getElementById("reporteTitulo").textContent  = "Ventas de " + nomMes + " " + anio;
+    document.getElementById("reporteConteo").textContent  = itemsReporteFiltrados.length + " producto(s) en " + pedidosUnicos.size + " pedido(s)";
+    document.getElementById("cardTablaReporte").style.display = "block";
+
+    if (itemsReporteFiltrados.length === 0) {
+      document.getElementById("cuerpoReporte").innerHTML = "";
+      document.getElementById("sinVentas").style.display = "block";
+      document.getElementById("tablaReporte").style.display = "none";
+      document.getElementById("btnDescargarPDF").style.display = "none";
+      return;
+    }
+
+    document.getElementById("sinVentas").style.display = "none";
+    document.getElementById("tablaReporte").style.display = "table";
+
+    document.getElementById("cuerpoReporte").innerHTML = itemsReporteFiltrados.map(function(it) {
+      var fecha = it.fecha && it.fecha.toDate
+        ? it.fecha.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"short", year:"numeric"})
+        : "-";
+      return "<tr>" +
+        "<td><strong>#" + it.pedidoId.substring(0,8).toUpperCase() + "</strong></td>" +
+        "<td>" + fecha + "</td>" +
+        "<td>" + it.usuario_email + "</td>" +
+        "<td style=\"font-size:12px;\">" + it.nombre + " x" + it.cantidad + " (Talla " + it.talla + (it.categoria ? ", " + it.categoria : "") + (it.estado ? ", " + it.estado : "") + ")</td>" +
+        "<td><strong>$" + it.subtotal.toFixed(2) + "</strong></td>" +
+        "<td><span class=\"badge activo\">aprobado</span></td>" +
+      "</tr>";
+    }).join("");
+
+    document.getElementById("btnDescargarPDF").style.display = "inline-block";
+  };
+
   // ── GENERAR PDF SIN LIBRERÍAS EXTERNAS ────────────────────────────────────
   window.descargarPDF = function() {
-    const mes    = parseInt(document.getElementById("reporteMes").value);
-    const anio   = parseInt(document.getElementById("reporteAnio").value);
-    const nomMes = MESES[mes];
+    var mes    = parseInt(document.getElementById("reporteMes").value);
+    var anio   = parseInt(document.getElementById("reporteAnio").value);
+    var nomMes = MESES[mes];
 
-    if (reporteData.length === 0) {
+    if (itemsReporteFiltrados.length === 0) {
       mostrarAviso("No hay datos para exportar.", "error");
       return;
     }
 
-    const totalVendido = reporteData.reduce((s,p) => s + parseFloat(p.total||0), 0);
-    const promedio     = reporteData.length > 0 ? (totalVendido / reporteData.length).toFixed(2) : "0.00";
-    const fechaHoy     = new Date().toLocaleDateString("es-EC", {day:"2-digit", month:"long", year:"numeric"});
+    var totalVendido  = itemsReporteFiltrados.reduce(function(s, it) { return s + it.subtotal; }, 0);
+    var pedidosUnicos = new Set(itemsReporteFiltrados.map(function(it) { return it.pedidoId; }));
+    var promedio      = pedidosUnicos.size > 0 ? (totalVendido / pedidosUnicos.size).toFixed(2) : "0.00";
+    var fechaHoy       = new Date().toLocaleDateString("es-EC", {day:"2-digit", month:"long", year:"numeric"});
 
-    // Filas de la tabla
-    let filas = "";
-    reporteData.forEach(function(p, idx) {
-      const fecha = p.fecha && p.fecha.toDate
-        ? p.fecha.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"long", year:"numeric"})
-        : " - ";
-      const bgColor = idx % 2 === 0 ? "#f9f9f9" : "#ffffff";
-      let productosStr = "";
-      (p.items || []).forEach(function(item) {
-        if (productosStr) productosStr += "<br>";
-        productosStr += item.nombre + " x" + item.cantidad + "  -  $" + (item.precio * item.cantidad).toFixed(2);
-      });
+    var filas = "";
+    itemsReporteFiltrados.forEach(function(it, idx) {
+      var fecha = it.fecha && it.fecha.toDate
+        ? it.fecha.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"long", year:"numeric"})
+        : "-";
+      var bgColor = idx % 2 === 0 ? "#f9f9f9" : "#ffffff";
+      var detalle = it.nombre + " x" + it.cantidad + " (Talla " + it.talla + (it.categoria ? ", " + it.categoria : "") + (it.estado ? ", " + it.estado : "") + ")";
       filas += "<tr style='background:" + bgColor + "'>";
-      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>#" + p.id.substring(0,8).toUpperCase() + "</td>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>#" + it.pedidoId.substring(0,8).toUpperCase() + "</td>";
       filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + fecha + "</td>";
-      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + (p.usuario_email || " - ") + "</td>";
-      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee;line-height:1.6'>" + productosStr + "</td>";
-      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee;font-weight:700;color:#1a5c3a'>$" + parseFloat(p.total).toFixed(2) + "</td>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + it.usuario_email + "</td>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + detalle + "</td>";
+      filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee;font-weight:700;color:#1a5c3a'>$" + it.subtotal.toFixed(2) + "</td>";
       filas += "</tr>";
     });
 
-    // Construir HTML del reporte con concatenación (sin template literals anidados)
-    let html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
+    var filtrosAplicados = [];
+    var fN = document.getElementById("fNombreProducto").value.trim();
+    var fU = document.getElementById("fUsuario").value;
+    var fC = document.getElementById("fCategoria").value;
+    var fT = document.getElementById("fTalla").value;
+    var fE = document.getElementById("fEstadoProducto").value;
+    if (fN) filtrosAplicados.push("Producto: " + fN);
+    if (fU) filtrosAplicados.push("Cliente: " + fU);
+    if (fC) filtrosAplicados.push("Categoria: " + fC);
+    if (fT) filtrosAplicados.push("Talla: " + fT);
+    if (fE) filtrosAplicados.push("Estado: " + fE);
+    var filtrosTexto = filtrosAplicados.length ? "Filtros aplicados: " + filtrosAplicados.join(" | ") : "Sin filtros adicionales";
+
+    var html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
     html += "<title>Reporte " + nomMes + " " + anio + " - Reliquia Urbana</title>";
     html += "<style>";
     html += "* { box-sizing:border-box; margin:0; padding:0; }";
     html += "body { font-family:Arial,sans-serif; padding:32px; color:#111; }";
-    html += ".header { background:#1a1a1a; color:#c8a96e; padding:24px 28px; border-radius:8px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; }";
+    html += ".header { background:#1a1a1a; color:#c8a96e; padding:24px 28px; border-radius:8px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }";
     html += ".header h1 { font-size:20px; letter-spacing:2px; }";
     html += ".header p { font-size:12px; color:#999; margin-top:4px; }";
     html += ".fecha-gen { text-align:right; font-size:11px; color:#888; }";
+    html += ".filtros-info { background:#fff8e6; border:1px solid #e8d5a3; border-radius:6px; padding:8px 14px; font-size:11px; color:#7a5c1e; margin-bottom:20px; }";
     html += ".stats-row { display:flex; gap:16px; margin-bottom:24px; }";
     html += ".stat { flex:1; background:#f5f5f5; border-radius:8px; padding:14px 16px; border-left:4px solid #c8a96e; }";
     html += ".stat .num { font-size:22px; font-weight:700; color:#111; }";
@@ -1670,34 +1767,31 @@
     html += ".footer { margin-top:24px; padding-top:16px; border-top:1px solid #eee; display:flex; justify-content:space-between; font-size:11px; color:#aaa; }";
     html += "</" + "style></" + "head><body>";
 
-    // Header
     html += "<div class='header'>";
-    html += "<div><h1>RELIQUIA URBANA</h1><p>Reporte de ventas  -  " + nomMes + " " + anio + "</p></div>";
+    html += "<div><h1>RELIQUIA URBANA</h1><p>Reporte de ventas - " + nomMes + " " + anio + "</p></div>";
     html += "<div class='fecha-gen'>Generado el: " + fechaHoy + "<br>Por: " + usuario.email + "</div>";
     html += "</div>";
 
-    // Stats
+    html += "<div class='filtros-info'>" + filtrosTexto + "</div>";
+
     html += "<div class='stats-row'>";
-    html += "<div class='stat'><div class='num'>" + reporteData.length + "</div><div class='lbl'>Pedidos aprobados</div></div>";
+    html += "<div class='stat'><div class='num'>" + pedidosUnicos.size + "</div><div class='lbl'>Pedidos aprobados</div></div>";
     html += "<div class='stat'><div class='num'>$" + totalVendido.toFixed(2) + "</div><div class='lbl'>Total vendido</div></div>";
     html += "<div class='stat'><div class='num'>$" + promedio + "</div><div class='lbl'>Promedio por pedido</div></div>";
     html += "</div>";
 
-    // Tabla
-    html += "<h2>Detalle de ventas aprobadas</h2>";
+    html += "<h2>Detalle de ventas</h2>";
     html += "<table><thead><tr>";
-    html += "<td># Pedido</td><td>Fecha</td><td>Cliente</td><td>Productos</td><td>Total</td>";
+    html += "<td># Pedido</td><td>Fecha</td><td>Cliente</td><td>Producto</td><td>Subtotal</td>";
     html += "</tr></thead><tbody>" + filas + "</tbody></table>";
 
-    // Total y footer
     html += "<div class='total-final'>Total del periodo: $" + totalVendido.toFixed(2) + "</div>";
     html += "<div class='footer'>";
-    html += "<span>Reliquia Urbana (c) " + anio + "  -  Documento generado automaticamente</span>";
-    html += "<span>" + nomMes + " " + anio + "  -  " + reporteData.length + " pedido" + (reporteData.length !== 1 ? "s" : "") + "</span>";
+    html += "<span>Reliquia Urbana (c) " + anio + " - Documento generado automaticamente</span>";
+    html += "<span>" + nomMes + " " + anio + " - " + itemsReporteFiltrados.length + " producto(s)</span>";
     html += "</div></" + "body></" + "html>";
 
-    // Abrir en nueva ventana e imprimir como PDF
-    const ventana = window.open("", "_blank", "width=900,height=700");
+    var ventana = window.open("", "_blank", "width=900,height=700");
     ventana.document.write(html);
     ventana.document.close();
     ventana.focus();
