@@ -16,7 +16,6 @@
       <a href="catalogo.html" class="active">Catálogo</a>
       <a href="historial.html">Mis compras</a>
       <a href="vender.html">Vender ropa</a>
-      <a href="mis_prendas.html">Estado de Ventas</a>
       <a href="#" id="navAdmin" style="display:none">Admin</a>
     </div>
     <div class="nav-right">
@@ -140,13 +139,13 @@
       <a href="terminos.html">Términos</a>
       <a href="acerca.html">Acerca de</a>
     </div>
-    <span class="foot-copy">© 2026 Reliquia Urbana</span>
+    <span class="foot-copy">© 2025 Reliquia Urbana</span>
   </footer>
 
 <script type="module">
 import { db } from "./firebase.js";
 import { verificarSesionOpcional, cerrarSesion } from "./auth-guard.js";
-import { agregarAlCarrito, actualizarContadorCarrito, getCarrito, setCarrito } from "./carrito-utils.js";
+import { agregarAlCarrito, actualizarContadorCarrito, getCarrito, setCarrito, cambiarCantidadCarrito } from "./carrito-utils.js";
 import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ── ESTADO GLOBAL ─────────────────────────────────────────────────────────────
@@ -405,12 +404,8 @@ function renderPanelCarrito() {
 }
 
 window.cambiarQtyPanel = function(idx, delta) {
-  const carrito = getCarrito();
-  carrito[idx].cantidad += delta;
-  if (carrito[idx].cantidad <= 0) carrito.splice(idx, 1);
-  setCarrito(carrito);
+  cambiarCantidadCarrito(idx, delta);
   renderPanelCarrito();
-  actualizarContadorCarrito();
 };
 
 window.eliminarItemPanel = function(idx) {
