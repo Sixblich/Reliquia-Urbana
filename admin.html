@@ -1005,7 +1005,7 @@
 
   // ── ELIMINAR PRODUCTO ─────────────────────────────────────────────────────
   window.eliminarProducto = async function(id, nombre) {
-    if (!confirm(`¿Seguro que quieres eliminar "${nombre}"? Esta acción no se puede deshacer.`)) return;
+    if (!(await confirmarAccion('¿Seguro que quieres eliminar "' + nombre + '"? Esta accion no se puede deshacer.', {peligro:true, textoOk:"Eliminar"}))) return;
     await deleteDoc(doc(db, "productos", id));
     cargarProductos();
     cargarDashboard();
@@ -1119,7 +1119,7 @@
 
   // Aprobar pago → actualiza pago, pedido y descuenta stock (RF-10)
   window.aprobarPago = async function(pagoId, pedidoId) {
-    if (!confirm("¿Aprobar este pago? Se descontará el stock de los productos.")) return;
+    if (!(await confirmarAccion("¿Aprobar este pago? Se descontara el stock de los productos.", {textoOk:"Aprobar"}))) return;
 
     try {
       const pedidoSnap = await getDoc(doc(db, "pedidos", pedidoId));
@@ -1146,17 +1146,17 @@
       // Actualizar estado del pedido
       await updateDoc(doc(db, "pedidos", pedidoId), { estado: "aprobado" });
 
-      alert("Pago aprobado y stock actualizado correctamente.");
+      mostrarAviso("Pago aprobado y stock actualizado correctamente.", "success");
       cargarPagos();
       cargarDashboard();
 
     } catch(e) {
-      alert("Error al aprobar el pago: " + e.message);
+      mostrarAviso("Error al aprobar el pago: " + e.message, "error");
     }
   };
 
   window.rechazarPago = async function(pagoId, pedidoId) {
-    if (!confirm("¿Rechazar este pago? El cliente deberá volver a intentar.")) return;
+    if (!(await confirmarAccion("¿Rechazar este pago? El cliente debera volver a intentar.", {peligro:true, textoOk:"Rechazar"}))) return;
 
     await updateDoc(doc(db, "pagos", pagoId), {
       estado: "rechazado",
@@ -1164,7 +1164,7 @@
     });
     await updateDoc(doc(db, "pedidos", pedidoId), { estado: "rechazado" });
 
-    alert("Pago rechazado.");
+    mostrarAviso("Pago rechazado.", "info");
     cargarPagos();
   };
 
@@ -1417,7 +1417,7 @@
       rechazada:          "Rechazar esta prenda",
       en_inspeccion:      "Marcar la prenda como 'En inspeccion'",
     };
-    if (!confirm((labels[nuevoEstado] || "Cambiar estado a: " + nuevoEstado) + "? Prenda: " + nombre)) return;
+    if (!(await confirmarAccion((labels[nuevoEstado] || "Cambiar estado a: " + nuevoEstado) + " Prenda: " + nombre))) return;
 
     try {
       await updateDoc(doc(db, "prendas_ofrecidas", id), {
@@ -1427,7 +1427,7 @@
       await cargarPrendas();
       cargarDashboard();
     } catch(e) {
-      alert("Error: " + e.message);
+      mostrarAviso("Error: " + e.message, "error");
     }
   };
 
@@ -1435,10 +1435,10 @@
   window.comprarPrenda = async function(id) {
     var p = prendasCache.find(function(x) { return x.id === id; });
     if (!p) return;
-    var precio = prompt("Confirmar compra de: " + p.nombre + "\nPrecio sugerido: $" + parseFloat(p.precio_sugerido || 0).toFixed(2) + "\n\nIngresa el precio final que pagaras al vendedor ($):", p.precio_sugerido || "");
+    var precio = await pedirValor("Confirmar compra de: " + p.nombre + "\nPrecio sugerido: $" + parseFloat(p.precio_sugerido || 0).toFixed(2) + "\n\nIngresa el precio final que pagaras al vendedor ($):", p.precio_sugerido || "");
     if (!precio) return;
     var precioFinal = parseFloat(precio);
-    if (isNaN(precioFinal) || precioFinal <= 0) { alert("Precio invalido."); return; }
+    if (isNaN(precioFinal) || precioFinal <= 0) { mostrarAviso("Precio invalido.", "error"); return; }
 
     try {
       // Actualizar estado de la prenda
@@ -1450,9 +1450,9 @@
       });
       await cargarPrendas();
       cargarDashboard();
-      alert("Prenda comprada correctamente. Precio pagado: $" + precioFinal.toFixed(2) + "\nAhora puedes publicarla en el catalogo desde esta misma seccion.");
+      mostrarAviso("Prenda comprada correctamente. Precio pagado: $" + precioFinal.toFixed(2) + ". Ahora puedes publicarla en el catalogo.", "success");
     } catch(e) {
-      alert("Error: " + e.message);
+      mostrarAviso("Error: " + e.message, "error");
     }
   };
 
@@ -1460,10 +1460,10 @@
   window.publicarPrenda = async function(id) {
     var p = prendasCache.find(function(x) { return x.id === id; });
     if (!p) return;
-    var precioVenta = prompt("Publicar '" + p.nombre + "' en el catalogo.\n\nIngresa el precio de venta al publico ($):", "");
+    var precioVenta = await pedirValor("Publicar '" + p.nombre + "' en el catalogo.\nIngresa el precio de venta al publico ($):", "");
     if (!precioVenta) return;
     var precio = parseFloat(precioVenta);
-    if (isNaN(precio) || precio <= 0) { alert("Precio invalido."); return; }
+    if (isNaN(precio) || precio <= 0) { mostrarAviso("Precio invalido.", "error"); return; }
 
     try {
       // Crear producto en el catalogo
@@ -1495,9 +1495,9 @@
 
       await cargarPrendas();
       cargarDashboard();
-      alert("Prenda publicada en el catalogo con precio de venta: $" + precio.toFixed(2));
+      mostrarAviso("Prenda publicada en el catalogo con precio de venta: $" + precio.toFixed(2), "success");
     } catch(e) {
-      alert("Error al publicar: " + e.message);
+      mostrarAviso("Error al publicar: " + e.message, "error");
     }
   };
 
@@ -1608,7 +1608,7 @@
       btn.style.display = "inline-block";
 
     } catch(e) {
-      alert("Error al generar el reporte: " + e.message);
+      mostrarAviso("Error al generar el reporte: " + e.message, "error");
     }
   };
 
@@ -1619,7 +1619,7 @@
     const nomMes = MESES[mes];
 
     if (reporteData.length === 0) {
-      alert("No hay datos para exportar.");
+      mostrarAviso("No hay datos para exportar.", "error");
       return;
     }
 
@@ -1707,5 +1707,6 @@
   // ── CARGAR AL INICIO ──────────────────────────────────────────────────────
   cargarDashboard();
 </script>
+<script src="ui-notify.js"></script>
 </body>
 </html>
