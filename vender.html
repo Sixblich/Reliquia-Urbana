@@ -184,7 +184,7 @@
   <a href="catalogo.html" class="logo">RELIQUIA URBANA</a>
   <div class="nav-links">
     <a href="catalogo.html">Catalogo</a>
-    <a href="mis_prendas.html">Mis prendas</a>
+    <a href="mis-prendas.html">Mis prendas</a>
     <a href="vender.html" class="active">Vender ropa</a>
   </div>
   <div class="nav-right">
@@ -323,7 +323,7 @@
 
     <div class="mensaje" id="msgVender"></div>
     <button class="btn-main" id="btnEnviar" onclick="enviarPrenda()">Publicar prenda para revision</button>
-    <a href="mis_prendas.html" class="btn-link">Ver el estado de mis prendas publicadas →</a>
+    <a href="mis-prendas.html" class="btn-link">Ver el estado de mis prendas publicadas →</a>
   </div>
 
   <!-- CONFIRMACION -->
@@ -386,7 +386,7 @@
   window.cargarFoto = function(idx, input) {
     var file = input.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert("La imagen no puede superar 5MB."); input.value = ""; return; }
+    if (file.size > 5 * 1024 * 1024) { mostrarAviso("La imagen no puede superar 5MB.", "error"); input.value = ""; return; }
     fotosFiles[idx] = file;
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -475,5 +475,6 @@
     window.scrollTo(0, 0);
   };
 </script>
+<script src="ui-notify.js"></script>
 </body>
 </html>
