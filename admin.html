@@ -297,7 +297,146 @@
     .modal-info-table td:last-child { font-weight: 500; }
     .modal-acciones { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid #f0f0f0; }
 
+
+    /* ── PEDIDOS ADMIN (cards con info de entrega) ── */
+    .pedido-admin-card {
+      background: #fff; border-radius: 12px; padding: 18px;
+      border: 1px solid #e0e0e0; margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .pedido-admin-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+    .pedido-admin-id { font-weight: 700; font-size: 14px; }
+    .pedido-admin-fecha { font-size: 11px; color: #999; }
+    .pedido-admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+    @media (max-width: 700px) { .pedido-admin-grid { grid-template-columns: 1fr; } }
+    .pedido-admin-box { background: #fafafa; border-radius: 8px; padding: 12px 14px; font-size: 12px; line-height: 1.8; }
+    .pedido-admin-box h5 { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .pedido-admin-productos { font-size: 12px; color: #555; padding: 10px 0; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; margin-bottom: 10px; }
+    .pedido-admin-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .pedido-admin-total { font-size: 16px; font-weight: 700; }
+    .entrega-tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .entrega-tag.recoger { background: #e3f2fd; color: #1565c0; }
+    .entrega-tag.envio { background: #fff3e0; color: #e65100; }
+
+
+    /* ── ALERTAS DE STOCK ── */
+    .alerta-stock-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 13px;
+    }
+    .alerta-stock-item.agotado { background: #fce4ec; color: #c62828; }
+    .alerta-stock-item.bajo    { background: #fff3e0; color: #e65100; }
+    .alerta-stock-item strong { font-weight: 700; }
+    .alerta-stock-badge {
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+    }
+    .alerta-stock-item.agotado .alerta-stock-badge { background: #c62828; color: #fff; }
+    .alerta-stock-item.bajo .alerta-stock-badge { background: #e65100; color: #fff; }
+
+    /* ── RESPONSIVE MOVIL ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      /* Navbar */
+      nav { padding: 0 16px; }
+      .nav-logo { font-size: 15px; letter-spacing: 1px; }
+      .nav-badge { font-size: 9px; padding: 2px 6px; }
+      .nav-user { display: none; }
+      .btn-logout { padding: 5px 10px; font-size: 11px; }
+
+      /* Layout: sidebar pasa a barra horizontal con scroll */
+      .layout { flex-direction: column; min-height: auto; }
+      .sidebar {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        padding: 10px 8px;
+        gap: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .sidebar::-webkit-scrollbar { display: none; }
+      .sidebar-title { display: none; }
+      .sidebar a {
+        flex-direction: column;
+        gap: 3px;
+        padding: 8px 12px;
+        white-space: nowrap;
+        border-left: none !important;
+        border-bottom: 3px solid transparent;
+        font-size: 10px;
+        text-align: center;
+      }
+      .sidebar a.active, .sidebar a:hover {
+        border-left: none;
+        border-bottom: 3px solid #c8a96e;
+      }
+      .sidebar a .icon { font-size: 18px; width: auto; }
+
+      .main { padding: 16px; }
+      .page-title { font-size: 19px; }
+      .page-sub { font-size: 12px; margin-bottom: 18px; }
+
+      /* Stats: 2 columnas en vez de 4 */
+      .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-card { padding: 14px; border-radius: 10px; }
+      .stat-num { font-size: 24px; }
+      .stat-label { font-size: 11px; }
+
+      /* Cards y headers */
+      .card-head { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
+      .card-head h3 { font-size: 13px; }
+      .btn-primary { padding: 7px 14px; font-size: 12px; }
+
+      /* Tablas: scroll horizontal en vez de romper layout */
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      th, td { padding: 10px 12px; font-size: 12px; }
+
+      /* Formulario de productos: 1 columna */
+      .form-grid { grid-template-columns: 1fr; padding: 16px; gap: 12px; }
+      .form-group label { font-size: 11px; }
+      .form-group input, .form-group select, .form-group textarea { font-size: 12px; padding: 9px 11px; }
+      .form-footer { padding: 12px 16px; flex-wrap: wrap; }
+
+      /* Filtros de estado */
+      .btn-filtro-estado { font-size: 11px; padding: 5px 10px; }
+
+      /* Cards de prendas y pedidos */
+      .prenda-admin-card { flex-direction: column; padding: 14px; }
+      .prenda-admin-img { width: 100%; height: 160px; }
+      .prenda-admin-head { flex-direction: column; align-items: flex-start; }
+      .prenda-admin-meta { font-size: 11px; }
+      .prenda-admin-acciones { flex-direction: column; }
+      .prenda-admin-acciones button { width: 100%; }
+
+      .pedido-admin-card { padding: 14px; }
+      .pedido-admin-grid { gap: 10px; }
+      .pedido-admin-box { font-size: 11px; padding: 10px 12px; }
+      .pedido-admin-footer { flex-direction: column; align-items: stretch; }
+      .pedido-admin-footer select { width: 100%; }
+
+      /* Modales */
+      .modal-prenda-header { padding: 16px 18px; }
+      .modal-prenda-header h3 { font-size: 15px; }
+      .modal-prenda-body { padding: 16px; }
+      .modal-fotos-grid { grid-template-columns: repeat(2, 1fr); }
+      .modal-info-table td { padding: 6px 8px; font-size: 12px; }
+      .modal-info-table td:first-child { width: 100px; }
+      .modal-acciones { flex-direction: column; }
+      .modal-acciones button { width: 100%; }
+
+      /* Reportes */
+      #page-reportes .card-head { flex-direction: column; align-items: stretch; }
+      #page-reportes select, #page-reportes button { width: 100%; margin-bottom: 6px; }
+    }
+
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat-num { font-size: 20px; }
+      .sidebar a { font-size: 9px; padding: 7px 9px; }
+      .sidebar a .icon { font-size: 16px; }
+    }
+
   </style>
+
 </head>
 <body>
 
@@ -352,6 +491,13 @@
           <div class="stat-num" id="statCategorias">—</div>
           <div class="stat-label">Categorías</div>
         </div>
+      </div>
+
+      <div class="card" id="cardAlertasStock" style="display:none; margin-bottom:20px; border-left:4px solid #e65100;">
+        <div class="card-head">
+          <h3>⚠️ Alertas de stock</h3>
+        </div>
+        <div id="listaAlertasStock" style="padding: 0 24px 16px;"></div>
       </div>
 
       <div class="card">
@@ -469,7 +615,7 @@
         <div class="card-head"><h3>Pagos pendientes y procesados</h3></div>
         <table>
           <thead>
-            <tr><th>Comprobante</th><th>Cliente</th><th>Referencia</th><th>Monto</th><th>Estado</th><th>Acciones</th></tr>
+            <tr><th>Comprobante</th><th>Comprador</th><th>Referencia / Entrega</th><th>Monto</th><th>Estado</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaPagos"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
         </table>
@@ -479,15 +625,14 @@
     <!-- ── PEDIDOS ── -->
     <div class="page" id="page-pedidos">
       <h1 class="page-title">Gestión de Pedidos</h1>
-      <p class="page-sub">Visualiza y actualiza el estado de todos los pedidos (RF-21)</p>
-      <div class="card">
-        <div class="card-head"><h3>Todos los pedidos</h3></div>
-        <table>
-          <thead>
-            <tr><th>Pedido</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th><th>Acciones</th></tr>
-          </thead>
-          <tbody id="tablaPedidos"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
-        </table>
+      <p class="page-sub">Visualiza y actualiza el estado de todos los pedidos</p>
+      <div id="listaPedidosAdmin"><div class="empty">Cargando...</div></div>
+    </div>
+
+    <!-- MODAL DETALLE PEDIDO -->
+    <div id="modalPedido" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; align-items:center; justify-content:center; overflow-y:auto; padding:20px;">
+      <div style="background:#fff; border-radius:14px; max-width:560px; width:100%; max-height:90vh; overflow-y:auto;">
+        <div id="pedidoModalContent"></div>
       </div>
     </div>
 
@@ -672,7 +817,7 @@
       getDocs(collection(db, "usuarios"))
     ]);
 
-    const prods    = snapProd.docs.map(d => d.data());
+    const prods    = snapProd.docs.map(d => Object.assign({id: d.id}, d.data()));
     const activos  = prods.filter(p => p.activo !== false);
     const stock    = activos.reduce((s, p) => s + (parseInt(p.stock)||0), 0);
     const cats     = new Set(activos.map(p => p.categoria)).size;
@@ -681,6 +826,37 @@
     document.getElementById("statUsuarios").textContent   = snapUsers.size;
     document.getElementById("statStock").textContent      = stock;
     document.getElementById("statCategorias").textContent = cats;
+
+    // ── ALERTAS DE STOCK (agotado o bajo) ──────────────────────────────────
+    const LIMITE_STOCK_BAJO = 3;
+    const agotados = activos.filter(p => (parseInt(p.stock)||0) === 0);
+    const bajos    = activos.filter(p => { const s = parseInt(p.stock)||0; return s > 0 && s <= LIMITE_STOCK_BAJO; });
+
+    const cardAlertas  = document.getElementById("cardAlertasStock");
+    const listaAlertas = document.getElementById("listaAlertasStock");
+
+    if (agotados.length > 0 || bajos.length > 0) {
+      cardAlertas.style.display = "block";
+      var htmlAlertas = "";
+
+      agotados.forEach(function(p) {
+        htmlAlertas += '<div class="alerta-stock-item agotado" onclick="editarProducto(\'' + p.id + '\'); mostrarPaginaDirecta(\'productos\')" style="cursor:pointer;">' +
+          '<span><strong>' + p.nombre + '</strong>  -  ' + (p.categoria||'') + ' · Talla ' + (p.talla||'') + '</span>' +
+          '<span class="alerta-stock-badge">SIN STOCK</span>' +
+        '</div>';
+      });
+
+      bajos.forEach(function(p) {
+        htmlAlertas += '<div class="alerta-stock-item bajo" onclick="editarProducto(\'' + p.id + '\'); mostrarPaginaDirecta(\'productos\')" style="cursor:pointer;">' +
+          '<span><strong>' + p.nombre + '</strong>  -  ' + (p.categoria||'') + ' · Talla ' + (p.talla||'') + '</span>' +
+          '<span class="alerta-stock-badge">QUEDAN ' + p.stock + '</span>' +
+        '</div>';
+      });
+
+      listaAlertas.innerHTML = htmlAlertas;
+    } else {
+      cardAlertas.style.display = "none";
+    }
 
     const recientes = activos.slice(-5).reverse();
     document.getElementById("tablaRecientes").innerHTML = recientes.length
@@ -693,6 +869,17 @@
           </tr>`).join("")
       : `<tr><td colspan="4" class="empty">No hay productos aún</td></tr>`;
   }
+
+  window.mostrarPaginaDirecta = function(id) {
+    document.querySelectorAll(".page").forEach(function(p) { p.classList.remove("active"); });
+    document.querySelectorAll(".sidebar a").forEach(function(a) { a.classList.remove("active"); });
+    document.getElementById("page-" + id).classList.add("active");
+    document.querySelectorAll(".sidebar a").forEach(function(a) {
+      if (a.getAttribute("onclick") && a.getAttribute("onclick").indexOf("'" + id + "'") >= 0) {
+        a.classList.add("active");
+      }
+    });
+  };
 
   // ── PRODUCTOS ─────────────────────────────────────────────────────────────
   async function cargarProductos() {
@@ -876,29 +1063,50 @@
 
   // ── VALIDACIÓN DE PAGOS (RF-19) ───────────────────────────────────────────
   async function cargarPagos() {
-    const snap = await getDocs(collection(db, "pagos"));
-    const pagos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    pagos.sort((a,b) => (b.fecha_subida?.seconds||0) - (a.fecha_subida?.seconds||0));
+    var snapPagos   = await getDocs(collection(db, "pagos"));
+    var snapPedidos = await getDocs(collection(db, "pedidos"));
 
-    document.getElementById("tablaPagos").innerHTML = pagos.length
-      ? pagos.map(p => `
-          <tr>
-            <td>
-              <img src="${p.comprobante_url}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;cursor:pointer"
-                   onclick="verComprobante('${p.comprobante_url}')">
-            </td>
-            <td>${p.nombre_titular || '"+" - "+"'}<br><small style="color:#999">${p.usuario_id ? p.usuario_id.substring(0,8) : ''}</small></td>
-            <td>${p.referencia || '"+" - "+"'}</td>
-            <td>$${parseFloat(p.monto).toFixed(2)}</td>
-            <td><span class="badge ${p.estado === 'aprobado' ? 'activo' : p.estado === 'rechazado' ? 'inactivo' : 'admin'}">${p.estado}</span></td>
-            <td>
-              ${p.estado === 'pendiente' ? `
-                <button class="btn-sm" onclick="aprobarPago('${p.id}', '${p.pedido_id}')">✅ Aprobar</button>
-                <button class="btn-sm danger" onclick="rechazarPago('${p.id}', '${p.pedido_id}')">❌ Rechazar</button>
-              ` : `<span style="color:#aaa; font-size:12px">Ya procesado</span>`}
-            </td>
-          </tr>`).join("")
-      : `<tr><td colspan="6" class="empty">No hay pagos registrados</td></tr>`;
+    var pagos   = snapPagos.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
+    var pedidos = {};
+    snapPedidos.docs.forEach(function(d) { pedidos[d.id] = d.data(); });
+
+    pagos.sort(function(a, b) {
+      return (b.fecha_subida && b.fecha_subida.seconds || 0) - (a.fecha_subida && a.fecha_subida.seconds || 0);
+    });
+
+    var cont = document.getElementById("tablaPagos");
+    if (pagos.length === 0) {
+      cont.innerHTML = "<tr><td colspan=\"6\" class=\"empty\">No hay pagos registrados</td></tr>";
+      return;
+    }
+
+    var html = "";
+    for (var i = 0; i < pagos.length; i++) {
+      var p = pagos[i];
+      var pedidoInfo = pedidos[p.pedido_id] || {};
+      var compradorNombre = pedidoInfo.comprador_nombre || p.nombre_titular || "-";
+      var compradorCedula = pedidoInfo.comprador_cedula || "-";
+      var entregaTxt = pedidoInfo.metodo_entrega === "recoger" ? "Recoger en tienda" :
+                        pedidoInfo.metodo_entrega === "envio" ? "Envio a domicilio" : "-";
+
+      var acciones = "";
+      if (p.estado === "pendiente") {
+        acciones = "<button class=\"btn-sm\" onclick=\"aprobarPago('" + p.id + "','" + p.pedido_id + "')\">Aprobar</button>" +
+                   "<button class=\"btn-sm danger\" onclick=\"rechazarPago('" + p.id + "','" + p.pedido_id + "')\">Rechazar</button>";
+      } else {
+        acciones = "<span style=\"color:#aaa;font-size:12px\">Ya procesado</span>";
+      }
+
+      html += "<tr>" +
+        "<td><img src=\"" + p.comprobante_url + "\" style=\"width:50px;height:50px;object-fit:cover;border-radius:6px;cursor:pointer\" onclick=\"verComprobante('" + p.comprobante_url + "')\"></td>" +
+        "<td><strong>" + compradorNombre + "</strong><br><small style=\"color:#999\">CI: " + compradorCedula + "</small></td>" +
+        "<td>" + (p.referencia || "-") + "<br><small style=\"color:#999\">" + entregaTxt + "</small></td>" +
+        "<td>$" + parseFloat(p.monto).toFixed(2) + "</td>" +
+        "<td><span class=\"badge " + (p.estado === "aprobado" ? "activo" : p.estado === "rechazado" ? "inactivo" : "admin") + "\">" + p.estado + "</span></td>" +
+        "<td>" + acciones + "</td>" +
+      "</tr>";
+    }
+    cont.innerHTML = html;
   }
 
   window.verComprobante = function(url) {
@@ -961,36 +1169,93 @@
   };
 
   // ── GESTIÓN DE PEDIDOS (RF-21) ────────────────────────────────────────────
-  async function cargarPedidosAdmin() {
-    const snap = await getDocs(collection(db, "pedidos"));
-    const pedidos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    pedidos.sort((a,b) => (b.fecha?.seconds||0) - (a.fecha?.seconds||0));
+  var pedidosCacheAdmin = [];
 
-    document.getElementById("tablaPedidos").innerHTML = pedidos.length
-      ? pedidos.map(p => `
-          <tr>
-            <td><strong>#${p.id.substring(0,8).toUpperCase()}</strong></td>
-            <td>${p.usuario_email || '"+" - "+"'}</td>
-            <td style="font-size:12px">${(p.items||[]).map(i => `${i.nombre} x${i.cantidad}`).join(', ')}</td>
-            <td>$${parseFloat(p.total).toFixed(2)}</td>
-            <td>
-              <select onchange="cambiarEstadoPedido('${p.id}', this.value)" style="padding:4px 8px; border-radius:6px; border:1px solid #ddd; font-size:12px;">
-                <option value="pendiente_pago" ${p.estado==='pendiente_pago'?'selected':''}>Pendiente pago</option>
-                <option value="aprobado" ${p.estado==='aprobado'?'selected':''}>Aprobado</option>
-                <option value="rechazado" ${p.estado==='rechazado'?'selected':''}>Rechazado</option>
-                <option value="enviado" ${p.estado==='enviado'?'selected':''}>Enviado</option>
-                <option value="entregado" ${p.estado==='entregado'?'selected':''}>Entregado</option>
-              </select>
-            </td>
-            <td><span class="badge ${p.estado === 'aprobado' || p.estado === 'entregado' ? 'activo' : p.estado === 'rechazado' ? 'inactivo' : 'admin'}">${p.estado}</span></td>
-          </tr>`).join("")
-      : `<tr><td colspan="6" class="empty">No hay pedidos registrados</td></tr>`;
+  async function cargarPedidosAdmin() {
+    var snap = await getDocs(collection(db, "pedidos"));
+    pedidosCacheAdmin = snap.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
+    pedidosCacheAdmin.sort(function(a, b) {
+      return (b.fecha && b.fecha.seconds || 0) - (a.fecha && a.fecha.seconds || 0);
+    });
+    renderPedidosAdmin(pedidosCacheAdmin);
+  }
+
+  function renderPedidosAdmin(lista) {
+    var cont = document.getElementById("listaPedidosAdmin");
+    if (!lista || lista.length === 0) {
+      cont.innerHTML = "<div class=\"empty\">No hay pedidos registrados</div>";
+      return;
+    }
+
+    var html = "";
+    for (var i = 0; i < lista.length; i++) {
+      var p = lista[i];
+      var fecha = p.fecha && p.fecha.toDate
+        ? p.fecha.toDate().toLocaleDateString("es-EC", {day:"2-digit", month:"short", year:"numeric"})
+        : "-";
+
+      var productosHtml = "";
+      (p.items || []).forEach(function(it) {
+        productosHtml += it.nombre + " x" + it.cantidad + " ($" + (it.precio*it.cantidad).toFixed(2) + ")<br>";
+      });
+
+      var entregaTag = "";
+      var entregaInfo = "";
+      if (p.metodo_entrega === "recoger") {
+        entregaTag = "<span class=\"entrega-tag recoger\">Recoger en tienda</span>";
+        entregaInfo = "El cliente retirara personalmente en la tienda.";
+      } else if (p.metodo_entrega === "envio") {
+        entregaTag = "<span class=\"entrega-tag envio\">Envio a domicilio</span>";
+        entregaInfo = (p.envio_direccion || "-") + ", " + (p.envio_ciudad || "-") + " - " + (p.comprador_provincia || "-");
+      } else {
+        entregaTag = "<span style=\"color:#aaa;font-size:11px\">Sin especificar</span>";
+      }
+
+      html +=
+        "<div class=\"pedido-admin-card\">" +
+          "<div class=\"pedido-admin-head\">" +
+            "<div>" +
+              "<div class=\"pedido-admin-id\">Pedido #" + p.id.substring(0,8).toUpperCase() + "</div>" +
+              "<div class=\"pedido-admin-fecha\">" + fecha + "</div>" +
+            "</div>" +
+            "<span class=\"badge " + (p.estado === "aprobado" || p.estado === "entregado" ? "activo" : p.estado === "rechazado" ? "inactivo" : "admin") + "\">" + p.estado + "</span>" +
+          "</div>" +
+          "<div class=\"pedido-admin-grid\">" +
+            "<div class=\"pedido-admin-box\">" +
+              "<h5>Datos del comprador</h5>" +
+              "<strong>" + (p.comprador_nombre || p.usuario_email) + "</strong><br>" +
+              "Cedula: " + (p.comprador_cedula || "-") + "<br>" +
+              "Tel: " + (p.comprador_telefono || "-") + "<br>" +
+              "Correo: " + (p.usuario_email || "-") +
+            "</div>" +
+            "<div class=\"pedido-admin-box\">" +
+              "<h5>Entrega</h5>" +
+              entregaTag + "<br><br>" +
+              entregaInfo +
+            "</div>" +
+          "</div>" +
+          "<div class=\"pedido-admin-productos\">" + productosHtml + "</div>" +
+          "<div class=\"pedido-admin-footer\">" +
+            "<span class=\"pedido-admin-total\">$" + parseFloat(p.total).toFixed(2) + "</span>" +
+            "<select onchange=\"cambiarEstadoPedido('" + p.id + "', this.value)\" style=\"padding:6px 10px;border-radius:6px;border:1px solid #ddd;font-size:12px;\">" +
+              "<option value=\"pendiente_pago\" " + (p.estado==="pendiente_pago"?"selected":"") + ">Pendiente pago</option>" +
+              "<option value=\"aprobado\" "       + (p.estado==="aprobado"?"selected":"") + ">Aprobado</option>" +
+              "<option value=\"rechazado\" "      + (p.estado==="rechazado"?"selected":"") + ">Rechazado</option>" +
+              "<option value=\"enviado\" "        + (p.estado==="enviado"?"selected":"") + ">Enviado</option>" +
+              "<option value=\"entregado\" "      + (p.estado==="entregado"?"selected":"") + ">Entregado</option>" +
+            "</select>" +
+          "</div>" +
+        "</div>";
+    }
+    cont.innerHTML = html;
   }
 
   window.cambiarEstadoPedido = async function(pedidoId, nuevoEstado) {
     await updateDoc(doc(db, "pedidos", pedidoId), { estado: nuevoEstado });
     cargarPedidosAdmin();
   };
+
+
 
   // ── MARKETPLACE  -  PRENDAS OFRECIDAS ──────────────────────────────────────────
 
@@ -1144,39 +1409,27 @@
     document.getElementById("modalPrendaAdmin").style.display = "none";
   };
 
- window.cambiarEstadoPrenda = async function(id, nuevoEstado) {
-  var p = prendasCache.find(function(x) {
-    return x.id === id;
-  });
+  window.cambiarEstadoPrenda = async function(id, nuevoEstado) {
+    var p = prendasCache.find(function(x) { return x.id === id; });
+    var nombre = p ? p.nombre : id;
+    var labels = {
+      aceptada_pendiente: "Aceptar la prenda (el usuario debera traerla a la tienda)",
+      rechazada:          "Rechazar esta prenda",
+      en_inspeccion:      "Marcar la prenda como 'En inspeccion'",
+    };
+    if (!confirm((labels[nuevoEstado] || "Cambiar estado a: " + nuevoEstado) + "? Prenda: " + nombre)) return;
 
-  var nombre = p ? p.nombre : id;
-
-  var labels = {
-    aceptada_pendiente: "Aceptar la prenda (el usuario debera traerla a la tienda)",
-    rechazada: "Rechazar esta prenda",
-    en_inspeccion: "Marcar la prenda como 'En inspeccion'"
+    try {
+      await updateDoc(doc(db, "prendas_ofrecidas", id), {
+        estadoRevision      : nuevoEstado,
+        fecha_actualizacion : serverTimestamp()
+      });
+      await cargarPrendas();
+      cargarDashboard();
+    } catch(e) {
+      alert("Error: " + e.message);
+    }
   };
-
-  if (
-    !confirm(
-      (labels[nuevoEstado] || "Cambiar estado a: " + nuevoEstado) +
-      "?\n\nPrenda: " + nombre
-    )
-  ) return;
-
-  try {
-    await updateDoc(doc(db, "prendas_ofrecidas", id), {
-      estadoRevision: nuevoEstado,
-      fecha_actualizacion: serverTimestamp()
-    });
-
-    await cargarPrendas();
-    cargarDashboard();
-
-  } catch (e) {
-    alert("Error: " + e.message);
-  }
-};
 
   // Confirmar compra: paga al vendedor y crea producto en inventario
   window.comprarPrenda = async function(id) {
