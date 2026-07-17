@@ -9,7 +9,6 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: #f6f6f6; color: #111; }
 
-    /* NAVBAR */
     nav {
       background: #111; padding: 0 32px; height: 60px;
       display: flex; align-items: center; justify-content: space-between;
@@ -24,12 +23,10 @@
     .btn-logout { background: transparent; border: 1px solid #333; color: #888; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: 0.2s; }
     .btn-logout:hover { border-color: #c8a96e; color: #c8a96e; }
 
-    /* CONTAINER */
     .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
     .page-title { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 4px; }
     .page-sub { color: #999; font-size: 13px; margin-bottom: 28px; }
 
-    /* STEPS */
     .steps-bar { display: flex; align-items: center; margin-bottom: 32px; }
     .step-item { display: flex; align-items: center; gap: 10px; flex: 1; }
     .step-circle {
@@ -45,15 +42,12 @@
     .step-line { flex: 1; height: 2px; background: #e5e5e5; margin: 0 8px; }
     .step-line.done { background: #70ad47; }
 
-    /* LAYOUT */
     .layout { display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
     @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
 
-    /* CARD */
     .card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
     .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
 
-    /* ITEMS */
     .item-row { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f0f0f0; align-items: center; }
     .item-row:last-child { border-bottom: none; }
     .item-img { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; background: #eee; flex-shrink: 0; }
@@ -70,11 +64,9 @@
     .empty-cart .icon { font-size: 48px; margin-bottom: 12px; }
     .empty-cart a { color: #c8a96e; text-decoration: none; font-weight: 600; }
 
-    /* RESUMEN */
     .resumen-row { display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 10px; }
     .resumen-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; padding-top: 14px; border-top: 1px solid #eee; margin-top: 6px; }
 
-    /* BOTONES */
     .btn-main {
       width: 100%; padding: 14px; background: #111; color: #fff; border: none;
       border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
@@ -89,7 +81,6 @@
     }
     .btn-secondary:hover { border-color: #c8a96e; color: #c8a96e; }
 
-    /* PAGO */
     .banco-box {
       background: #fdf8f0; border: 1px solid #e8d5a3;
       border-radius: 10px; padding: 16px; margin-bottom: 20px;
@@ -98,7 +89,22 @@
     .banco-row span:first-child { color: #7a5c1e; }
     .banco-row span:last-child { font-weight: 600; color: #5a3d0e; }
 
-    /* UPLOAD */
+    /* ENTREGA - metodo pickup/envio */
+    .entrega-opciones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    @media (max-width: 500px) { .entrega-opciones { grid-template-columns: 1fr; } }
+    .entrega-opt {
+      border: 2px solid #e5e5e5; border-radius: 10px; padding: 14px;
+      cursor: pointer; transition: 0.2s; text-align: center;
+    }
+    .entrega-opt:hover { border-color: #c8a96e; }
+    .entrega-opt.selected { border-color: #111; background: #fafafa; }
+    .entrega-opt-icon { font-size: 24px; margin-bottom: 6px; }
+    .entrega-opt-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .entrega-opt-desc { font-size: 11px; color: #999; }
+
+    .direccion-fields { display: none; margin-top: 4px; }
+    .direccion-fields.show { display: block; }
+
     .upload-box {
       border: 2px dashed #ddd; border-radius: 10px; padding: 28px;
       text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 16px;
@@ -110,29 +116,113 @@
     .upload-text { font-size: 13px; color: #777; line-height: 1.5; }
     .upload-preview { max-width: 100%; max-height: 160px; border-radius: 8px; margin-top: 12px; display: none; }
 
-    /* INPUTS */
     .input-group { margin-bottom: 14px; }
     .input-group label { display: block; font-size: 11px; font-weight: 500; color: #555; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .input-group input {
+    .input-group input, .input-group select {
       width: 100%; padding: 11px 14px; border: 1.5px solid #e5e5e5;
       border-radius: 8px; font-size: 13px; background: #fafafa;
       font-family: 'DM Sans', sans-serif; transition: 0.2s;
     }
-    .input-group input:focus { outline: none; border-color: #c8a96e; box-shadow: 0 0 0 3px rgba(200,169,110,0.12); background: #fff; }
+    .input-group input:focus, .input-group select:focus { outline: none; border-color: #c8a96e; box-shadow: 0 0 0 3px rgba(200,169,110,0.12); background: #fff; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 500px) { .form-row-2 { grid-template-columns: 1fr; } }
 
-    /* MENSAJE */
+    .section-label { font-size: 12px; font-weight: 700; color: #333; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .section-label:first-child { margin-top: 0; }
+
     .mensaje { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 13px; text-align: center; display: none; }
     .mensaje.error   { background: #fff0f0; color: #c00; border: 1px solid #fcc; display: block; }
     .mensaje.success { background: #f0fff4; color: #090; border: 1px solid #9f9; display: block; }
     .mensaje.loading { background: #f5f5f5; color: #555; border: 1px solid #ddd; display: block; }
 
-    /* CONFIRMACION */
     .confirm-box { text-align: center; padding: 40px 20px; }
     .confirm-icon { font-size: 56px; margin-bottom: 16px; }
     .confirm-box h2 { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 10px; }
     .confirm-box p { color: #777; font-size: 14px; margin-bottom: 4px; line-height: 1.6; }
     .confirm-id { display: inline-block; background: #f4f4f4; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin: 14px 0; color: #111; }
     .estado-badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #fff3e0; color: #e65100; }
+
+    /* ── RESPONSIVE MOVIL ────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      nav {
+        padding: 0 16px; height: auto;
+        padding-top: 10px; padding-bottom: 10px;
+        flex-wrap: wrap; gap: 8px;
+      }
+      .logo { font-size: 13px; letter-spacing: 2px; }
+      .nav-links { order: 3; width: 100%; justify-content: center; gap: 14px; }
+      .nav-links a { font-size: 12px; }
+      .nav-email { display: none; }
+      .btn-logout { padding: 5px 10px; font-size: 11px; }
+
+      .container { padding: 20px 16px 60px; }
+      .page-title { font-size: 22px; }
+      .page-sub { font-size: 12px; margin-bottom: 20px; }
+
+      /* Steps bar mas compacto */
+      .steps-bar { margin-bottom: 22px; }
+      .step-circle { width: 26px; height: 26px; font-size: 11px; }
+      .step-label { font-size: 10px; }
+      .step-line { margin: 0 4px; }
+
+      .card { padding: 16px; border-radius: 12px; }
+      .card h3 { font-size: 14px; margin-bottom: 12px; }
+
+      /* Item row del carrito: pasa a 2 filas en movil */
+      .item-row {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 0;
+      }
+      .item-img { width: 52px; height: 52px; }
+      .item-info { flex: 1 1 auto; min-width: 120px; }
+      .item-nombre { font-size: 13px; }
+      .item-meta { font-size: 11px; }
+      .item-qty { order: 3; }
+      .item-precio { order: 2; font-size: 13px; }
+      .item-del { order: 4; }
+
+      .empty-cart { padding: 40px 16px; }
+      .empty-cart .icon { font-size: 36px; }
+
+      .resumen-row { font-size: 12px; }
+      .resumen-total { font-size: 16px; }
+
+      .btn-main { font-size: 13px; padding: 12px; }
+      .btn-secondary { font-size: 12px; padding: 10px; }
+
+      /* Datos comprador */
+      .banco-box { padding: 12px; }
+      .banco-row { font-size: 12px; }
+
+      .entrega-opciones { grid-template-columns: 1fr; }
+      .entrega-opt { padding: 12px; }
+      .entrega-opt-icon { font-size: 20px; }
+      .entrega-opt-title { font-size: 12px; }
+      .entrega-opt-desc { font-size: 10px; }
+
+      .upload-box { padding: 20px; }
+      .upload-icon { font-size: 26px; }
+      .upload-text { font-size: 12px; }
+
+      .input-group label { font-size: 10px; }
+      .input-group input, .input-group select { font-size: 12px; padding: 10px 12px; }
+      .form-row-2 { grid-template-columns: 1fr; gap: 12px; }
+
+      .section-label { font-size: 11px; margin: 16px 0 8px; }
+
+      .confirm-box { padding: 28px 16px; }
+      .confirm-icon { font-size: 44px; }
+      .confirm-box h2 { font-size: 19px; }
+      .confirm-box p { font-size: 13px; }
+    }
+
+    @media (max-width: 360px) {
+      .logo { font-size: 11px; letter-spacing: 1px; }
+      .nav-links a { font-size: 10.5px; }
+      .page-title { font-size: 19px; }
+      .step-label { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -154,7 +244,6 @@
   <h1 class="page-title">Tu carrito de compras</h1>
   <p class="page-sub">Revisa tus productos y completa tu compra</p>
 
-  <!-- STEPS -->
   <div class="steps-bar">
     <div class="step-item">
       <div class="step-circle active" id="circ1">1</div>
@@ -194,7 +283,64 @@
   <div id="vistaPago" style="display:none">
     <div class="layout">
       <div class="card">
-        <h3>Datos para transferencia bancaria</h3>
+
+        <div class="section-label">Datos del comprador</div>
+        <div class="form-row-2">
+          <div class="input-group">
+            <label>Nombre completo *</label>
+            <input type="text" id="datNombre" placeholder="Nombre y apellido">
+          </div>
+          <div class="input-group">
+            <label>Cedula *</label>
+            <input type="text" id="datCedula" placeholder="0999999999" maxlength="10">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="input-group">
+            <label>Telefono *</label>
+            <input type="tel" id="datTelefono" placeholder="0999999999">
+          </div>
+          <div class="input-group">
+            <label>Provincia *</label>
+            <select id="datProvincia">
+              <option value="">Seleccionar...</option>
+              <option>Azuay</option><option>Bolivar</option><option>Canar</option>
+              <option>Carchi</option><option>Chimborazo</option><option>Cotopaxi</option>
+              <option>El Oro</option><option>Esmeraldas</option><option>Galapagos</option>
+              <option>Guayas</option><option>Imbabura</option><option>Loja</option>
+              <option>Los Rios</option><option>Manabi</option><option>Morona Santiago</option>
+              <option>Napo</option><option>Orellana</option><option>Pastaza</option>
+              <option>Pichincha</option><option>Santa Elena</option><option>Santo Domingo</option>
+              <option>Sucumbios</option><option>Tungurahua</option><option>Zamora Chinchipe</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="input-group">
+            <label>Direccion (calle y numero) *</label>
+            <input type="text" id="datDireccion" placeholder="Calle principal, numero, referencia">
+          </div>
+          <div class="input-group">
+            <label>Ciudad *</label>
+            <input type="text" id="datCiudad" placeholder="Ej: Riobamba">
+          </div>
+        </div>
+
+        <div class="section-label">Metodo de entrega</div>
+        <div class="entrega-opciones">
+          <div class="entrega-opt" id="optRecoger" onclick="seleccionarEntrega('recoger')">
+            <div class="entrega-opt-icon">🏬</div>
+            <div class="entrega-opt-title">Recoger en tienda</div>
+            <div class="entrega-opt-desc">Retiras tu pedido personalmente</div>
+          </div>
+          <div class="entrega-opt" id="optEnvio" onclick="seleccionarEntrega('envio')">
+            <div class="entrega-opt-icon">🚚</div>
+            <div class="entrega-opt-title">Envio a domicilio</div>
+            <div class="entrega-opt-desc">Lo recibes en tu direccion</div>
+          </div>
+        </div>
+
+        <div class="section-label">Datos para transferencia bancaria</div>
         <div class="banco-box">
           <div class="banco-row"><span>Banco</span><span>Banco Pichincha</span></div>
           <div class="banco-row"><span>Tipo de cuenta</span><span>Ahorros</span></div>
@@ -204,7 +350,7 @@
           <div class="banco-row"><span>Monto a transferir</span><span id="montoPagar">$0.00</span></div>
         </div>
 
-        <h3 style="margin-bottom:12px;">Sube tu comprobante de pago</h3>
+        <div class="section-label">Comprobante de pago</div>
         <div class="upload-box" id="uploadBox" onclick="document.getElementById('comprobanteInput').click()">
           <input type="file" id="comprobanteInput" accept="image/jpeg,image/png" onchange="previewComprobante(this)">
           <div id="uploadContent">
@@ -246,7 +392,7 @@
       <p>Estado actual: <span class="estado-badge">Pendiente de validacion</span></p>
       <p style="margin-top:16px; max-width:420px; margin-left:auto; margin-right:auto;">
         El administrador revisara tu comprobante y validara el pago.
-        Puedes ver el estado en <strong>Mis compras</strong>.
+        Cuando sea aprobado, podras descargar tu comprobante de compra en <strong>Mis compras</strong>.
       </p>
       <button class="btn-main" style="max-width:280px; margin:24px auto 0; display:block;" onclick="window.location.href='historial.html'">Ver mis compras</button>
       <button class="btn-secondary" style="max-width:280px; margin:10px auto 0; display:block;" onclick="window.location.href='catalogo.html'">Volver al catalogo</button>
@@ -264,26 +410,18 @@
     ref, uploadBytes, getDownloadURL
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-  // ── VERIFICAR SESION ────────────────────────────────────────────────────────
   const usuario = await verificarSesion("usuario");
   document.getElementById("userEmail").textContent = usuario.email;
   window.salir = () => cerrarSesion();
 
-  // ── CARRITO (localStorage) ──────────────────────────────────────────────────
   const CARRITO_KEY = "reliquia_carrito";
+  function getCarrito() { return JSON.parse(localStorage.getItem(CARRITO_KEY) || "[]"); }
+  function setCarrito(lista) { localStorage.setItem(CARRITO_KEY, JSON.stringify(lista)); }
 
-  function getCarrito() {
-    return JSON.parse(localStorage.getItem(CARRITO_KEY) || "[]");
-  }
-  function setCarrito(lista) {
-    localStorage.setItem(CARRITO_KEY, JSON.stringify(lista));
-  }
-
-  // ── RENDER CARRITO ──────────────────────────────────────────────────────────
   function renderCarrito() {
-    const carrito = getCarrito();
-    const lista   = document.getElementById("listaCarrito");
-    const btnPago = document.getElementById("btnIrPago");
+    var carrito = getCarrito();
+    var lista   = document.getElementById("listaCarrito");
+    var btnPago = document.getElementById("btnIrPago");
 
     if (carrito.length === 0) {
       lista.innerHTML = '<div class="empty-cart"><div class="icon">🛍️</div><p>Tu carrito esta vacio.</p><p style="margin-top:8px"><a href="catalogo.html">Ir al catalogo</a></p></div>';
@@ -315,8 +453,24 @@
 
   window.cambiarQty = function(idx, delta) {
     var carrito = getCarrito();
-    carrito[idx].cantidad += delta;
-    if (carrito[idx].cantidad <= 0) carrito.splice(idx, 1);
+    var item = carrito[idx];
+    if (!item) return;
+
+    var nuevaCantidad = item.cantidad + delta;
+
+    if (delta > 0) {
+      var limite = parseInt(item.stock) || 0;
+      if (nuevaCantidad > limite) {
+        alert("Solo hay " + limite + " unidad" + (limite === 1 ? "" : "es") + " disponible" + (limite === 1 ? "" : "s") + " de \"" + item.nombre + "\".");
+        return;
+      }
+    }
+
+    if (nuevaCantidad <= 0) {
+      carrito.splice(idx, 1);
+    } else {
+      item.cantidad = nuevaCantidad;
+    }
     setCarrito(carrito);
     renderCarrito();
   };
@@ -330,7 +484,6 @@
 
   renderCarrito();
 
-  // ── PASO 1 → PASO 2 ────────────────────────────────────────────────────────
   window.irAPago = function() {
     var carrito = getCarrito();
     if (carrito.length === 0) return;
@@ -338,7 +491,6 @@
     document.getElementById("vistaCarrito").style.display = "none";
     document.getElementById("vistaPago").style.display    = "block";
 
-    // Steps
     document.getElementById("circ1").className  = "step-circle done";
     document.getElementById("circ1").textContent = "✓";
     document.getElementById("circ2").className  = "step-circle active";
@@ -366,19 +518,22 @@
     document.getElementById("lbl2").className   = "step-label";
   };
 
+  // ── METODO DE ENTREGA ────────────────────────────────────────────────────
+  var metodoEntrega = null;
+
+  window.seleccionarEntrega = function(tipo) {
+    metodoEntrega = tipo;
+    document.getElementById("optRecoger").classList.toggle("selected", tipo === "recoger");
+    document.getElementById("optEnvio").classList.toggle("selected", tipo === "envio");
+  };
+
   // ── PREVIEW COMPROBANTE ─────────────────────────────────────────────────────
   var comprobanteFile = null;
 
   window.previewComprobante = function(input) {
     var file = input.files[0];
     if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("La imagen no puede superar 5MB.");
-      input.value = "";
-      return;
-    }
-
+    if (file.size > 5 * 1024 * 1024) { alert("La imagen no puede superar 5MB."); input.value = ""; return; }
     comprobanteFile = file;
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -392,27 +547,46 @@
 
   // ── CONFIRMAR COMPRA ────────────────────────────────────────────────────────
   window.confirmarCompra = async function() {
-    var msg       = document.getElementById("msgPago");
-    var btn       = document.getElementById("btnConfirmarPago");
-    var nombre    = document.getElementById("payNombre").value.trim();
-    var referencia= document.getElementById("payReferencia").value.trim();
-    var carrito   = getCarrito();
+    var msg        = document.getElementById("msgPago");
+    var btn        = document.getElementById("btnConfirmarPago");
+    var nombreComp = document.getElementById("datNombre").value.trim();
+    var cedula     = document.getElementById("datCedula").value.trim();
+    var telefono   = document.getElementById("datTelefono").value.trim();
+    var provincia  = document.getElementById("datProvincia").value;
+    var direccion  = document.getElementById("datDireccion").value.trim();
+    var ciudad     = document.getElementById("datCiudad").value.trim();
+    var nombrePago = document.getElementById("payNombre").value.trim();
+    var referencia = document.getElementById("payReferencia").value.trim();
+    var carrito    = getCarrito();
 
     // Validaciones
+    if (!nombreComp || !cedula || !telefono || !provincia) {
+      msg.textContent = "Completa tus datos de comprador (nombre, cedula, telefono, provincia).";
+      msg.className = "mensaje error"; return;
+    }
+    if (cedula.length !== 10) {
+      msg.textContent = "La cedula debe tener 10 digitos.";
+      msg.className = "mensaje error"; return;
+    }
+    if (!metodoEntrega) {
+      msg.textContent = "Selecciona un metodo de entrega: recoger en tienda o envio a domicilio.";
+      msg.className = "mensaje error"; return;
+    }
+    if (metodoEntrega === "envio" && (!direccion || !ciudad)) {
+      msg.textContent = "Completa la direccion y ciudad para el envio.";
+      msg.className = "mensaje error"; return;
+    }
     if (!comprobanteFile) {
       msg.textContent = "Debes subir una imagen del comprobante de pago.";
-      msg.className = "mensaje error";
-      return;
+      msg.className = "mensaje error"; return;
     }
-    if (!nombre || !referencia) {
+    if (!nombrePago || !referencia) {
       msg.textContent = "Completa el nombre del titular y el numero de referencia.";
-      msg.className = "mensaje error";
-      return;
+      msg.className = "mensaje error"; return;
     }
     if (carrito.length === 0) {
       msg.textContent = "Tu carrito esta vacio.";
-      msg.className = "mensaje error";
-      return;
+      msg.className = "mensaje error"; return;
     }
 
     btn.disabled = true;
@@ -422,13 +596,11 @@
     try {
       var total = carrito.reduce(function(s, i) { return s + i.precio * i.cantidad; }, 0);
 
-      // 1. Subir comprobante a Firebase Storage
       var nombreArchivo = "comprobantes/" + usuario.uid + "_" + Date.now() + ".jpg";
       var storageRef    = ref(storage, nombreArchivo);
       var uploadResult  = await uploadBytes(storageRef, comprobanteFile);
       var comprobanteUrl= await getDownloadURL(uploadResult.ref);
 
-      // 2. Verificar stock antes de confirmar
       for (var k = 0; k < carrito.length; k++) {
         var item = carrito[k];
         var prodSnap = await getDoc(doc(db, "productos", item.id));
@@ -440,22 +612,32 @@
         }
       }
 
-      // 3. Crear pedido en Firestore
+      // Crear pedido con TODOS los datos nuevos
       var pedidoRef = await addDoc(collection(db, "pedidos"), {
-        usuario_id   : usuario.uid,
-        usuario_email: usuario.email,
-        items        : carrito,
-        total        : total,
-        estado       : "pendiente_pago",
-        fecha        : serverTimestamp()
+        usuario_id     : usuario.uid,
+        usuario_email  : usuario.email,
+        items          : carrito,
+        total          : total,
+        estado         : "pendiente_pago",
+        fecha          : serverTimestamp(),
+
+        // Datos del comprador
+        comprador_nombre   : nombreComp,
+        comprador_cedula   : cedula,
+        comprador_telefono : telefono,
+        comprador_provincia: provincia,
+
+        // Metodo de entrega
+        metodo_entrega : metodoEntrega,
+        envio_direccion: metodoEntrega === "envio" ? direccion : "",
+        envio_ciudad   : metodoEntrega === "envio" ? ciudad : ""
       });
 
-      // 4. Crear registro de pago en Firestore
       await addDoc(collection(db, "pagos"), {
         pedido_id       : pedidoRef.id,
         usuario_id      : usuario.uid,
         comprobante_url : comprobanteUrl,
-        nombre_titular  : nombre,
+        nombre_titular  : nombrePago,
         referencia      : referencia,
         monto           : total,
         estado          : "pendiente",
@@ -463,7 +645,6 @@
         fecha_verificacion: null
       });
 
-      // 5. Limpiar carrito y mostrar confirmacion
       setCarrito([]);
       mostrarConfirmacion(pedidoRef.id);
 
@@ -475,7 +656,6 @@
     }
   };
 
-  // ── VISTA CONFIRMACION ──────────────────────────────────────────────────────
   function mostrarConfirmacion(pedidoId) {
     document.getElementById("vistaPago").style.display         = "none";
     document.getElementById("vistaConfirmacion").style.display = "block";
