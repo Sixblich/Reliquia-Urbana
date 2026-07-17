@@ -963,3 +963,43 @@ footer {
   .nav-links a { font-size: 11px; }
   .cart-icon { font-size: 16px; }
 }
+
+/* ── AJUSTES FINALES DE REFINAMIENTO MOVIL ────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Navbar: ocultar buscador y mostrarlo solo cuando se necesite, evitar overflow */
+  .nav-right { flex-wrap: wrap; justify-content: center; }
+  .search-box { order: 4; width: 100%; margin-top: 6px; }
+  .search-box input { width: 100%; }
+  .search-box input:focus { width: 100%; }
+
+  /* Botones de login/registro cuando no hay sesion */
+  #authArea { gap: 6px; }
+  .btn-login-nav { font-size: 11px; padding: 5px 10px; }
+  .btn-main-nav { font-size: 11px; padding: 6px 12px; }
+
+  /* Encabezado de seccion de productos */
+  .sec-head { flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 16px; }
+  .sec-head h2 { font-size: 19px; }
+
+  /* Toast mas angosto */
+  .toast { max-width: 90%; white-space: normal; text-align: center; font-size: 12px; padding: 12px 18px; }
+}
+
+@media (max-width: 480px) {
+  /* Nav: apilar logo y right en columna si aun se ve apretado */
+  nav { padding: 8px 12px; }
+  .nav-links { gap: 8px; }
+  .nav-links a { font-size: 10.5px; }
+
+  /* Botones de card mas compactos */
+  .btn-ver, .btn-add-rapido { font-size: 10px; padding: 7px; }
+
+  /* Panel carrito header */
+  .cart-panel-header { padding: 16px; }
+  .cart-panel-items { padding: 8px 16px; }
+  .cart-panel-footer { padding: 14px 16px 18px; }
+
+  /* Filtros right en columna en pantallas muy chicas */
+  .filtros-right { flex-direction: column; }
+  .filtros-right select { width: 100%; }
+}
