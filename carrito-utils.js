@@ -24,13 +24,13 @@ export function agregarAlCarrito(producto) {
   const stockDisponible = parseInt(producto.stock) || 0;
 
   if (stockDisponible <= 0) {
-    alert("Este producto no tiene stock disponible.");
+    mostrarAviso("Este producto no tiene stock disponible.", "error");
     return false;
   }
 
   if (existente) {
     if (existente.cantidad >= stockDisponible) {
-      alert("Ya tienes en el carrito todo el stock disponible de este producto (" + stockDisponible + ").");
+      mostrarAviso("Ya tienes en el carrito todo el stock disponible de este producto (" + stockDisponible + ").", "error");
       return false;
     }
     existente.cantidad++;
@@ -67,7 +67,7 @@ export function cambiarCantidadCarrito(idx, delta) {
   if (delta > 0) {
     const limite = parseInt(item.stock) || 0;
     if (nuevaCantidad > limite) {
-      alert("Solo hay " + limite + " unidad" + (limite === 1 ? "" : "es") + " disponible" + (limite === 1 ? "" : "s") + " de \"" + item.nombre + "\".");
+      mostrarAviso("Solo hay " + limite + " unidad" + (limite === 1 ? "" : "es") + " disponible" + (limite === 1 ? "" : "s") + " de \"" + item.nombre + "\".", "error");
       return false;
     }
   }
