@@ -15,18 +15,26 @@ export function setCarrito(carrito) {
 
 /**
  * Agrega un producto al carrito. Si ya existe, suma 1 a la cantidad.
+ * Guarda el stock disponible para poder limitar la cantidad despues.
  * @param {Object} producto - { id, nombre, precio, imagen, talla, marca, stock }
  */
 export function agregarAlCarrito(producto) {
   const carrito = getCarrito();
   const existente = carrito.find(i => i.id === producto.id);
+  const stockDisponible = parseInt(producto.stock) || 0;
+
+  if (stockDisponible <= 0) {
+    alert("Este producto no tiene stock disponible.");
+    return false;
+  }
 
   if (existente) {
-    if (existente.cantidad >= producto.stock) {
-      alert("No hay más stock disponible de este producto.");
+    if (existente.cantidad >= stockDisponible) {
+      alert("Ya tienes en el carrito todo el stock disponible de este producto (" + stockDisponible + ").");
       return false;
     }
     existente.cantidad++;
+    existente.stock = stockDisponible; // mantener actualizado el limite
   } else {
     carrito.push({
       id: producto.id,
@@ -35,8 +43,39 @@ export function agregarAlCarrito(producto) {
       imagen: producto.imagen || "",
       talla: producto.talla || "",
       marca: producto.marca || "",
+      stock: stockDisponible,
       cantidad: 1
     });
+  }
+
+  setCarrito(carrito);
+  actualizarContadorCarrito();
+  return true;
+}
+
+/**
+ * Cambia la cantidad de un item del carrito respetando el limite de stock.
+ * @returns {boolean} true si el cambio se aplico, false si se bloqueo por stock
+ */
+export function cambiarCantidadCarrito(idx, delta) {
+  const carrito = getCarrito();
+  const item = carrito[idx];
+  if (!item) return false;
+
+  const nuevaCantidad = item.cantidad + delta;
+
+  if (delta > 0) {
+    const limite = parseInt(item.stock) || 0;
+    if (nuevaCantidad > limite) {
+      alert("Solo hay " + limite + " unidad" + (limite === 1 ? "" : "es") + " disponible" + (limite === 1 ? "" : "s") + " de \"" + item.nombre + "\".");
+      return false;
+    }
+  }
+
+  if (nuevaCantidad <= 0) {
+    carrito.splice(idx, 1);
+  } else {
+    item.cantidad = nuevaCantidad;
   }
 
   setCarrito(carrito);
