@@ -79,6 +79,19 @@
       padding: 60px 50px;
     }
 
+    .btn-volver-inicio {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #999;
+      font-size: 12px;
+      text-decoration: none;
+      margin-bottom: 24px;
+      transition: color 0.2s, transform 0.15s;
+    }
+    .btn-volver-inicio:hover { color: #c8a96e; transform: translateX(-2px); }
+
     .form-title {
       font-family: 'Playfair Display', serif;
       font-size: 28px;
@@ -213,6 +226,7 @@
 
   <!-- LADO DERECHO -->
   <div class="right">
+    <a href="index.html" class="btn-volver-inicio">← Volver al inicio</a>
     <h1 class="form-title">Bienvenido de vuelta</h1>
     <p class="form-sub">Ingresa a tu cuenta para continuar</p>
 
@@ -256,12 +270,18 @@
     }
 
     async function redirigirSegunRol(uid) {
+      // Si venía de una página específica (carrito, vender, etc.), regresar ahí
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect");
+
       try {
         const snap = await getDoc(doc(db, "usuarios", uid));
         if (snap.exists()) {
           const rol = snap.data().rol;
           if (rol === "admin") {
             window.location.href = "admin.html";
+          } else if (redirect && redirect !== "login.html") {
+            window.location.href = redirect;
           } else {
             window.location.href = "catalogo.html";
           }
@@ -304,5 +324,6 @@
       }
     });
   </script>
+<script src="ui-notify.js"></script>
 </body>
 </html>
