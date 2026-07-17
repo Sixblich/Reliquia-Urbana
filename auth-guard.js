@@ -54,7 +54,12 @@ export function verificarSesion(rolRequerido = null) {
 
         // Verificar que la cuenta esté activa
         if (datos.activo === false) {
-          alert("Tu cuenta ha sido desactivada. Contacta al administrador.");
+          if (window.mostrarAviso) {
+            window.mostrarAviso("Tu cuenta ha sido desactivada. Contacta al administrador.", "error");
+            await new Promise(function(r) { setTimeout(r, 2200); });
+          } else {
+            alert("Tu cuenta ha sido desactivada. Contacta al administrador.");
+          }
           await auth.signOut();
           window.location.href = "login.html";
           return;
