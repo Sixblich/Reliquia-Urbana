@@ -461,7 +461,7 @@
     if (delta > 0) {
       var limite = parseInt(item.stock) || 0;
       if (nuevaCantidad > limite) {
-        alert("Solo hay " + limite + " unidad" + (limite === 1 ? "" : "es") + " disponible" + (limite === 1 ? "" : "s") + " de \"" + item.nombre + "\".");
+        mostrarAviso("Solo hay " + limite + " unidad" + (limite === 1 ? "" : "es") + " disponible" + (limite === 1 ? "" : "s") + " de \"" + item.nombre + "\".", "error");
         return;
       }
     }
@@ -533,7 +533,7 @@
   window.previewComprobante = function(input) {
     var file = input.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert("La imagen no puede superar 5MB."); input.value = ""; return; }
+    if (file.size > 5 * 1024 * 1024) { mostrarAviso("La imagen no puede superar 5MB.", "error"); input.value = ""; return; }
     comprobanteFile = file;
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -671,5 +671,6 @@
   }
 </script>
 
+<script src="ui-notify.js"></script>
 </body>
 </html>
