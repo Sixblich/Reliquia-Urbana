@@ -55,6 +55,14 @@
     }
     .btn-comprobante:hover { background: #c8a96e; color: #111; }
 
+    .btn-whatsapp {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; margin-top: 10px; padding: 11px; background: #25D366; color: #fff;
+      border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: 0.2s; text-decoration: none;
+    }
+    .btn-whatsapp:hover { background: #1da851; }
+
     .empty { text-align: center; padding: 60px 20px; color: #aaa; }
     .empty .icon { font-size: 48px; margin-bottom: 12px; }
     .empty a { color: #c8a96e; text-decoration: none; font-weight: 600; }
@@ -178,6 +186,9 @@
           btnComprobante = '<button class="btn-comprobante" onclick="verComprobante(\'' + p.id + '\')">📄 Ver comprobante de compra</button>';
         }
 
+        var mensajeWa = encodeURIComponent("Hola, tengo una consulta sobre mi pedido #" + p.id.substring(0,8).toUpperCase() + " (" + estadoTxt + ").");
+        var btnWhatsapp = '<a class="btn-whatsapp" href="https://wa.me/593969360333?text=' + mensajeWa + '" target="_blank">💬 Contactar por WhatsApp</a>';
+
         return '<div class="pedido-card">' +
           '<div class="pedido-head">' +
             '<div>' +
@@ -190,6 +201,7 @@
           '<div class="pedido-total"><span>Total</span><span>$' + parseFloat(p.total).toFixed(2) + '</span></div>' +
           entregaHtml +
           btnComprobante +
+          btnWhatsapp +
         '</div>';
       }).join("");
 
@@ -300,7 +312,7 @@
 
     html += "<div class='footer'>";
     html += "Este comprobante certifica tu compra en Reliquia Urbana. No constituye una factura tributaria.<br>";
-    html += "Generado el " + new Date().toLocaleDateString("es-EC") + " &middot; Reliquia Urbana (c) 2026";
+    html += "Generado el " + new Date().toLocaleDateString("es-EC") + " &middot; Reliquia Urbana (c) 2025";
     html += "</div>";
     html += "</div>"; // body-pad
     html += "</div>"; // sheet
