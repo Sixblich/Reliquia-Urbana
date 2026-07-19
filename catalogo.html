@@ -52,6 +52,16 @@
       <div class="cat" onclick="filtrarCategoria(this,'accesorios')">Accesorios</div>
     </div>
     <div class="filtros-right">
+      <select id="filtroTalla" onchange="aplicarFiltros()">
+        <option value="todas">Todas las tallas</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+        <option value="Unica">Única</option>
+      </select>
       <select id="filtroEstado" onchange="aplicarFiltros()">
         <option value="todos">Nuevo y Usado</option>
         <option value="nuevo">Solo Nuevos</option>
@@ -201,6 +211,7 @@ window.filtrarCategoria = function(el, cat) {
 // ── APLICAR TODOS LOS FILTROS ─────────────────────────────────────────────────
 window.aplicarFiltros = function() {
   const busq   = document.getElementById("busqueda").value.toLowerCase().trim();
+  const talla  = document.getElementById("filtroTalla").value;
   const estado = document.getElementById("filtroEstado").value;
   const orden  = document.getElementById("filtroOrden").value;
 
@@ -208,6 +219,9 @@ window.aplicarFiltros = function() {
 
   if (categoriaActual !== "todas") {
     resultado = resultado.filter(p => p.categoria === categoriaActual);
+  }
+  if (talla !== "todas") {
+    resultado = resultado.filter(p => p.talla === talla);
   }
   if (estado !== "todos") {
     resultado = resultado.filter(p => p.estado === estado);
