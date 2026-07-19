@@ -611,7 +611,12 @@
     <!-- ── VALIDAR PAGOS ── -->
     <div class="page" id="page-pagos">
       <h1 class="page-title">Validación de Pagos</h1>
-      <p class="page-sub">Revisa los comprobantes subidos y aprueba o rechaza cada pago (RF-19)</p>
+      <p class="page-sub">Revisa los comprobantes subidos y aprueba o rechaza cada pago</p>
+      <div class="card" style="margin-bottom:16px;">
+        <div style="padding:16px 24px;">
+          <input type="text" id="buscarPago" placeholder="🔍 Buscar por código de pedido, nombre o correo del comprador..." style="width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:13px;" oninput="filtrarPagos()">
+        </div>
+      </div>
       <div class="card">
         <div class="card-head"><h3>Pagos pendientes y procesados</h3></div>
         <table>
@@ -627,6 +632,11 @@
     <div class="page" id="page-pedidos">
       <h1 class="page-title">Gestión de Pedidos</h1>
       <p class="page-sub">Visualiza y actualiza el estado de todos los pedidos</p>
+      <div class="card" style="margin-bottom:16px;">
+        <div style="padding:16px 24px;">
+          <input type="text" id="buscarPedido" placeholder="🔍 Buscar por código de pedido, nombre o correo del comprador..." style="width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:13px;" oninput="filtrarPedidos()">
+        </div>
+      </div>
       <div id="listaPedidosAdmin"><div class="empty">Cargando...</div></div>
     </div>
 
@@ -695,6 +705,7 @@
             </select>
             <button class="btn-primary" onclick="generarReporte()">Consultar</button>
             <button class="btn-primary" id="btnDescargarPDF" onclick="descargarPDF()" style="background:#2e7d32; display:none;">⬇ Descargar PDF</button>
+            <button class="btn-primary" onclick="descargarReporteDiario()" style="background:#1565c0; margin-left:auto;">📅 Reporte de hoy (PDF)</button>
           </div>
         </div>
         <div style="padding:16px 24px; border-top:1px solid #f0f0f0; display:flex; gap:10px; flex-wrap:wrap;">
@@ -1089,29 +1100,36 @@
     cargarUsuarios();
   };
 
-  // ── VALIDACIÓN DE PAGOS (RF-19) ───────────────────────────────────────────
+  // ── VALIDACIÓN DE PAGOS ───────────────────────────────────────────────────
+  var pagosCacheAdmin = [];
+  var pedidosLookupParaPagos = {};
+
   async function cargarPagos() {
     var snapPagos   = await getDocs(collection(db, "pagos"));
     var snapPedidos = await getDocs(collection(db, "pedidos"));
 
-    var pagos   = snapPagos.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
-    var pedidos = {};
-    snapPedidos.docs.forEach(function(d) { pedidos[d.id] = d.data(); });
+    pagosCacheAdmin = snapPagos.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
+    pedidosLookupParaPagos = {};
+    snapPedidos.docs.forEach(function(d) { pedidosLookupParaPagos[d.id] = d.data(); });
 
-    pagos.sort(function(a, b) {
+    pagosCacheAdmin.sort(function(a, b) {
       return (b.fecha_subida && b.fecha_subida.seconds || 0) - (a.fecha_subida && a.fecha_subida.seconds || 0);
     });
 
+    renderPagosAdmin(pagosCacheAdmin);
+  }
+
+  function renderPagosAdmin(pagos) {
     var cont = document.getElementById("tablaPagos");
     if (pagos.length === 0) {
-      cont.innerHTML = "<tr><td colspan=\"6\" class=\"empty\">No hay pagos registrados</td></tr>";
+      cont.innerHTML = "<tr><td colspan=\"6\" class=\"empty\">No se encontraron pagos</td></tr>";
       return;
     }
 
     var html = "";
     for (var i = 0; i < pagos.length; i++) {
       var p = pagos[i];
-      var pedidoInfo = pedidos[p.pedido_id] || {};
+      var pedidoInfo = pedidosLookupParaPagos[p.pedido_id] || {};
       var compradorNombre = pedidoInfo.comprador_nombre || p.nombre_titular || "-";
       var compradorCedula = pedidoInfo.comprador_cedula || "-";
       var entregaTxt = pedidoInfo.metodo_entrega === "recoger" ? "Recoger en tienda" :
@@ -1127,7 +1145,7 @@
 
       html += "<tr>" +
         "<td><img src=\"" + p.comprobante_url + "\" style=\"width:50px;height:50px;object-fit:cover;border-radius:6px;cursor:pointer\" onclick=\"verComprobante('" + p.comprobante_url + "')\"></td>" +
-        "<td><strong>" + compradorNombre + "</strong><br><small style=\"color:#999\">CI: " + compradorCedula + "</small></td>" +
+        "<td><strong>" + compradorNombre + "</strong><br><small style=\"color:#999\">CI: " + compradorCedula + " &middot; #" + (p.pedido_id ? p.pedido_id.substring(0,8).toUpperCase() : "-") + "</small></td>" +
         "<td>" + (p.referencia || "-") + "<br><small style=\"color:#999\">" + entregaTxt + "</small></td>" +
         "<td>$" + parseFloat(p.monto).toFixed(2) + "</td>" +
         "<td><span class=\"badge " + (p.estado === "aprobado" ? "activo" : p.estado === "rechazado" ? "inactivo" : "admin") + "\">" + p.estado + "</span></td>" +
@@ -1136,6 +1154,25 @@
     }
     cont.innerHTML = html;
   }
+
+  window.filtrarPagos = function() {
+    var q = document.getElementById("buscarPago").value.trim().toLowerCase();
+    if (!q) { renderPagosAdmin(pagosCacheAdmin); return; }
+
+    var filtrados = pagosCacheAdmin.filter(function(p) {
+      var pedidoInfo = pedidosLookupParaPagos[p.pedido_id] || {};
+      var campos = [
+        p.pedido_id || "",
+        p.id || "",
+        pedidoInfo.comprador_nombre || "",
+        pedidoInfo.usuario_email || "",
+        p.nombre_titular || "",
+        p.referencia || ""
+      ].join(" ").toLowerCase();
+      return campos.indexOf(q) >= 0;
+    });
+    renderPagosAdmin(filtrados);
+  };
 
   window.verComprobante = function(url) {
     document.getElementById("imgComprobanteGrande").src = url;
@@ -1281,6 +1318,22 @@
   window.cambiarEstadoPedido = async function(pedidoId, nuevoEstado) {
     await updateDoc(doc(db, "pedidos", pedidoId), { estado: nuevoEstado });
     cargarPedidosAdmin();
+  };
+
+  window.filtrarPedidos = function() {
+    var q = document.getElementById("buscarPedido").value.trim().toLowerCase();
+    if (!q) { renderPedidosAdmin(pedidosCacheAdmin); return; }
+
+    var filtrados = pedidosCacheAdmin.filter(function(p) {
+      var campos = [
+        p.id || "",
+        p.comprador_nombre || "",
+        p.usuario_email || "",
+        p.comprador_cedula || ""
+      ].join(" ").toLowerCase();
+      return campos.indexOf(q) >= 0;
+    });
+    renderPedidosAdmin(filtrados);
   };
 
 
@@ -1701,6 +1754,111 @@
   };
 
   // ── GENERAR PDF SIN LIBRERÍAS EXTERNAS ────────────────────────────────────
+  // ── REPORTE DIARIO RAPIDO (independiente del filtro mes/año) ────────────────
+  window.descargarReporteDiario = async function() {
+    try {
+      var hoy = new Date();
+      var inicio = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0);
+      var fin    = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59);
+
+      var [snapPed, snapProd] = await Promise.all([
+        getDocs(collection(db, "pedidos")),
+        getDocs(collection(db, "productos"))
+      ]);
+
+      var lookupProd = {};
+      snapProd.docs.forEach(function(d) {
+        var data = d.data();
+        lookupProd[d.id] = { categoria: data.categoria || "", estado: data.estado || "" };
+      });
+
+      var pedidosHoy = snapPed.docs
+        .map(function(d) { return Object.assign({id: d.id}, d.data()); })
+        .filter(function(p) {
+          if (p.estado !== "aprobado") return false;
+          var fecha = p.fecha && p.fecha.toDate ? p.fecha.toDate() : new Date(p.fecha);
+          return fecha >= inicio && fecha <= fin;
+        });
+
+      var itemsHoy = [];
+      pedidosHoy.forEach(function(p) {
+        (p.items || []).forEach(function(item) {
+          itemsHoy.push({
+            pedidoId: p.id, fecha: p.fecha, usuario_email: p.usuario_email || "-",
+            nombre: item.nombre, cantidad: item.cantidad, precio: item.precio,
+            subtotal: item.precio * item.cantidad, talla: item.talla || "-"
+          });
+        });
+      });
+
+      if (itemsHoy.length === 0) {
+        mostrarAviso("No hay ventas aprobadas registradas hoy.", "info");
+        return;
+      }
+
+      var totalHoy = itemsHoy.reduce(function(s, it) { return s + it.subtotal; }, 0);
+      var fechaTexto = hoy.toLocaleDateString("es-EC", { day:"2-digit", month:"long", year:"numeric" });
+      var horaTexto  = hoy.toLocaleTimeString("es-EC", { hour:"2-digit", minute:"2-digit" });
+
+      var filas = "";
+      itemsHoy.forEach(function(it, idx) {
+        var horaPedido = it.fecha && it.fecha.toDate
+          ? it.fecha.toDate().toLocaleTimeString("es-EC", { hour:"2-digit", minute:"2-digit" })
+          : "-";
+        var bg = idx % 2 === 0 ? "#f9f9f9" : "#ffffff";
+        filas += "<tr style='background:" + bg + "'>";
+        filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>#" + it.pedidoId.substring(0,8).toUpperCase() + "</td>";
+        filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + horaPedido + "</td>";
+        filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + it.usuario_email + "</td>";
+        filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee'>" + it.nombre + " x" + it.cantidad + " (Talla " + it.talla + ")</td>";
+        filas += "<td style='padding:8px 10px;font-size:12px;border-bottom:1px solid #eee;font-weight:700;color:#1a5c3a'>$" + it.subtotal.toFixed(2) + "</td>";
+        filas += "</tr>";
+      });
+
+      var html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
+      html += "<title>Reporte diario - " + fechaTexto + "</title>";
+      html += "<style>";
+      html += "* { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }";
+      html += "body { padding:32px; color:#111; }";
+      html += ".header { background:#1565c0; color:#fff; padding:22px 28px; border-radius:8px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }";
+      html += ".header h1 { font-size:19px; letter-spacing:1px; }";
+      html += ".header p { font-size:12px; color:#dbe9fb; margin-top:4px; }";
+      html += ".stats-row { display:flex; gap:16px; margin-bottom:22px; }";
+      html += ".stat { flex:1; background:#f5f5f5; border-radius:8px; padding:14px 16px; border-left:4px solid #1565c0; }";
+      html += ".stat .num { font-size:22px; font-weight:700; color:#111; }";
+      html += ".stat .lbl { font-size:11px; color:#888; margin-top:2px; }";
+      html += "table { width:100%; border-collapse:collapse; }";
+      html += "thead tr { background:#111; color:#fff; }";
+      html += "thead td { padding:10px; font-size:12px; font-weight:600; }";
+      html += ".total-final { text-align:right; margin-top:14px; font-size:16px; font-weight:700; }";
+      html += ".footer { margin-top:22px; padding-top:14px; border-top:1px solid #eee; text-align:center; font-size:11px; color:#aaa; }";
+      html += "</" + "style></" + "head><body>";
+
+      html += "<div class='header'><div><h1>RELIQUIA URBANA</h1><p>Reporte diario de ventas</p></div><div style='text-align:right;font-size:12px;'>" + fechaTexto + "<br>Generado a las " + horaTexto + "</div></div>";
+
+      html += "<div class='stats-row'>";
+      html += "<div class='stat'><div class='num'>" + pedidosHoy.length + "</div><div class='lbl'>Pedidos aprobados hoy</div></div>";
+      html += "<div class='stat'><div class='num'>$" + totalHoy.toFixed(2) + "</div><div class='lbl'>Total vendido hoy</div></div>";
+      html += "<div class='stat'><div class='num'>" + itemsHoy.length + "</div><div class='lbl'>Productos vendidos</div></div>";
+      html += "</div>";
+
+      html += "<table><thead><tr><td># Pedido</td><td>Hora</td><td>Cliente</td><td>Producto</td><td>Subtotal</td></tr></thead><tbody>" + filas + "</tbody></table>";
+      html += "<div class='total-final'>Total del dia: $" + totalHoy.toFixed(2) + "</div>";
+      html += "<div class='footer'>Reliquia Urbana (c) " + hoy.getFullYear() + " - Reporte generado automaticamente</div>";
+      html += "</" + "body></" + "html>";
+
+      var ventana = window.open("", "_blank", "width=900,height=700");
+      ventana.document.write(html);
+      ventana.document.close();
+      ventana.focus();
+      setTimeout(function() { ventana.print(); }, 600);
+
+    } catch(e) {
+      mostrarAviso("Error al generar el reporte diario: " + e.message, "error");
+    }
+  };
+
+
   window.descargarPDF = function() {
     var mes    = parseInt(document.getElementById("reporteMes").value);
     var anio   = parseInt(document.getElementById("reporteAnio").value);
