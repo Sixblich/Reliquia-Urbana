@@ -231,33 +231,47 @@
 
     var html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
     html += "<title>Comprobante de Compra - " + pedidoId.substring(0,8).toUpperCase() + "</title>";
+    html += "<link href='https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500&display=swap' rel='stylesheet'>";
     html += "<style>";
-    html += "* { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }";
-    html += "body { padding:36px; color:#111; }";
-    html += ".header { background:#111; color:#c8a96e; padding:26px 30px; border-radius:10px; margin-bottom:24px; }";
-    html += ".header h1 { font-size:22px; letter-spacing:2px; }";
-    html += ".header p { font-size:12px; color:#ccc; margin-top:6px; }";
-    html += ".badge-comp { display:inline-block; background:#2e7d32; color:#fff; padding:5px 14px; border-radius:20px; font-size:11px; font-weight:700; margin-top:10px; }";
-    html += ".info-grid { display:flex; gap:20px; margin-bottom:24px; flex-wrap:wrap; }";
-    html += ".info-box { flex:1; min-width:220px; background:#f7f7f7; border-radius:8px; padding:16px; }";
-    html += ".info-box h4 { font-size:11px; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }";
-    html += ".info-box p { font-size:13px; line-height:1.8; }";
-    html += "table { width:100%; border-collapse:collapse; margin-bottom:20px; }";
-    html += "thead tr { background:#111; color:#fff; }";
-    html += "thead td { padding:10px; font-size:12px; font-weight:600; }";
-    html += ".total-row { text-align:right; font-size:18px; font-weight:700; margin-bottom:24px; }";
-    html += ".entrega-box { background:#fdf8f0; border:1px solid #e8d5a3; border-radius:8px; padding:18px; margin-bottom:20px; }";
-    html += ".entrega-box h4 { font-size:13px; color:#7a5c1e; margin-bottom:8px; }";
-    html += ".entrega-box p { font-size:12px; color:#7a5c1e; line-height:1.7; }";
-    html += ".footer { text-align:center; font-size:11px; color:#aaa; padding-top:20px; border-top:1px solid #eee; }";
+    html += "* { box-sizing:border-box; margin:0; padding:0; }";
+    html += "body { font-family:'DM Sans',Arial,sans-serif; color:#222; background:#eeeeee; padding:40px 20px 60px; }";
+    html += ".sheet { max-width:720px; margin:0 auto; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.12); }";
+    html += ".header { background:#111111; color:#c8a96e; padding:34px 36px 28px; position:relative; }";
+    html += ".header h1 { font-family:'Playfair Display',serif; font-size:26px; letter-spacing:3px; }";
+    html += ".header p { font-size:12px; color:#999; margin-top:6px; }";
+    html += ".badge-comp { display:inline-block; background:#2e7d32; color:#fff; padding:6px 16px; border-radius:20px; font-size:11px; font-weight:700; margin-top:16px; letter-spacing:0.5px; }";
+    html += ".body-pad { padding:32px 36px 36px; }";
+    html += ".info-grid { display:flex; gap:16px; margin-bottom:26px; flex-wrap:wrap; }";
+    html += ".info-box { flex:1; min-width:220px; background:#faf8f4; border:1px solid #f0e9db; border-radius:12px; padding:18px 20px; }";
+    html += ".info-box h4 { font-size:10px; color:#c8a96e; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; font-weight:700; }";
+    html += ".info-box p { font-size:13px; line-height:1.9; color:#333; }";
+    html += "table { width:100%; border-collapse:collapse; margin-bottom:22px; }";
+    html += "thead tr { background:#111111; color:#fff; }";
+    html += "thead td { padding:12px 10px; font-size:11px; font-weight:600; letter-spacing:0.5px; }";
+    html += "thead td:first-child { border-radius:8px 0 0 0; } thead td:last-child { border-radius:0 8px 0 0; }";
+    html += "tbody td { font-size:13px; }";
+    html += "tbody tr:nth-child(even) { background:#faf8f4; }";
+    html += ".total-row { text-align:right; font-size:20px; font-weight:700; margin-bottom:26px; color:#111; }";
+    html += ".total-row span { color:#c8a96e; }";
+    html += ".entrega-box { background:#fdf8f0; border:1px solid #e8d5a3; border-radius:12px; padding:20px 22px; margin-bottom:10px; }";
+    html += ".entrega-box h4 { font-size:13px; color:#7a5c1e; margin-bottom:8px; font-weight:700; }";
+    html += ".entrega-box p { font-size:12.5px; color:#7a5c1e; line-height:1.8; }";
+    html += ".footer { text-align:center; font-size:11px; color:#aaa; padding:22px 20px 4px; border-top:1px solid #f0f0f0; margin-top:10px; }";
+    html += ".btn-print { position:fixed; top:22px; right:22px; background:#111111; color:#c8a96e; border:none; padding:12px 22px; border-radius:30px; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.25); font-family:'DM Sans',Arial,sans-serif; transition:transform 0.15s, background 0.2s; }";
+    html += ".btn-print:hover { background:#c8a96e; color:#111111; transform:translateY(-2px); }";
+    html += "@media print { body{background:#fff;padding:0;} .sheet{box-shadow:none;border-radius:0;max-width:100%;} .btn-print{display:none;} }";
     html += "</style></head><body>";
 
+    html += "<button class='btn-print' onclick='window.print()'>🖨  Imprimir comprobante</button>";
+
+    html += "<div class='sheet'>";
     html += "<div class='header'>";
     html += "<h1>RELIQUIA URBANA</h1>";
-    html += "<p>Comprobante de Compra - No es un documento tributario</p>";
-    html += "<div class='badge-comp'>Pedido #" + pedidoId.substring(0,8).toUpperCase() + " - PAGO APROBADO</div>";
+    html += "<p>Comprobante de Compra &middot; No es un documento tributario</p>";
+    html += "<div class='badge-comp'>Pedido #" + pedidoId.substring(0,8).toUpperCase() + " &middot; PAGO APROBADO</div>";
     html += "</div>";
 
+    html += "<div class='body-pad'>";
     html += "<div class='info-grid'>";
     html += "<div class='info-box'><h4>Datos del comprador</h4><p>";
     html += "<strong>" + (p.comprador_nombre || usuario.email) + "</strong><br>";
@@ -277,7 +291,7 @@
     html += "<td>Producto</td><td style='text-align:center'>Talla</td><td style='text-align:center'>Cant.</td><td style='text-align:right'>P. Unit.</td><td style='text-align:right'>Subtotal</td>";
     html += "</tr></thead><tbody>" + filasProductos + "</tbody></table>";
 
-    html += "<div class='total-row'>Total pagado: $" + parseFloat(p.total).toFixed(2) + "</div>";
+    html += "<div class='total-row'>Total pagado: <span>$" + parseFloat(p.total).toFixed(2) + "</span></div>";
 
     html += "<div class='entrega-box'>";
     html += "<h4>" + (p.metodo_entrega === "recoger" ? "Instrucciones para retiro" : "Instrucciones de envio") + "</h4>";
@@ -286,12 +300,14 @@
 
     html += "<div class='footer'>";
     html += "Este comprobante certifica tu compra en Reliquia Urbana. No constituye una factura tributaria.<br>";
-    html += "Generado el " + new Date().toLocaleDateString("es-EC") + " - Reliquia Urbana (c) 2026";
+    html += "Generado el " + new Date().toLocaleDateString("es-EC") + " &middot; Reliquia Urbana (c) 2026";
     html += "</div>";
+    html += "</div>"; // body-pad
+    html += "</div>"; // sheet
 
     html += "</" + "body></" + "html>";
 
-    var ventana = window.open("", "_blank", "width=800,height=700");
+    var ventana = window.open("", "_blank", "width=820,height=760");
     ventana.document.write(html);
     ventana.document.close();
   };
