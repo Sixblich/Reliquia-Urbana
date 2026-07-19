@@ -315,17 +315,6 @@
             </select>
           </div>
         </div>
-        <div class="form-row-2">
-          <div class="input-group">
-            <label>Direccion (calle y numero) *</label>
-            <input type="text" id="datDireccion" placeholder="Calle principal, numero, referencia">
-          </div>
-          <div class="input-group">
-            <label>Ciudad *</label>
-            <input type="text" id="datCiudad" placeholder="Ej: Riobamba">
-          </div>
-        </div>
-
         <div class="section-label">Metodo de entrega</div>
         <div class="entrega-opciones">
           <div class="entrega-opt" id="optRecoger" onclick="seleccionarEntrega('recoger')">
@@ -340,12 +329,25 @@
           </div>
         </div>
 
+        <div class="direccion-fields" id="direccionFields">
+          <div class="form-row-2">
+            <div class="input-group">
+              <label>Direccion (calle y numero) *</label>
+              <input type="text" id="datDireccion" placeholder="Calle principal, numero, referencia">
+            </div>
+            <div class="input-group">
+              <label>Ciudad *</label>
+              <input type="text" id="datCiudad" placeholder="Ej: Riobamba">
+            </div>
+          </div>
+        </div>
+
         <div class="section-label">Datos para transferencia bancaria</div>
         <div class="banco-box">
           <div class="banco-row"><span>Banco</span><span>Banco Pichincha</span></div>
           <div class="banco-row"><span>Tipo de cuenta</span><span>Ahorros</span></div>
           <div class="banco-row"><span>Numero de cuenta</span><span>2208882801</span></div>
-          <div class="banco-row"><span>Titular</span><span>CAZCO MUYULEMA JOHANA MISHELL</span></div>
+          <div class="banco-row"><span>Titular</span><span>Reliquia Urbana S.A.S</span></div>
           <div class="banco-row"><span>Monto a transferir</span><span id="montoPagar">$0.00</span></div>
         </div>
 
@@ -524,6 +526,7 @@
     metodoEntrega = tipo;
     document.getElementById("optRecoger").classList.toggle("selected", tipo === "recoger");
     document.getElementById("optEnvio").classList.toggle("selected", tipo === "envio");
+    document.getElementById("direccionFields").classList.toggle("show", tipo === "envio");
   };
 
   // ── PREVIEW COMPROBANTE ─────────────────────────────────────────────────────
