@@ -306,7 +306,7 @@
         <div class="form-row-2">
           <div class="input-group">
             <label>Telefono *</label>
-            <input type="tel" id="datTelefono" placeholder="0999999999">
+            <input type="tel" id="datTelefono" placeholder="0999999999" maxlength="10">
           </div>
           <div class="input-group">
             <label>Provincia *</label>
@@ -354,8 +354,9 @@
         <div class="banco-box">
           <div class="banco-row"><span>Banco</span><span>Banco Pichincha</span></div>
           <div class="banco-row"><span>Tipo de cuenta</span><span>Ahorros</span></div>
-          <div class="banco-row"><span>Numero de cuenta</span><span>2208882801</span></div>
-          <div class="banco-row"><span>Titular</span><span>JOHANA MISHELL CAZCO MUYULEMA</span></div>
+          <div class="banco-row"><span>Numero de cuenta</span><span>2208765432</span></div>
+          <div class="banco-row"><span>Titular</span><span>Reliquia Urbana S.A.S</span></div>
+          <div class="banco-row"><span>Cedula/RUC</span><span>0605734573001</span></div>
           <div class="banco-row"><span>Monto a transferir</span><span id="montoPagar">$0.00</span></div>
         </div>
 
@@ -531,6 +532,22 @@
   // ── METODO DE ENTREGA ────────────────────────────────────────────────────
   var metodoEntrega = null;
 
+  // ── VALIDACION EN TIEMPO REAL DE CAMPOS ──────────────────────────────────
+  // Nombre: solo letras y espacios (incluye tildes y enie)
+  document.getElementById("datNombre").addEventListener("input", function(e) {
+    e.target.value = e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ ]/g, "");
+  });
+
+  // Cedula: solo numeros, maximo 10 digitos
+  document.getElementById("datCedula").addEventListener("input", function(e) {
+    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+  });
+
+  // Telefono: solo numeros, maximo 10 digitos
+  document.getElementById("datTelefono").addEventListener("input", function(e) {
+    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+  });
+
   window.seleccionarEntrega = function(tipo) {
     metodoEntrega = tipo;
     document.getElementById("optRecoger").classList.toggle("selected", tipo === "recoger");
@@ -577,6 +594,10 @@
     }
     if (cedula.length !== 10) {
       msg.textContent = "La cedula debe tener 10 digitos.";
+      msg.className = "mensaje error"; return;
+    }
+    if (telefono.length !== 10) {
+      msg.textContent = "El telefono debe tener 10 digitos.";
       msg.className = "mensaje error"; return;
     }
     if (!metodoEntrega) {
