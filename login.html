@@ -280,8 +280,8 @@
 
   <script type="module">
     import { auth, db } from "./firebase.js";
-    import { signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const form    = document.getElementById("loginForm");
     const msg     = document.getElementById("mensaje");
@@ -325,18 +325,18 @@
         var result = await signInWithPopup(auth, provider);
         var user = result.user;
 
-        // Si es su primera vez, crear el documento en Firestore
+        // El login con Google solo debe dejar entrar a cuentas YA registradas
         var refUsuario = doc(db, "usuarios", user.uid);
         var snap = await getDoc(refUsuario);
 
         if (!snap.exists()) {
-          await setDoc(refUsuario, {
-            nombre: user.displayName || "",
-            email: user.email,
-            rol: "usuario",
-            activo: true,
-            creado_en: serverTimestamp()
-          });
+          // Cuenta nueva: no crear nada, cerrar sesion y mandar a registrarse
+          await cerrarSesionSinRedirigir();
+          mostrarAviso("No tienes una cuenta registrada todavia. Te llevamos a crear una con Google.", "info");
+          setTimeout(function() {
+            window.location.href = "registro.html?google=1";
+          }, 1800);
+          return;
         }
 
         await redirigirSegunRol(user.uid);
@@ -360,6 +360,10 @@
     function mostrarMsg(texto, tipo) {
       msg.textContent = texto;
       msg.className = "mensaje " + tipo;
+    }
+
+    async function cerrarSesionSinRedirigir() {
+      try { await signOut(auth); } catch (e) { /* ignorar */ }
     }
 
     async function redirigirSegunRol(uid) {
@@ -405,11 +409,22 @@
         btnLogin.disabled = false;
         btnLogin.textContent = "Iniciar Sesión";
 
+        // Si el error es de credenciales, revisar si la cuenta fue creada con Google
+        if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential" || error.code === "auth/user-not-found") {
+          try {
+            const metodos = await fetchSignInMethodsForEmail(auth, email);
+            if (metodos.includes("google.com") && !metodos.includes("password")) {
+              mostrarMsg("Esta cuenta fue creada con Google. Usa el botón \"Continuar con Google\" de abajo para iniciar sesión, o crea una contraseña desde \"¿Olvidaste tu contraseña?\".", "error");
+              return;
+            }
+          } catch (e2) { /* si falla la verificacion, seguimos con el mensaje generico */ }
+        }
+
         const errores = {
           "auth/user-not-found"     : "No existe una cuenta con ese correo.",
           "auth/wrong-password"     : "Contraseña incorrecta.",
           "auth/invalid-email"      : "El formato del correo no es válido.",
-          "auth/invalid-credential" : "Correo o contraseña incorrectos.",
+          "auth/invalid-credential" : "Correo o contraseña incorrectos. Si creaste tu cuenta con Google, usa ese botón en su lugar.",
           "auth/too-many-requests"  : "Demasiados intentos. Intenta más tarde.",
           "auth/user-disabled"      : "Esta cuenta ha sido desactivada.",
         };
