@@ -42,6 +42,38 @@ nav {
 .nav-links a { color: var(--muted); font-size: 13px; text-decoration: none; transition: color 0.2s; }
 .nav-links a:hover, .nav-links a.active { color: var(--bg); }
 
+/* ── Link "Estado de Ventas" con contador dinamico ── */
+.nav-link-badge {
+  display: flex; align-items: center; gap: 6px; position: relative;
+}
+.nav-link-badge::before {
+  content: "🏷️"; font-size: 12px; transition: transform 0.25s ease;
+}
+.nav-link-badge:hover::before { transform: rotate(-12deg) scale(1.15); }
+
+.badge-pulse {
+  display: none; align-items: center; justify-content: center;
+  min-width: 17px; height: 17px; padding: 0 4px;
+  background: var(--gold); color: var(--dark);
+  border-radius: 20px; font-size: 10px; font-weight: 700;
+  line-height: 1; position: relative;
+  animation: badgePop 0.4s ease;
+}
+.badge-pulse::after {
+  content: ""; position: absolute; inset: 0; border-radius: 20px;
+  background: var(--gold); opacity: 0.6;
+  animation: badgeRing 1.8s ease-out infinite;
+}
+@keyframes badgePop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes badgeRing {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
 .nav-right { display: flex; align-items: center; gap: 12px; }
 
 .search-box input {
@@ -111,6 +143,52 @@ nav {
   color: var(--bg);
   padding: 72px 32px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero h1, .hero p, .hero .btn-main {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Orbes dorados difuminados, flotando lentamente */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: 0.18;
+  background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+  animation: floatOrb 16s ease-in-out infinite;
+}
+.orb1 { width: 320px; height: 320px; top: -80px; left: 8%; animation-duration: 18s; }
+.orb2 { width: 260px; height: 260px; bottom: -100px; right: 10%; animation-duration: 22s; animation-delay: -6s; }
+.orb3 { width: 200px; height: 200px; top: 30%; right: 30%; animation-duration: 14s; animation-delay: -3s; opacity: 0.12; }
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(30px, -25px) scale(1.08); }
+  66%      { transform: translate(-25px, 20px) scale(0.95); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb { animation: none; opacity: 0.1; }
+  .hero-canvas { display: none; }
 }
 
 .hero h1 {
