@@ -625,7 +625,7 @@
         <div class="card-head"><h3>Categorías actuales</h3></div>
         <table>
           <thead>
-            <tr><th>Nombre</th><th>Identificador (slug)</th><th>Tipo</th><th>Acciones</th></tr>
+            <tr><th>Nombre</th><th>Identificador (slug)</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaCategorias"><tr><td colspan="4" class="empty">Cargando...</td></tr></tbody>
         </table>
@@ -963,30 +963,43 @@
       .replace(/(^-|-$)/g, "");
   }
 
-  // Trae TODAS las categorias (base + personalizadas de Firestore) para usar en selects
+  // La primera vez que se usa el panel, si la coleccion "categorias" esta vacia,
+  // se siembran las 6 categorias base para que el admin pueda editarlas/eliminarlas igual que las demas.
+  async function sembrarCategoriasBaseSiHaceFalta() {
+    try {
+      const snap = await getDocs(collection(db, "categorias"));
+      if (snap.empty) {
+        for (const c of CATEGORIAS_BASE) {
+          await addDoc(collection(db, "categorias"), {
+            nombre: c.nombre, slug: c.slug, creado_en: serverTimestamp()
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Error sembrando categorias base:", e);
+    }
+  }
+
+  // Trae TODAS las categorias desde Firestore (ya no hay distincion de "predeterminadas")
   async function obtenerTodasLasCategorias() {
     const snap = await getDocs(collection(db, "categorias"));
-    const personalizadas = snap.docs.map(d => ({ id: d.id, ...d.data(), personalizada: true }));
-    return [...CATEGORIAS_BASE.map(c => ({ ...c, personalizada: false })), ...personalizadas];
+    const cats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    cats.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    return cats;
   }
 
   async function cargarCategoriasAdmin() {
     const cont = document.getElementById("tablaCategorias");
     try {
       const todas = await obtenerTodasLasCategorias();
-      cont.innerHTML = todas.map(c => `
+      cont.innerHTML = todas.length ? todas.map(c => `
         <tr>
           <td><strong>${c.nombre}</strong></td>
           <td><code style="font-size:12px;color:#888;">${c.slug}</code></td>
-          <td>${c.personalizada
-                ? '<span class="badge admin">Personalizada</span>'
-                : '<span class="badge activo">Predeterminada</span>'}</td>
-          <td>${c.personalizada
-                ? `<button class="btn-sm danger" onclick="eliminarCategoria('${c.id}','${c.nombre}')">Eliminar</button>`
-                : '<span style="color:#bbb; font-size:12px;">—</span>'}</td>
-        </tr>`).join("");
+          <td><button class="btn-sm danger" onclick="eliminarCategoria('${c.id}','${c.nombre}')">Eliminar</button></td>
+        </tr>`).join("") : `<tr><td colspan="3" class="empty">No hay categorias registradas.</td></tr>`;
     } catch (e) {
-      cont.innerHTML = `<tr><td colspan="4" class="empty">Error al cargar: ${e.message}</td></tr>`;
+      cont.innerHTML = `<tr><td colspan="3" class="empty">Error al cargar: ${e.message}</td></tr>`;
     }
   }
 
@@ -2090,7 +2103,7 @@
 
   // ── CARGAR AL INICIO ──────────────────────────────────────────────────────
   cargarDashboard();
-  poblarSelectsCategorias();
+  sembrarCategoriasBaseSiHaceFalta().then(poblarSelectsCategorias);
 </script>
 <script src="ui-notify.js"></script>
 </body>
