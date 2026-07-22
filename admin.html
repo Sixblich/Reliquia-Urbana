@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Admin — Reliquia Urbana</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -459,6 +461,7 @@
     <div class="sidebar-title">Panel de control</div>
     <a class="active" onclick="mostrarPagina('dashboard')"><span class="icon">📊</span> Dashboard</a>
     <a onclick="mostrarPagina('productos')"><span class="icon">👕</span> Productos</a>
+    <a onclick="mostrarPagina('categorias')"><span class="icon">🏷️</span> Categorías</a>
     <a onclick="mostrarPagina('pagos')"><span class="icon">💳</span> Validar Pagos</a>
     <a onclick="mostrarPagina('pedidos')"><span class="icon">📦</span> Pedidos</a>
     <a onclick="mostrarPagina('prendas')"><span class="icon">👚</span> Prendas Marketplace</a>
@@ -546,12 +549,6 @@
             <label>Categoría *</label>
             <select id="pCategoria">
               <option value="">Seleccionar...</option>
-              <option value="camisetas">Camisetas</option>
-              <option value="pantalones">Pantalones</option>
-              <option value="vestidos">Vestidos</option>
-              <option value="abrigos">Abrigos</option>
-              <option value="zapatos">Zapatos</option>
-              <option value="accesorios">Accesorios</option>
             </select>
           </div>
           <div class="form-group">
@@ -604,6 +601,33 @@
             <tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaProductos"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── CATEGORIAS ── -->
+    <div class="page" id="page-categorias">
+      <h1 class="page-title">Gestión de Categorías</h1>
+      <p class="page-sub">Crea nuevas categorías de ropa para tu catálogo, formulario de productos y de venta</p>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-head"><h3>Agregar nueva categoría</h3></div>
+        <div style="padding:0 24px 24px; display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;">
+            <label style="display:block; font-size:12px; color:#666; margin-bottom:6px;">Nombre de la categoría</label>
+            <input type="text" id="nuevaCategoriaNombre" placeholder="Ej: Chompas, Ropa deportiva..." style="width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+          </div>
+          <button class="btn-primary" onclick="agregarCategoria()">+ Agregar categoría</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Categorías actuales</h3></div>
+        <table>
+          <thead>
+            <tr><th>Nombre</th><th>Identificador (slug)</th><th>Tipo</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaCategorias"><tr><td colspan="4" class="empty">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -715,12 +739,6 @@
           </select>
           <select id="fCategoria" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px; font-size:12px;" onchange="aplicarFiltrosReporte()">
             <option value="">Todas las categorías</option>
-            <option value="camisetas">Camisetas</option>
-            <option value="pantalones">Pantalones</option>
-            <option value="vestidos">Vestidos</option>
-            <option value="abrigos">Abrigos</option>
-            <option value="zapatos">Zapatos</option>
-            <option value="accesorios">Accesorios</option>
           </select>
           <select id="fTalla" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px; font-size:12px;" onchange="aplicarFiltrosReporte()">
             <option value="">Todas las tallas</option>
@@ -850,6 +868,7 @@
     if (id === "pagos")      cargarPagos();
     if (id === "pedidos")    cargarPedidosAdmin();
     if (id === "prendas")    cargarPrendas();
+    if (id === "categorias") cargarCategoriasAdmin();
     if (id === "reportes")   iniciarReportes();
     if (id === "usuarios")   cargarUsuarios();
   };
@@ -925,6 +944,99 @@
         a.classList.add("active");
       }
     });
+  };
+
+  // ── CATEGORIAS ────────────────────────────────────────────────────────────
+  const CATEGORIAS_BASE = [
+    { nombre: "Camisetas",   slug: "camisetas" },
+    { nombre: "Pantalones",  slug: "pantalones" },
+    { nombre: "Vestidos",    slug: "vestidos" },
+    { nombre: "Abrigos",     slug: "abrigos" },
+    { nombre: "Zapatos",     slug: "zapatos" },
+    { nombre: "Accesorios",  slug: "accesorios" },
+  ];
+
+  function generarSlug(nombre) {
+    return nombre.trim().toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quitar tildes
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  }
+
+  // Trae TODAS las categorias (base + personalizadas de Firestore) para usar en selects
+  async function obtenerTodasLasCategorias() {
+    const snap = await getDocs(collection(db, "categorias"));
+    const personalizadas = snap.docs.map(d => ({ id: d.id, ...d.data(), personalizada: true }));
+    return [...CATEGORIAS_BASE.map(c => ({ ...c, personalizada: false })), ...personalizadas];
+  }
+
+  async function cargarCategoriasAdmin() {
+    const cont = document.getElementById("tablaCategorias");
+    try {
+      const todas = await obtenerTodasLasCategorias();
+      cont.innerHTML = todas.map(c => `
+        <tr>
+          <td><strong>${c.nombre}</strong></td>
+          <td><code style="font-size:12px;color:#888;">${c.slug}</code></td>
+          <td>${c.personalizada
+                ? '<span class="badge admin">Personalizada</span>'
+                : '<span class="badge activo">Predeterminada</span>'}</td>
+          <td>${c.personalizada
+                ? `<button class="btn-sm danger" onclick="eliminarCategoria('${c.id}','${c.nombre}')">Eliminar</button>`
+                : '<span style="color:#bbb; font-size:12px;">—</span>'}</td>
+        </tr>`).join("");
+    } catch (e) {
+      cont.innerHTML = `<tr><td colspan="4" class="empty">Error al cargar: ${e.message}</td></tr>`;
+    }
+  }
+
+  window.agregarCategoria = async function() {
+    const input  = document.getElementById("nuevaCategoriaNombre");
+    const nombre = input.value.trim();
+
+    if (!nombre) {
+      mostrarAviso("Escribe un nombre para la categoria.", "error");
+      return;
+    }
+
+    const slug = generarSlug(nombre);
+    const todas = await obtenerTodasLasCategorias();
+
+    if (todas.some(c => c.slug === slug)) {
+      mostrarAviso("Ya existe una categoria con ese nombre.", "error");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "categorias"), {
+        nombre: nombre,
+        slug: slug,
+        creado_en: serverTimestamp()
+      });
+      input.value = "";
+      mostrarAviso("Categoria \"" + nombre + "\" agregada correctamente.", "success");
+      cargarCategoriasAdmin();
+      poblarSelectsCategorias();
+    } catch (e) {
+      mostrarAviso("Error al agregar la categoria: " + e.message, "error");
+    }
+  };
+
+  window.eliminarCategoria = async function(id, nombre) {
+    const ok = await confirmarAccion(
+      "¿Eliminar la categoria \"" + nombre + "\"? Los productos que ya la usan conservaran el nombre, pero no podras elegirla de nuevo.",
+      { peligro: true, textoOk: "Eliminar" }
+    );
+    if (!ok) return;
+
+    try {
+      await deleteDoc(doc(db, "categorias", id));
+      mostrarAviso("Categoria eliminada.", "success");
+      cargarCategoriasAdmin();
+      poblarSelectsCategorias();
+    } catch (e) {
+      mostrarAviso("Error al eliminar: " + e.message, "error");
+    }
   };
 
   // ── PRODUCTOS ─────────────────────────────────────────────────────────────
@@ -1964,8 +2076,21 @@
     setTimeout(function() { ventana.print(); }, 600);
   };
 
+  // Llena los selects de categoria (formulario de producto y filtro de reportes)
+  async function poblarSelectsCategorias() {
+    const todas = await obtenerTodasLasCategorias();
+    const opciones = todas.map(c => `<option value="${c.slug}">${c.nombre}</option>`).join("");
+
+    const selP = document.getElementById("pCategoria");
+    if (selP) selP.innerHTML = '<option value="">Seleccionar...</option>' + opciones;
+
+    const selF = document.getElementById("fCategoria");
+    if (selF) selF.innerHTML = '<option value="">Todas las categorías</option>' + opciones;
+  }
+
   // ── CARGAR AL INICIO ──────────────────────────────────────────────────────
   cargarDashboard();
+  poblarSelectsCategorias();
 </script>
 <script src="ui-notify.js"></script>
 </body>
