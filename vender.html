@@ -375,30 +375,20 @@
 
   const usuario = await verificarSesion("usuario");
 
-  // ── CATEGORIAS (predeterminadas + personalizadas del administrador) ──────────
-  const CATEGORIAS_BASE = [
-    { nombre: "Camisetas",  slug: "camisetas" },
-    { nombre: "Pantalones", slug: "pantalones" },
-    { nombre: "Vestidos",   slug: "vestidos" },
-    { nombre: "Abrigos",    slug: "abrigos" },
-    { nombre: "Zapatos",    slug: "zapatos" },
-    { nombre: "Accesorios", slug: "accesorios" },
-  ];
-
+  // ── CATEGORIAS (el administrador controla la lista completa desde su panel) ──
   async function poblarCategorias() {
     var sel = document.getElementById("vCategoria");
-    var opciones = CATEGORIAS_BASE.map(function(c) {
-      return '<option value="' + c.slug + '">' + c.nombre + '</option>';
-    }).join("");
-
+    var opciones = "";
     try {
       var snap = await getDocs(collection(db, "categorias"));
-      snap.docs.forEach(function(d) {
-        var c = d.data();
+      var cats = snap.docs.map(function(d) { return d.data(); });
+      cats.sort(function(a, b) { return a.nombre.localeCompare(b.nombre); });
+      cats.forEach(function(c) {
         opciones += '<option value="' + c.slug + '">' + c.nombre + '</option>';
       });
-    } catch (e) { /* si falla, se queda solo con las predeterminadas */ }
-
+    } catch (e) {
+      console.error("Error cargando categorias:", e);
+    }
     sel.innerHTML = '<option value="">Seleccionar...</option>' + opciones;
   }
   poblarCategorias();
