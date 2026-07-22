@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catálogo — Reliquia Urbana</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="catalogo.css">
 </head>
@@ -51,7 +53,7 @@
 
   <!-- ── FILTROS ── -->
   <div class="filtros-bar">
-    <div class="cats">
+    <div class="cats" id="catsContainer">
       <div class="cat active" onclick="filtrarCategoria(this,'todas')">Todas</div>
       <div class="cat" onclick="filtrarCategoria(this,'camisetas')">Camisetas</div>
       <div class="cat" onclick="filtrarCategoria(this,'pantalones')">Pantalones</div>
@@ -251,6 +253,25 @@ function initHeroParticles() {
   });
 }
 initHeroParticles();
+
+// Agrega categorias personalizadas creadas por el administrador, ademas de las 6 predeterminadas
+async function cargarCategoriasExtra() {
+  try {
+    const snap = await getDocs(collection(db, "categorias"));
+    const cont = document.getElementById("catsContainer");
+    snap.docs.forEach(d => {
+      const c = d.data();
+      const pill = document.createElement("div");
+      pill.className = "cat";
+      pill.textContent = c.nombre;
+      pill.onclick = function() { filtrarCategoria(pill, c.slug); };
+      cont.appendChild(pill);
+    });
+  } catch (e) {
+    console.error("Error cargando categorias personalizadas:", e);
+  }
+}
+cargarCategoriasExtra();
 
 // ── VERIFICAR SESIÓN (OPCIONAL — el catálogo es público) ─────────────────────
 const usuario = await verificarSesionOpcional();
