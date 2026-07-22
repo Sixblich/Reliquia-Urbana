@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vender mi ropa — Reliquia Urbana</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -184,7 +186,7 @@
   <a href="catalogo.html" class="logo">RELIQUIA URBANA</a>
   <div class="nav-links">
     <a href="catalogo.html">Catalogo</a>
-    <a href="mis_prendas.html">Mis prendas</a>
+    <a href="mis-prendas.html">Mis prendas</a>
     <a href="vender.html" class="active">Vender ropa</a>
   </div>
   <div class="nav-right">
@@ -278,12 +280,6 @@
         <label>Categoria *</label>
         <select id="vCategoria">
           <option value="">Seleccionar...</option>
-          <option value="camisetas">Camisetas</option>
-          <option value="pantalones">Pantalones</option>
-          <option value="vestidos">Vestidos</option>
-          <option value="abrigos">Abrigos</option>
-          <option value="zapatos">Zapatos</option>
-          <option value="accesorios">Accesorios</option>
         </select>
       </div>
       <div class="input-group">
@@ -323,7 +319,7 @@
 
     <div class="mensaje" id="msgVender"></div>
     <button class="btn-main" id="btnEnviar" onclick="enviarPrenda()">Publicar prenda para revision</button>
-    <a href="mis_prendas.html" class="btn-link">Ver el estado de mis prendas publicadas →</a>
+    <a href="mis-prendas.html" class="btn-link">Ver el estado de mis prendas publicadas →</a>
   </div>
 
   <!-- CONFIRMACION -->
@@ -374,10 +370,39 @@
 <script type="module">
   import { db, storage } from "./firebase.js";
   import { verificarSesion, cerrarSesion } from "./auth-guard.js";
-  import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
   const usuario = await verificarSesion("usuario");
+
+  // ── CATEGORIAS (predeterminadas + personalizadas del administrador) ──────────
+  const CATEGORIAS_BASE = [
+    { nombre: "Camisetas",  slug: "camisetas" },
+    { nombre: "Pantalones", slug: "pantalones" },
+    { nombre: "Vestidos",   slug: "vestidos" },
+    { nombre: "Abrigos",    slug: "abrigos" },
+    { nombre: "Zapatos",    slug: "zapatos" },
+    { nombre: "Accesorios", slug: "accesorios" },
+  ];
+
+  async function poblarCategorias() {
+    var sel = document.getElementById("vCategoria");
+    var opciones = CATEGORIAS_BASE.map(function(c) {
+      return '<option value="' + c.slug + '">' + c.nombre + '</option>';
+    }).join("");
+
+    try {
+      var snap = await getDocs(collection(db, "categorias"));
+      snap.docs.forEach(function(d) {
+        var c = d.data();
+        opciones += '<option value="' + c.slug + '">' + c.nombre + '</option>';
+      });
+    } catch (e) { /* si falla, se queda solo con las predeterminadas */ }
+
+    sel.innerHTML = '<option value="">Seleccionar...</option>' + opciones;
+  }
+  poblarCategorias();
+
   document.getElementById("userEmail").textContent = usuario.email;
   window.salir = () => cerrarSesion();
 
