@@ -46,7 +46,6 @@
     </div>
     <h1>Tu armario,<br>tu <span>mercado.</span></h1>
     <p>Compra ropa única o vende la tuya. Moda sostenible, precios justos.</p>
-    <p>PRENDAS AMERICANAS USA.</p>
     <button class="btn-main" onclick="document.getElementById('catalogo-sec').scrollIntoView({behavior:'smooth'})">
       Explorar catálogo ↓
     </button>
@@ -56,12 +55,6 @@
   <div class="filtros-bar">
     <div class="cats" id="catsContainer">
       <div class="cat active" onclick="filtrarCategoria(this,'todas')">Todas</div>
-      <div class="cat" onclick="filtrarCategoria(this,'camisetas')">Camisetas</div>
-      <div class="cat" onclick="filtrarCategoria(this,'pantalones')">Pantalones</div>
-      <div class="cat" onclick="filtrarCategoria(this,'vestidos')">Vestidos</div>
-      <div class="cat" onclick="filtrarCategoria(this,'abrigos')">Abrigos</div>
-      <div class="cat" onclick="filtrarCategoria(this,'zapatos')">Zapatos</div>
-      <div class="cat" onclick="filtrarCategoria(this,'accesorios')">Accesorios</div>
     </div>
     <div class="filtros-right">
       <select id="filtroTalla" onchange="aplicarFiltros()">
@@ -255,7 +248,7 @@ function initHeroParticles() {
 }
 initHeroParticles();
 
-// Agrega categorias personalizadas creadas por el administrador, ademas de las 6 predeterminadas
+// Carga TODAS las categorias desde Firestore (el admin controla la lista completa)
 async function cargarCategoriasExtra() {
   try {
     const snap = await getDocs(collection(db, "categorias"));
